@@ -3,7 +3,7 @@
 #ifndef I2C_TASK_H
 #define I2C_TASK_H
 #include "vtI2C.h"
-#include "LCDtask.h"
+#include "lcdTask.h"
 // Structure used to pass parameters to the task
 // Do not touch...
 typedef struct __i2cStruct {

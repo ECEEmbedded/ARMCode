@@ -7,6 +7,8 @@
 #include "i2c_ARM.h"
 #include "motorControl.h"
 #include "navigation.h"
+#include "speedLimit.h"
+#include "myADC.h"
 
 // Structure used to pass parameters to the task
 // Do not touch...

@@ -21,6 +21,7 @@
 #include "motorControl.h"
 #include "navigation.h"
 #include "speedLimit.h"
+#include "myADC.h"
 
 /* *********************************************** */
 // definitions and data structures that are private to this file
@@ -203,3 +204,4 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 	}
 }
 #endif
+

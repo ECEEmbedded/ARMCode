@@ -10,10 +10,9 @@
 /* include files. */
 #include "GLCD.h"
 #include "vtUtilities.h"
-#include "LCDtask.h"
+#include "lcdTask.h"
 #include "string.h"
-// Added the myDefs.h include here by Matthew Ibarra 2/4/2013
-#include "myDefs.h"
+#include "myTypes.h"
 
 // I have set this to a larger stack size because of (a) using printf() and (b) the depth of function calls
 //   for some of the LCD operations

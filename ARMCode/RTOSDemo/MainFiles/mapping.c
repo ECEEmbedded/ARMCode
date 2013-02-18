@@ -18,7 +18,7 @@
 #include "navigation.h"
 #include "mapping.h"
 #include "speedLimit.h"
-#include "LCDtask.h"
+#include "lcdTask.h"
 /* *********************************************** */
 
 #define INSPECT_STACK 1

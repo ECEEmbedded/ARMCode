@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_1==1
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -15,7 +14,7 @@
 #include "myADC.h"
 #include "vtUtilities.h"
 #include "vtI2C.h"
-#include "LCDtask.h"
+#include "lcdTask.h"
 #include "myTypes.h"
 
 /* *********************************************** */
@@ -159,4 +158,3 @@ static portTASK_FUNCTION( vADCUpdateTask, pvParameters )
     }
 }
 
-#endif

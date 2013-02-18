@@ -11,9 +11,10 @@
 
 /* include files. */
 #include "vtUtilities.h"
-#include "LCDtask.h"
+#include "lcdTask.h"
 #include "myTimers.h"
 #include "myTypes.h"
+#include "myADC.h"
 
 /* **************************************************************** */
 // WARNING: Do not print in this file -- the stack is not large enough for this task

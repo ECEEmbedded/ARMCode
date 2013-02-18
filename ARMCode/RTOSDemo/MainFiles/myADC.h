@@ -1,6 +1,5 @@
 #include "myDefs.h"
-#if MILESTONE_1==1
-#include "LCDtask.h"
+#include "lcdTask.h"
 
 #include "i2c_ARM.h"
 #include "myTypes.h"
@@ -36,4 +35,3 @@ portBASE_TYPE SendADCDataMsg(vtADCStruct *adcData,uint8_t msgType,uint8_t value,
 //   Result of the call to xQueueSend()
 portBASE_TYPE SendADCTimerMsg(vtADCStruct *adcData,portTickType ticksElapsed,portTickType ticksToBlock);
 
-#endif

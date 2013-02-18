@@ -91,6 +91,7 @@ You should read the note above.
 #include "mapping.h"
 #include "speedLimit.h"
 #include "myTypes.h"
+#include "myADC.h"
 
 /* syscalls initialization -- *must* occur first */
 #include "syscalls.h"
