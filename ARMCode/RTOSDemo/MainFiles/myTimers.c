@@ -1,8 +1,8 @@
-// The include statement and the pound include statement for
-// Example Color Change statement below added by 
-// Matthew Ibarra 2/2/2013
+// Cleaned up this file for milestone 2
+// Matthew Ibarra 2/10/2013
 #include "myDefs.h"
-#if EXAMPLE_COLOR_CHANGE==1
+#if MILESTONE_2==1
+
 /* Scheduler include files. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -13,100 +13,138 @@
 #include "vtUtilities.h"
 #include "LCDtask.h"
 #include "myTimers.h"
+#include "myTypes.h"
 
 /* **************************************************************** */
 // WARNING: Do not print in this file -- the stack is not large enough for this task
 /* **************************************************************** */
 
 /* *********************************************************** */
-// Functions for the LCD Task related timer
+// Functions for the I2C Task related timer
 //
-// how often the timer that sends messages to the LCD task should run
-// Set the task up to run every 100 ms
-#define lcdWRITE_RATE_BASE	( ( portTickType ) 100 / portTICK_RATE_MS)
+// how often the timer that sends messages to the I2C task should run
+// Set the task up to run every 30 ms for the I2C timer
+#define i2cWRITE_RATE_BASE	( ( portTickType ) 30 / portTICK_RATE_MS)
 
-// Callback function that is called by the LCDTimer
-//   Sends a message to the queue that is read by the LCD Task
-void LCDTimerCallback(xTimerHandle pxTimer)
+// Callback function that is called by the I2C Timer
+// This badboy will send a message to the queue that is read by the I2C Task
+void i2cTimerCallback(xTimerHandle pxTimer)
 {
 	if (pxTimer == NULL) {
-		VT_HANDLE_FATAL_ERROR(0);
+		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
 	} else {
-	#if EXAMPLE_COLOR_CHANGE==1
-		// When setting up this timer, I put the pointer to the 
-		//   LCD structure as the "timer ID" so that I could access
-		//   that structure here -- which I need to do to get the 
-		//   address of the message queue to send to 
-		vtLCDStruct *ptr = (vtLCDStruct *) pvTimerGetTimerID(pxTimer);
+		// When setting up this timer, I put the pointer to the
+		// i2c structure as the "timer ID" so that I could access
+		// that structure here -- which I need to do to get the
+		// address of the message queue to send to.
+		myI2CStruct *ptr = (myI2CStruct *) pvTimerGetTimerID(pxTimer);
 		// Make this non-blocking *but* be aware that if the queue is full, this routine
-		// will not care, so if you care, you need to check something
-		if (SendLCDTimerMsg(ptr,lcdWRITE_RATE_BASE,0) == errQUEUE_FULL) {
+		// will not care, so if you care, you need to check something.
+		if (sendi2cTimerMsg(ptr,i2cWRITE_RATE_BASE,0) == errQUEUE_FULL) {
 			// Here is where you would do something if you wanted to handle the queue being full
-			VT_HANDLE_FATAL_ERROR(0);
+			VT_HANDLE_FATAL_ERROR(I2C_Q_FULL);
 		}
-	#endif
-	#if MILESTONE_1==1
-	// Added by Matthew Ibarra 2/2/2013
-		vtLCDStruct *ptr = (vtLCDStruct *) pvTimerGetTimerID(pxTimer);
-		if(SendLCDADCMsg(ptr, 0x110, portMAX_DELAY) != pdTRUE) {
-			VT_HANDLE_FATAL_ERROR(0);
-		}
-	#endif
+	}
 }
 
-void startTimerForLCD(vtLCDStruct *vtLCDdata) {
-	if (sizeof(long) != sizeof(vtLCDStruct *)) {
-		VT_HANDLE_FATAL_ERROR(0);
+void startTimerFori2c(myI2CStruct *i2cdata) {
+	if (sizeof(long) != sizeof(myI2CStruct *)) {
+		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
 	}
-	xTimerHandle LCDTimerHandle = xTimerCreate((const signed char *)"LCD Timer",lcdWRITE_RATE_BASE,pdTRUE,(void *) vtLCDdata,LCDTimerCallback);
-	if (LCDTimerHandle == NULL) {
-		VT_HANDLE_FATAL_ERROR(0);
+	xTimerHandle i2cTimerHandle = xTimerCreate((const signed char *)"i2c Timer",i2cWRITE_RATE_BASE,pdTRUE,(void *) i2cdata,i2cTimerCallback);
+	if (i2cTimerHandle == NULL) {
+		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
 	} else {
-		if (xTimerStart(LCDTimerHandle,0) != pdPASS) {
-			VT_HANDLE_FATAL_ERROR(0);
+		if (xTimerStart(i2cTimerHandle,0) != pdPASS) {
+			VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
 		}
 	}
 }
+
 
 /* *********************************************************** */
-// Functions for the Temperature Task related timer
+// Functions for the Motor Controller Task related timer
+//
+// how often the timer that sends messages to the motor controller task should run
+// Set the task up to run every 19 ms for the motor control timer
+#define motorWRITE_RATE_BASE	( ( portTickType ) 19 / portTICK_RATE_MS)
+
+// Callback function that is called by the i2c Timer
+// This puppy sends a message to the queue that is read by the Motor Controller Task
+void motorTimerCallback(xTimerHandle pxTimer)
+{
+	if (pxTimer == NULL) {
+		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
+	} else {
+		// When setting up this timer, I put the pointer to the
+		// i2c structure as the "timer ID" so that I could access
+		// that structure here -- which I need to do to get the
+		// address of the message queue to send to
+		motorControlStruct *ptr = (motorControlStruct *) pvTimerGetTimerID(pxTimer);
+		// Make this non-blocking *but* be aware that if the queue is full, this routine
+		// will not care, so if you care, you need to check something
+		if (sendmotorTimerMsg(ptr,motorWRITE_RATE_BASE,0) == errQUEUE_FULL) {
+			// Here is where you would do something if you wanted to handle the queue being full
+			VT_HANDLE_FATAL_ERROR(I2C_Q_FULL);
+		}
+	}
+}
+
+void startTimerForMotor(motorControlStruct *motordata){
+	if (sizeof(long) != sizeof(motorControlStruct *)) {
+		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
+	}
+	xTimerHandle motorTimerHandle = xTimerCreate((const signed char *)"Motor Timer",motorWRITE_RATE_BASE,pdTRUE,(void *) motordata,motorTimerCallback);
+	if (motorTimerHandle == NULL) {
+		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
+	} else {
+		if (xTimerStart(motorTimerHandle,0) != pdPASS) {
+			VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
+		}
+	}
+}
+
+
+/* *********************************************************** */
+// Functions for the ADC Task related timer
 //
 // how often the timer that sends messages to the LCD task should run
 // Set the task up to run every 500 ms
-#define tempWRITE_RATE_BASE	( ( portTickType ) 500 / portTICK_RATE_MS)
+#define adcWRITE_RATE_BASE	( ( portTickType ) 500 / portTICK_RATE_MS)
 
-// Callback function that is called by the TemperatureTimer
-//   Sends a message to the queue that is read by the Temperature Task
-void TempTimerCallback(xTimerHandle pxTimer)
+// Callback function that is called by the ADCTimer
+//   Sends a message to the queue that is read by the ADC Task
+void ADCTimerCallback(xTimerHandle pxTimer)
 {
 	if (pxTimer == NULL) {
 		VT_HANDLE_FATAL_ERROR(0);
 	} else {
-		// When setting up this timer, I put the pointer to the 
-		//   Temperature structure as the "timer ID" so that I could access
-		//   that structure here -- which I need to do to get the 
-		//   address of the message queue to send to 
-		vtTempStruct *ptr = (vtTempStruct *) pvTimerGetTimerID(pxTimer);
+		// When setting up this timer, I put the pointer to the
+		//   ADC structure as the "timer ID" so that I could access
+		//   that structure here -- which I need to do to get the
+		//   address of the message queue to send to
+		vtADCStruct *ptr = (vtADCStruct *) pvTimerGetTimerID(pxTimer);
 		// Make this non-blocking *but* be aware that if the queue is full, this routine
 		// will not care, so if you care, you need to check something
-		if (SendTempTimerMsg(ptr,tempWRITE_RATE_BASE,0) == errQUEUE_FULL) {
+		if (SendADCTimerMsg(ptr,adcWRITE_RATE_BASE,0) == errQUEUE_FULL) {
 			// Here is where you would do something if you wanted to handle the queue being full
 			VT_HANDLE_FATAL_ERROR(0);
 		}
 	}
 }
 
-void startTimerForTemperature(vtTempStruct *vtTempdata) {
-	if (sizeof(long) != sizeof(vtTempStruct *)) {
+void startTimerForADC(vtADCStruct *vtADCdata) {
+	if (sizeof(long) != sizeof(vtADCStruct *)) {
 		VT_HANDLE_FATAL_ERROR(0);
 	}
-	xTimerHandle TempTimerHandle = xTimerCreate((const signed char *)"Temp Timer",tempWRITE_RATE_BASE,pdTRUE,(void *) vtTempdata,TempTimerCallback);
-	if (TempTimerHandle == NULL) {
+	xTimerHandle ADCTimerHandle = xTimerCreate((const signed char *)"ADC Timer",adcWRITE_RATE_BASE,pdTRUE,(void *) vtADCdata,ADCTimerCallback);
+	if (ADCTimerHandle == NULL) {
 		VT_HANDLE_FATAL_ERROR(0);
 	} else {
-		if (xTimerStart(TempTimerHandle,0) != pdPASS) {
+		if (xTimerStart(ADCTimerHandle,0) != pdPASS) {
 			VT_HANDLE_FATAL_ERROR(0);
 		}
 	}
 }
+
 #endif

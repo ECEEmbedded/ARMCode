@@ -74,7 +74,6 @@ portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData,int length,char *pString,port
 portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData,int data,portTickType ticksToBlock);
 /* ********************************************************************* */
 
-
 void LCDTimerCallback(xTimerHandle);
 
 #endif

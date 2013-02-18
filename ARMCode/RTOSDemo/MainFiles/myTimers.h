@@ -1,12 +1,17 @@
 #include "myDefs.h"
-#if MILESTONE_1
-#ifndef _MY_TIMERS_H
-#define _MY_TIMERS_H
-#include "lcdTask.h"
-#include "i2cTemp.h"
-//#include "i2cADC.h"
-void startTimerForLCD(vtLCDStruct *vtLCDdata);
-void startTimerForTemperature(vtTempStruct *vtTempdata);
-//void startTimerForADC(vtADCStruct *vtADCdata);
+#if MILESTONE_2==1
+#ifndef MY_TIMERS_H
+#define MY_TIMERS_H
+
+#include "LCDtask.h"
+#include "i2c_ARM.h"
+#include "navigation.h"
+#include "motorControl.h"
+#include "mapping.h"
+
+void startTimerFori2c(myI2CStruct *i2cdata);
+void startTimerForMotor(motorControlStruct *motordata);
+void startTimerForADC(vtADCStruct *vtADCdata);
+
 #endif
 #endif

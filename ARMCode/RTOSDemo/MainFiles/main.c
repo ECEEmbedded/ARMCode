@@ -33,9 +33,9 @@
     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT
     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-    more details. You should have received a copy of the GNU General Public 
-    License and the FreeRTOS license exception along with FreeRTOS; if not it 
-    can be viewed here: http://www.freertos.org/a00114.html and also obtained 
+    more details. You should have received a copy of the GNU General Public
+    License and the FreeRTOS license exception along with FreeRTOS; if not it
+    can be viewed here: http://www.freertos.org/a00114.html and also obtained
     by writing to Richard Barry, contact details for whom are available on the
     FreeRTOS WEB site.
 
@@ -51,32 +51,20 @@
     licensing and training services.
 */
 
-
 /*
- * Creates all the demo application tasks, then starts the scheduler.  The WEB
- * documentation provides more details of the standard demo application tasks
- * (which just exist to test the kernel port and provide an example of how to use
- * each FreeRTOS API function).
- *
- * In addition to the standard demo tasks, the following tasks and tests are
- * defined and/or created within this file:
- *
- * "Check" hook -  This only executes fully every five seconds from the tick
- * hook.  Its main function is to check that all the standard demo tasks are
- * still operational.  The status can be viewed using on the Task Stats page
- * served by the WEB server.
- *
- * "uIP" task -  This is the task that handles the uIP stack.  All TCP/IP
- * processing is performed in this task.
- * 
- * "USB" task - Enumerates the USB device as a CDC class, then echoes back all
- * received characters with a configurable offset (for example, if the offset
- * is 1 and 'A' is received then 'B' will be sent back).  A dumb terminal such
- * as Hyperterminal can be used to talk to the USB task.
- */
- 
- #include "myDefs.h"
- #if MILESTONE_1==1
+    This file has been modified for the usage of Virginia Tech ECE4534 Spring 2013 Group 04:
+    Authors:
+        Matthew Ibarra
+        Seo Townsend
+        Richard Clermont
+        Dhiraj Pandey
+*/
+
+// Cleaned up main.c for milestone 2 and beyond
+// Matthew Ibarra 2/10/2013
+
+#include "myDefs.h"
+#if MILESTONE_2==1
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
@@ -89,40 +77,20 @@
 You should read the note above.
 #endif
 
-/* Define whether or not to start the standard FreeRTOS demo tasks (the code is still included in the project
-   unless the files are actually removed from the project */
-#define USE_FREERTOS_DEMO 0
-// Define whether or not to use my LCD task
-#define USE_MTJ_LCD 1
-// Define whether to use my temperature sensor read task (the sensor is on the PIC v4 demo board, so if that isn't connected
-//   then this should be off
-#define USE_MTJ_V4Temp_Sensor 1
-// Define whether to use my USB task
-#define USE_MTJ_USE_USB 0
-
-#if USE_FREERTOS_DEMO == 1
-/* Demo app includes. */
-#include "BlockQ.h"
-#include "integer.h"
-#include "blocktim.h"
-#include "flash.h"
-#include "semtest.h"
-#include "PollQ.h"
-#include "GenQTest.h"
-#include "QPeek.h"
-#include "recmutex.h"
-#include "timers.h"
-#endif
-
 #include "partest.h"
 
-// Include file for MTJ's LCD & i2cTemp tasks
+// Include files for rover racer project
 #include "vtUtilities.h"
 #include "lcdTask.h"
-#include "i2cTemp.h"
+#include "i2c_ARM.h"
 #include "vtI2C.h"
 #include "myTimers.h"
 #include "conductor.h"
+#include "motorControl.h"
+#include "navigation.h"
+#include "mapping.h"
+#include "speedLimit.h"
+#include "myTypes.h"
 
 /* syscalls initialization -- *must* occur first */
 #include "syscalls.h"
@@ -144,10 +112,15 @@ tick hook). */
 #define mainGEN_QUEUE_TASK_PRIORITY			( tskIDLE_PRIORITY)
 #define mainFLASH_TASK_PRIORITY				( tskIDLE_PRIORITY)
 #define mainLCD_TASK_PRIORITY				( tskIDLE_PRIORITY)
-#define mainI2CTEMP_TASK_PRIORITY			( tskIDLE_PRIORITY)
+#define mainI2C_TASK_PRIORITY		     	( tskIDLE_PRIORITY)
 #define mainUSB_TASK_PRIORITY				( tskIDLE_PRIORITY)
 #define mainI2CMONITOR_TASK_PRIORITY		( tskIDLE_PRIORITY)
 #define mainCONDUCTOR_TASK_PRIORITY			( tskIDLE_PRIORITY)
+#define mainADC_TASK_PRIORITY               ( tskIDLE_PRIORITY)
+#define mainMOTOR_CONTROL_TASK_PRIORITY     ( tskIDLE_PRIORITY)
+#define mainNAVIGATION_TASK_PRIORITY        ( tskIDLE_PRIORITY)
+#define mainMAPPING_TASK_PRIORITY           ( tskIDLE_PRIORITY)
+#define mainSPEED_LIMIT_TASK_PRIORITY       ( tskIDLE_PRIORITY)
 
 /* The WEB server has a larger stack as it utilises stack hungry string
 handling library calls. */
@@ -186,26 +159,31 @@ char *pcGetTaskStatusMessage( void );
 static char *pcStatusMessage = mainPASS_STATUS_MESSAGE;
 
 
-#if USE_MTJ_V4Temp_Sensor == 1
-// data structure required for one I2C task
+// Required data structure for I2C interrupt handler
 static vtI2CStruct vtI2C0;
-// data structure required for one temperature sensor task
-static vtTempStruct tempSensorData;
-// data structure required for conductor task
+// Required data structure for I2C task
+static myI2CStruct i2cData;
+// Required data structure for Conductor task
 static vtConductorStruct conductorData;
-#endif
-
-#if USE_MTJ_LCD == 1
-// data structure required for LCDtask API
-static vtLCDStruct vtLCDdata; 
-#endif
+// Required data structure for LCD task
+static vtLCDStruct vtLCDdata;
+// Required data structure for Motor Control task
+static motorControlStruct motorControl;
+// Required data structure for Navigation task
+static navigationStruct navData;
+// Required data structure for Mapping task
+static mappingStruct mapData;
+// Required data structure for Speed Limit task
+static speedLimitControlStruct speedData;
+// Required data structure for ADC task
+static myADCStruct adcData;
 
 /*-----------------------------------------------------------*/
 
 int main( void )
 {
 	/* MTJ: initialize syscalls -- *must* be first */
-	// syscalls.c contains the files upon which the standard (and portable) C libraries rely 
+	// syscalls.c contains the files upon which the standard (and portable) C libraries rely
 	init_syscalls();
 
 	// Set up the LED ports and turn them off
@@ -214,63 +192,49 @@ int main( void )
 	/* Configure the hardware for use by this demo. */
 	prvSetupHardware();
 
-	#if USE_FREERTOS_DEMO == 1
-	/* Start the standard demo tasks.  These are just here to exercise the
-	kernel port and provide examples of how the FreeRTOS API can be used. */
-	vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );
-    vCreateBlockTimeTasks();
-    vStartSemaphoreTasks( mainSEM_TEST_PRIORITY );
-    vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
-    vStartIntegerMathTasks( mainINTEGER_TASK_PRIORITY );
-    vStartGenericQueueTasks( mainGEN_QUEUE_TASK_PRIORITY );
-    vStartQueuePeekTasks();
-    vStartRecursiveMutexTasks();
-	vStartLEDFlashTasks( mainFLASH_TASK_PRIORITY );
-	#endif
-
 	#if USE_WEB_SERVER == 1
 	// Not a standard demo -- but also not one of mine (MTJ)
 	/* Create the uIP task.  The WEB server runs in this task. */
     xTaskCreate( vuIP_Task, ( signed char * ) "uIP", mainBASIC_WEB_STACK_SIZE, ( void * ) NULL, mainUIP_TASK_PRIORITY, NULL );
 	#endif
 
-	#if USE_MTJ_LCD == 1
-	// MTJ: My LCD demonstration task
 	StartLCDTask(&vtLCDdata,mainLCD_TASK_PRIORITY);
 	// LCD Task creates a queue to receive messages -- what it does with those messages will depend on how the task is configured (see LCDtask.c)
 	// Here we set up a timer that will send messages to the LCD task.  You don't have to have this timer for the LCD task, it is just showing
 	//  how to use a timer and how to send messages from that timer.
 
-	//Commented out by Matthew Ibarra 2/2/2013
-	//startTimerForLCD(&vtLCDdata);
-	#endif
-	
-	#if USE_MTJ_V4Temp_Sensor == 1
-	// MTJ: My i2cTemp demonstration task
 	// First, start up an I2C task and associate it with the I2C0 hardware on the ARM (there are 3 I2C devices, we need this one)
 	// See vtI2C.h & vtI2C.c for more details on this task and the API to access the task
 	// Initialize I2C0 for I2C0 at an I2C clock speed of 100KHz
 	if (vtI2CInit(&vtI2C0,0,mainI2CMONITOR_TASK_PRIORITY,100000) != vtI2CInitSuccess) {
 		VT_HANDLE_FATAL_ERROR(0);
 	}
-	// Now, start up the task that is going to handle the temperature sensor sampling (it will talk to the I2C task and LCD task using their APIs)
-	#if USE_MTJ_LCD == 1
-	vStarti2cTempTask(&tempSensorData,mainI2CTEMP_TASK_PRIORITY,&vtI2C0,&vtLCDdata);
-	#else
-	vStarti2cTempTask(&tempSensorData,mainI2CTEMP_TASK_PRIORITY,&vtI2C0,NULL);
-	#endif
-	// Here we set up a timer that will send messages to the Temperature sensing task.  The timer will determine how often the sensor is sampled
-	startTimerForTemperature(&tempSensorData);
+
 	// start up a "conductor" task that will move messages around
-	vStartConductorTask(&conductorData,mainCONDUCTOR_TASK_PRIORITY,&vtI2C0,&tempSensorData);
-	#endif
+	vStartConductorTask(&conductorData,mainCONDUCTOR_TASK_PRIORITY,&vtI2C0,&i2cData,&motorControl,&navData,&speedData);
+
+    // Start the I2C task
+    starti2cTask(&i2cData,mainI2C_TASK_PRIORITY,&vtI2C0);
+    // Start the Motor Control task
+    vStartMotorControlTask(&motorControl,mainMOTOR_CONTROL_TASK_PRIORITY,&i2cData,&navData,&vtLCDdata);
+    // Start the Navigation task
+    vStartNavigationTask(&navData,mainNAVIGATION_TASK_PRIORITY,&motorControl,&mapData,&speedData, &vtLCDdata);
+    // Start the Mapping task
+    vStartMappingTask(&mapData,mainMAPPING_TASK_PRIORITY,&navData,&speedData,&vtLCDdata);
+    // Start the Speed Limit task
+    vStartSpeedLimitTask(&speedData,mainSPEED_LIMIT_TASK_PRIORITY,&i2cData,&navData,&mapData);
+    // Start the ADC task
+    vStartADCTask(&adcData,mainADC_TASK_PRIORITY,&i2cData,&vtLCDdata);
+
+    startTimerFori2c(&i2cData);
+    startTimerForMotor(&motorControl);
 
     /* Create the USB task. MTJ: This routine has been modified from the original example (which is not a FreeRTOS standard demo) */
 	#if USE_MTJ_USE_USB == 1
 	initUSB();  // MTJ: This is my routine used to make sure we can do printf() with USB
     xTaskCreate( vUSBTask, ( signed char * ) "USB", configMINIMAL_STACK_SIZE, ( void * ) NULL, mainUSB_TASK_PRIORITY, NULL );
 	#endif
-	
+
 	/* Start the scheduler. */
 	// IMPORTANT: Once you start the scheduler, any variables on the stack from main (local variables in main) can be (will be...) written over
 	//            because the stack is used by the interrupt handler
@@ -297,42 +261,6 @@ static unsigned long ulTicksSinceLastDisplay = 0;
 		/* Reset the counter so these checks run again in mainCHECK_DELAY
 		ticks time. */
 		ulTicksSinceLastDisplay = 0;
-
-#if USE_FREERTOS_DEMO == 1
-		/* Has an error been found in any task? */
-		if( xAreGenericQueueTasksStillRunning() != pdTRUE )
-		{
-			pcStatusMessage = "An error has been detected in the Generic Queue test/demo.";
-		}
-		else if( xAreQueuePeekTasksStillRunning() != pdTRUE )
-		{
-			pcStatusMessage = "An error has been detected in the Peek Queue test/demo.";
-		}
-		else if( xAreBlockingQueuesStillRunning() != pdTRUE )
-		{
-			pcStatusMessage = "An error has been detected in the Block Queue test/demo.";
-		}
-		else if( xAreBlockTimeTestTasksStillRunning() != pdTRUE )
-		{
-			pcStatusMessage = "An error has been detected in the Block Time test/demo.";
-		}
-	    else if( xAreSemaphoreTasksStillRunning() != pdTRUE )
-	    {
-	        pcStatusMessage = "An error has been detected in the Semaphore test/demo.";
-	    }
-	    else if( xArePollingQueuesStillRunning() != pdTRUE )
-	    {
-	        pcStatusMessage = "An error has been detected in the Poll Queue test/demo.";
-	    }
-	    else if( xAreIntegerMathsTaskStillRunning() != pdTRUE )
-	    {
-	        pcStatusMessage = "An error has been detected in the Int Math test/demo.";
-	    }
-	    else if( xAreRecursiveMutexTasksStillRunning() != pdTRUE )
-	    {
-	    	pcStatusMessage = "An error has been detected in the Mutex test/demo.";
-	    }
-#endif
 	}
 }
 /*-----------------------------------------------------------*/
