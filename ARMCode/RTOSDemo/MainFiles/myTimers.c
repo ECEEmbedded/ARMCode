@@ -14,7 +14,6 @@
 #include "lcdTask.h"
 #include "myTimers.h"
 #include "myTypes.h"
-#include "myADC.h"
 
 /* **************************************************************** */
 // WARNING: Do not print in this file -- the stack is not large enough for this task
@@ -63,89 +62,46 @@ void startTimerFori2c(myI2CStruct *i2cdata) {
 }
 
 
-/* *********************************************************** */
-// Functions for the Motor Controller Task related timer
-//
-// how often the timer that sends messages to the motor controller task should run
-// Set the task up to run every 19 ms for the motor control timer
-#define motorWRITE_RATE_BASE	( ( portTickType ) 19 / portTICK_RATE_MS)
+// /* *********************************************************** */
+// // Functions for the Motor Controller Task related timer
+// //
+// // how often the timer that sends messages to the motor controller task should run
+// // Set the task up to run every 19 ms for the motor control timer
+// #define motorWRITE_RATE_BASE	( ( portTickType ) 19 / portTICK_RATE_MS)
 
-// Callback function that is called by the i2c Timer
-// This puppy sends a message to the queue that is read by the Motor Controller Task
-void motorTimerCallback(xTimerHandle pxTimer)
-{
-	if (pxTimer == NULL) {
-		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
-	} else {
-		// When setting up this timer, I put the pointer to the
-		// i2c structure as the "timer ID" so that I could access
-		// that structure here -- which I need to do to get the
-		// address of the message queue to send to
-		motorControlStruct *ptr = (motorControlStruct *) pvTimerGetTimerID(pxTimer);
-		// Make this non-blocking *but* be aware that if the queue is full, this routine
-		// will not care, so if you care, you need to check something
-		if (sendmotorTimerMsg(ptr,motorWRITE_RATE_BASE,0) == errQUEUE_FULL) {
-			// Here is where you would do something if you wanted to handle the queue being full
-			VT_HANDLE_FATAL_ERROR(I2C_Q_FULL);
-		}
-	}
-}
+// // Callback function that is called by the i2c Timer
+// // This puppy sends a message to the queue that is read by the Motor Controller Task
+// void motorTimerCallback(xTimerHandle pxTimer)
+// {
+// 	if (pxTimer == NULL) {
+// 		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
+// 	} else {
+// 		// When setting up this timer, I put the pointer to the
+// 		// i2c structure as the "timer ID" so that I could access
+// 		// that structure here -- which I need to do to get the
+// 		// address of the message queue to send to
+// 		motorControlStruct *ptr = (motorControlStruct *) pvTimerGetTimerID(pxTimer);
+// 		// Make this non-blocking *but* be aware that if the queue is full, this routine
+// 		// will not care, so if you care, you need to check something
+// 		if (sendmotorTimerMsg(ptr,motorWRITE_RATE_BASE,0) == errQUEUE_FULL) {
+// 			// Here is where you would do something if you wanted to handle the queue being full
+// 			VT_HANDLE_FATAL_ERROR(I2C_Q_FULL);
+// 		}
+// 	}
+// }
 
-void startTimerForMotor(motorControlStruct *motordata){
-	if (sizeof(long) != sizeof(motorControlStruct *)) {
-		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
-	}
-	xTimerHandle motorTimerHandle = xTimerCreate((const signed char *)"Motor Timer",motorWRITE_RATE_BASE,pdTRUE,(void *) motordata,motorTimerCallback);
-	if (motorTimerHandle == NULL) {
-		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
-	} else {
-		if (xTimerStart(motorTimerHandle,0) != pdPASS) {
-			VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
-		}
-	}
-}
-
-
-/* *********************************************************** */
-// Functions for the ADC Task related timer
-//
-// how often the timer that sends messages to the LCD task should run
-// Set the task up to run every 500 ms
-#define adcWRITE_RATE_BASE	( ( portTickType ) 500 / portTICK_RATE_MS)
-
-// Callback function that is called by the ADCTimer
-//   Sends a message to the queue that is read by the ADC Task
-void ADCTimerCallback(xTimerHandle pxTimer)
-{
-	if (pxTimer == NULL) {
-		VT_HANDLE_FATAL_ERROR(0);
-	} else {
-		// When setting up this timer, I put the pointer to the
-		//   ADC structure as the "timer ID" so that I could access
-		//   that structure here -- which I need to do to get the
-		//   address of the message queue to send to
-		myADCStruct *ptr = (myADCStruct *) pvTimerGetTimerID(pxTimer);
-		// Make this non-blocking *but* be aware that if the queue is full, this routine
-		// will not care, so if you care, you need to check something
-		if (SendADCTimerMsg(ptr,adcWRITE_RATE_BASE,0) == errQUEUE_FULL) {
-			// Here is where you would do something if you wanted to handle the queue being full
-			VT_HANDLE_FATAL_ERROR(0);
-		}
-	}
-}
-
-void startTimerForADC(myADCStruct *myADCdata) {
-	if (sizeof(long) != sizeof(myADCStruct *)) {
-		VT_HANDLE_FATAL_ERROR(0);
-	}
-	xTimerHandle ADCTimerHandle = xTimerCreate((const signed char *)"ADC Timer",adcWRITE_RATE_BASE,pdTRUE,(void *) myADCdata,ADCTimerCallback);
-	if (ADCTimerHandle == NULL) {
-		VT_HANDLE_FATAL_ERROR(0);
-	} else {
-		if (xTimerStart(ADCTimerHandle,0) != pdPASS) {
-			VT_HANDLE_FATAL_ERROR(0);
-		}
-	}
-}
+// void startTimerForMotor(motorControlStruct *motordata){
+// 	if (sizeof(long) != sizeof(motorControlStruct *)) {
+// 		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
+// 	}
+// 	xTimerHandle motorTimerHandle = xTimerCreate((const signed char *)"Motor Timer",motorWRITE_RATE_BASE,pdTRUE,(void *) motordata,motorTimerCallback);
+// 	if (motorTimerHandle == NULL) {
+// 		VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
+// 	} else {
+// 		if (xTimerStart(motorTimerHandle,0) != pdPASS) {
+// 			VT_HANDLE_FATAL_ERROR(TIMER_ERROR);
+// 		}
+// 	}
+// }
 
 #endif

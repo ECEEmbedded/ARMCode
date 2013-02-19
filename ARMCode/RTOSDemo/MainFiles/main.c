@@ -117,7 +117,6 @@ tick hook). */
 #define mainUSB_TASK_PRIORITY				( tskIDLE_PRIORITY)
 #define mainI2CMONITOR_TASK_PRIORITY		( tskIDLE_PRIORITY)
 #define mainCONDUCTOR_TASK_PRIORITY			( tskIDLE_PRIORITY)
-#define mainADC_TASK_PRIORITY               ( tskIDLE_PRIORITY)
 #define mainMOTOR_CONTROL_TASK_PRIORITY     ( tskIDLE_PRIORITY)
 #define mainNAVIGATION_TASK_PRIORITY        ( tskIDLE_PRIORITY)
 #define mainMAPPING_TASK_PRIORITY           ( tskIDLE_PRIORITY)
@@ -176,8 +175,6 @@ static navigationStruct navData;
 static mappingStruct mapData;
 // Required data structure for Speed Limit task
 static speedLimitControlStruct speedData;
-// Required data structure for ADC task
-static myADCStruct adcData;
 
 /*-----------------------------------------------------------*/
 
@@ -212,7 +209,7 @@ int main( void )
 	}
 
 	// start up a "conductor" task that will move messages around
-	vStartConductorTask(&conductorData,mainCONDUCTOR_TASK_PRIORITY,&vtI2C0,&i2cData,&motorControl,&navData,&speedData,&adcData);
+	vStartConductorTask(&conductorData,mainCONDUCTOR_TASK_PRIORITY,&vtI2C0,&i2cData,&motorControl,&navData,&speedData,&vtLCDdata);
 
     // Start the I2C task
     starti2cTask(&i2cData,mainI2C_TASK_PRIORITY,&vtI2C0);
@@ -224,11 +221,9 @@ int main( void )
     vStartMappingTask(&mapData,mainMAPPING_TASK_PRIORITY,&navData,&speedData,&vtLCDdata);
     // Start the Speed Limit task
     vStartSpeedLimitTask(&speedData,mainSPEED_LIMIT_TASK_PRIORITY,&i2cData,&navData,&mapData);
-    // Start the ADC task
-    vStartADCTask(&adcData,mainADC_TASK_PRIORITY,&i2cData,&vtLCDdata);
 
     startTimerFori2c(&i2cData);
-    startTimerForMotor(&motorControl);
+    //startTimerForMotor(&motorControl);
 
     /* Create the USB task. MTJ: This routine has been modified from the original example (which is not a FreeRTOS standard demo) */
 	#if USE_MTJ_USE_USB == 1

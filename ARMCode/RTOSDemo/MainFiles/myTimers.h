@@ -5,14 +5,12 @@
 
 #include "lcdTask.h"
 #include "i2c_ARM.h"
-#include "navigation.h"
-#include "motorControl.h"
-#include "mapping.h"
-#include "myADC.h"
+// #include "navigation.h"
+// #include "motorControl.h"
+// #include "mapping.h"
 
 void startTimerFori2c(myI2CStruct *i2cdata);
-void startTimerForMotor(motorControlStruct *motordata);
-void startTimerForADC(myADCStruct *myADCdata);
+//void startTimerForMotor(motorControlStruct *motordata);
 
 #endif
 #endif

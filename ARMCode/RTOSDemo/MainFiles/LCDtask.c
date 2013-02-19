@@ -29,13 +29,11 @@
 // definitions and data structures that are private to this file
 // Length of the queue to this task
 #define vtLCDQLen 10
-// a timer message -- not to be printed
-#define LCDMsgTypeTimer 1
-// a message to be printed
-#define LCDMsgTypePrint 2
 
-// Added by Matthew Ibarra for ADC LCD Task Message 2/4/2013
-#define LCDMsgTypeADC 3
+static unsigned int pic2680MsgDropCount = 0;
+static unsigned int pic26J50MsgDropCount = 0;
+static unsigned int pic2680errorCount = 0;
+static unsigned int pic26J50errorCount = 0;
 
 /* definition for the LCD task. */
 static portTASK_FUNCTION_PROTO( vLCDUpdateTask, pvParameters );
@@ -59,122 +57,168 @@ void StartLCDTask(vtLCDStruct *ptr, unsigned portBASE_TYPE uxPriority)
 	}
 }
 
-portBASE_TYPE SendLCDTimerMsg(vtLCDStruct *lcdData,portTickType ticksElapsed,portTickType ticksToBlock)
+// portBASE_TYPE SendLCDTimerMsg(vtLCDStruct *lcdData,portTickType ticksElapsed,portTickType ticksToBlock)
+// {
+// 	if (lcdData == NULL) {
+// 		VT_HANDLE_FATAL_ERROR(0);
+// 	}
+// 	vtLCDMsg lcdBuffer;
+// 	lcdBuffer.length = sizeof(ticksElapsed);
+// 	if (lcdBuffer.length > vtLCDMaxLen) {
+// 		// no room for this message
+// 		VT_HANDLE_FATAL_ERROR(lcdBuffer.length);
+// 	}
+// 	memcpy(lcdBuffer.buf,(char *)&ticksElapsed,sizeof(ticksElapsed));
+// 	lcdBuffer.msgType = LCDMsgTypeTimer;
+// 	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
+// }
+
+// portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData,int length,char *pString,portTickType ticksToBlock)
+// {
+// 	if (lcdData == NULL) {
+// 		VT_HANDLE_FATAL_ERROR(0);
+// 	}
+// 	vtLCDMsg lcdBuffer;
+
+// 	if (length > vtLCDMaxLen) {
+// 		// no room for this message
+// 		VT_HANDLE_FATAL_ERROR(lcdBuffer.length);
+// 	}
+// 	lcdBuffer.length = strnlen(pString,vtLCDMaxLen);
+// 	lcdBuffer.msgType = LCDMsgTypePrint;
+// 	strncpy((char *)lcdBuffer.buf,pString,vtLCDMaxLen);
+// 	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
+// }
+
+portBASE_TYPE SendLCDADCMsgvtLCDStruct *lcdData,int data, uint8_t type, uint8_t errCount, portTickType ticksToBlock)
 {
 	if (lcdData == NULL) {
 		VT_HANDLE_FATAL_ERROR(0);
 	}
-	vtLCDMsg lcdBuffer;
-	lcdBuffer.length = sizeof(ticksElapsed);
-	if (lcdBuffer.length > vtLCDMaxLen) {
-		// no room for this message
-		VT_HANDLE_FATAL_ERROR(lcdBuffer.length);
-	}
-	memcpy(lcdBuffer.buf,(char *)&ticksElapsed,sizeof(ticksElapsed));
-	lcdBuffer.msgType = LCDMsgTypeTimer;
-	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
-}
-
-portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData,int length,char *pString,portTickType ticksToBlock)
-{
-	if (lcdData == NULL) {
-		VT_HANDLE_FATAL_ERROR(0);
-	}
-	vtLCDMsg lcdBuffer;
-
-	if (length > vtLCDMaxLen) {
-		// no room for this message
-		VT_HANDLE_FATAL_ERROR(lcdBuffer.length);
-	}
-	lcdBuffer.length = strnlen(pString,vtLCDMaxLen);
-	lcdBuffer.msgType = LCDMsgTypePrint;
-	strncpy((char *)lcdBuffer.buf,pString,vtLCDMaxLen);
-	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
-}
-
-// Added by Matthew Ibarra 2/4/2013
-portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData, int data, portTickType ticksToBlock)
-{
-	if(lcdData == NULL) {
-		VT_HANDLE_FATAL_ERROR(0);
-	}
-
 	vtLCDMsg lcdBuffer;
 
 	lcdBuffer.length = sizeof(data);
-	lcdBuffer.msgType = LCDMsgTypeADC;
+	lcdBuffer.msgType = type;
+	switch(type){
+		case PIC2680_ADC_MESSAGE:{
+			pic2680MsgDropCount = pic2680MsgDropCount + errCount;
+			break;
+		}
+		case PIC26J50_ADC_MESSAGE:{
+			pic26J50MsgDropCount = pic26J50MsgDropCount + errCount;
+			break;
+		}
+		default:{
+		}
+	}
 	lcdBuffer.buf[0] = (uint8_t) data;
 	lcdBuffer.buf[1] = (uint8_t)(data>>8);
-	return(xQueueSend(lcdData->inQ, (void *) (&lcdBuffer), ticksToBlock));
+	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
+}
+
+portBASE_TYPE SendLCDErrorMsg(vtLCDStruct *lcdData, uint8_t type, portTickType ticksToBlock)
+{
+	if (lcdData == NULL) {
+		VT_HANDLE_FATAL_ERROR(0);
+	}
+	vtLCDMsg lcdBuffer;
+	lcdBuffer.msgType = type;
+	switch(type){
+		case PIC2680_ADC_MESSAGE:{
+			pic2680errorCount++;
+			break;
+		}
+		case PIC26J50_ADC_MESSAGE:{
+			pic26J50errorCount++;
+			break;
+		}
+		default:{
+		}
+	}
+	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
 }
 
 // Private routines used to unpack the message buffers
 //   I do not want to access the message buffer data structures outside of these routines
-portTickType unpackTimerMsg(vtLCDMsg *lcdBuffer)
-{
-	portTickType *ptr = (portTickType *) lcdBuffer->buf;
-	return(*ptr);
-}
+// portTickType unpackTimerMsg(vtLCDMsg *lcdBuffer)
+// {
+// 	portTickType *ptr = (portTickType *) lcdBuffer->buf;
+// 	return(*ptr);
+// }
 
 int getMsgType(vtLCDMsg *lcdBuffer)
 {
 	return(lcdBuffer->msgType);
 }
 
-int getMsgLength(vtLCDMsg *lcdBuffer)
+int getMsgValue(vtLCDMsg *lcdBuffer)
 {
-	return(lcdBuffer->msgType);
+	return((int)(lcdBuffer->buf[1]<<8)) | ((int) lcdBuffer->buf[0]);
 }
 
-void copyMsgString(char *target,vtLCDMsg *lcdBuffer,int targetMaxLen)
-{
-	strncpy(target,(char *)(lcdBuffer->buf),targetMaxLen);
+void adcIntToString(int value, unsigned char *returnVal){
+	returnVal[0] = (value/0xCC) + 48;	//Ones Place
+	returnVal[1] = '.';
+	returnVal[2] = (((10*value)/0xCC)%10) + 48; //Tenths place
+	returnVal[3] = ((((100*value)/0xCC)%100)%10) + 48; //Hundredths place
+	returnVal[4] = 0;
 }
+
+void errorCountIntToString(int value, unsigned char *returnVal){
+	int index = 0;
+	int place;
+	int zeroSoFar = 0;
+	for(place = 1000000; place > 0; place = place/10){
+		returnVal[index] = ((value/place)%10) + 48;
+		if((returnVal[index] == 48) && (zeroSoFar == 0)){
+			returnVal[index] = ' ';
+		}else{
+			zeroSoFar = 1;
+		}
+		index++;
+	}
+	returnVal[8] = 0;
+}
+
+// int getMsgLength(vtLCDMsg *lcdBuffer)
+// {
+// 	return(lcdBuffer->msgType);
+// }
+
+// void copyMsgString(char *target,vtLCDMsg *lcdBuffer,int targetMaxLen)
+// {
+// 	strncpy(target,(char *)(lcdBuffer->buf),targetMaxLen);
+// }
 
 // End of private routines for message buffers
-
-// If LCD_EXAMPLE_OP=0, then accept messages that may be timer or print requests and respond accordingly
-// If LCD_EXAMPLE_OP=1, then do a rotating ARM bitmap display
-#define LCD_EXAMPLE_OP 0
-#if LCD_EXAMPLE_OP==1
-// This include the file with the definition of the ARM bitmap
-#include "ARM_Ani_16bpp.c"
-#endif
-
-#if LCD_EXAMPLE_OP==0
-// Buffer in which to store the memory read from the LCD
-	#define MAX_RADIUS 15
-	#define BUF_LEN (((MAX_RADIUS*2)+1)*((MAX_RADIUS*2)+1))
-	static unsigned short int buffer[BUF_LEN];
-#endif
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 {
 	unsigned short screenColor = 0;
 	unsigned short tscr;
-	unsigned char curLine;
-	unsigned timerCount = 0;
-	int xoffset = 0, yoffset = 0;
-	unsigned int xmin=0, xmax=0, ymin=0, ymax=0;
-	unsigned int x, y;
-	int i, j;
-	float hue=0, sat=0.2, light=0.2;
 
 	vtLCDMsg msgBuffer;
 	vtLCDStruct *lcdPtr = (vtLCDStruct *) pvParameters;
 
 	/* Initialize the LCD and set the initial colors */
 	GLCD_Init();
-	tscr = Red; // may be reset in the LCDMsgTypeTimer code below
+	tscr = Black; // may be reset in the LCDMsgTypeTimer code below
 	screenColor = White; // may be reset in the LCDMsgTypeTimer code below
 	GLCD_SetTextColor(tscr);
 	GLCD_SetBackColor(screenColor);
 	GLCD_Clear(screenColor);
 
-	int xPos = 0;
+	//Set up constant text fields
+	GLCD_DisplayString(PIC2680_LINE,0,1, (unsigned char*) "2680 ADC:");
+	GLCD_DisplayString(PIC2680_LINE,15,1,(unsigned char*) "V");
+	GLCD_DisplayString(PIC2680_LINE + 1,0,1, (unsigned char*) "Msgs Missed:      0");
+	GLCD_DisplayString(PIC2680_LINE + 2,0,1, (unsigned char*) "Rqsts Drop:       0");
+	GLCD_DisplayString(PIC26J50_LINE,0,1, (unsigned char*) "26J50 ADC:");
+	GLCD_DisplayString(PIC26J50_LINE,16,1,(unsigned char*) "V");
+	GLCD_DisplayString(PIC26J50_LINE + 1,0,1, (unsigned char*) "Msgs Missed:      0");
+	GLCD_DisplayString(PIC26J50_LINE + 2,0,1, (unsigned char*) "Rqsts Drop:       0");
 
-	curLine = 5;
 	// This task should never exit
 	for(;;)
 	{
@@ -182,86 +226,40 @@ static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 		if (xQueueReceive(lcdPtr->inQ,(void *) &msgBuffer,portMAX_DELAY) != pdTRUE) {
 			VT_HANDLE_FATAL_ERROR(0);
 		}
-		switch(getMsgType(&msgBuffer)) {
-			case LCDMsgTypePrint: {
-				// Nothing at the moment
+		switch(getMsgType(&msgBuffer)){
+			case PIC2680_ADC_MESSAGE:{
+				unsigned char displayVal[8];
+				adcIntToString(getMsgValue(&msgBuffer), displayVal);
+				GLCD_DisplayString(PIC2680_LINE,10,1,displayVal);
+				errorCountIntToString(pic2680MsgDropCount, displayVal);
+				GLCD_DisplayString(PIC2680_LINE + 1,12,1,displayVal);
 				break;
 			}
-			case LCDMsgTypeTimer: //{
-			//	// Nothing at the moment
-			//	break;
-			//}
-			case LCDMsgTypeADC: {		// I think this should work like it did before.
-										// Will simply put it back to the way it was before
-										// if things start not working.
-				if(timerCount==0) {
-					GLCD_Clear(screenColor);
-
-					// Draw the vertical gridlines onto the LCD
-					int i;
-					for(i = 320/6; i < 315; i = i + 320/6) {
-						GLCD_ClearWindow(i, 0, 1, 240, Red);
-					}
-
-					// Draw the vertical gridlines onto the LCD
-					for(i = 240/4; i < 235; i = i + 240/4) {
-						GLCD_ClearWindow(0, i, 320, 1, Red);
-					}
-
-					//Output Scale on LCD
-					GLCD_DisplayString(29, 0, 0, (unsigned char*) "V/div=2.5 s/div=3");
-					timerCount++;
-				}
-				int adcValue;
-				getMsgValue(&adcValue, &msgBuffer);
-				int displayValue;
-				displayValue = 120 - (adcValue * 120)/(0x100);
-				GLCD_ClearWindow(xPos, displayValue, 2, 2, Black);
-				xPos += 2;
-				if(xPos > 320) {
-					timerCount = 0;
-					xPos = 0;
-				}
+			case PIC26J50_ADC_MESSAGE:{
+				unsigned char displayVal[5];
+				adcIntToString(getMsgValue(&msgBuffer), displayVal);
+				GLCD_DisplayString(PIC26J50_LINE,11,1,displayVal);
+				errorCountIntToString(pic26J50MsgDropCount, displayVal);
+				GLCD_DisplayString(PIC26J50_LINE + 1,12,1,displayVal);
+			}
+			case PIC2680_ERROR:{
+				pic2680errorCount++;
+				unsigned char displayVal[8];
+				errorCountIntToString(pic2680errorCount, displayVal);
+				GLCD_DisplayString(PIC2680_LINE + 2,12,1,displayVal);
 				break;
 			}
-			default: {
-				// In this configuration, we are only expecting to receive timer messages
-				VT_HANDLE_FATAL_ERROR(getMsgType(&msgBuffer));
+			case PIC26J50_ERROR:{
+				pic26J50errorCount++;
+				unsigned char displayVal[8];
+				errorCountIntToString(pic26J50errorCount, displayVal);
+				GLCD_DisplayString(PIC26J50_LINE + 2,12,1,displayVal);
 				break;
 			}
-		} // end of switch()
-
-		#if MILESTONE_1==1
-		// Added by Matthew Ibarra 2/2/2013
-			if(timerCount==0) {
-				GLCD_Clear(screenColor);
-
-				// Draw the vertical gridlines onto the LCD
-				int i;
-				for(i = 320/6; i < 315; i = i + 320/6) {
-					GLCD_ClearWindow(i, 0, 1, 240, Red);
-				}
-
-				// Draw the vertical gridlines onto the LCD
-				for(i = 240/4; i < 235; i = i + 240/4) {
-					GLCD_ClearWindow(0, i, 320, 1, Red);
-				}
-
-				//Output Scale on LCD
-				GLCD_DisplayString(29, 0, 0, (unsigned char*) "V/div=2.5 s/div=3");
-				timerCount++;
+			default:{
+				break;
 			}
-			int adcValue;
-			getMsgValue(&adcValue, &msgBuffer);
-			int displayValue;
-			displayValue = 120 - (adcValue * 120)/(0x100);
-			GLCD_ClearWindow(xPos, displayValue, 2, 2, Black);
-			xPos += 2;
-			if(xPos > 320) {
-				timerCount = 0;
-				xPos = 0;
-			}
-		#endif
+		}
 
 		// Here is a way to do debugging output via the built-in hardware -- it requires the ULINK cable and the
 		//   debugger in the Keil tools to be connected.  You can view PORT0 output in the "Debug(printf) Viewer"

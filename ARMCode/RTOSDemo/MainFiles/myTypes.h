@@ -5,58 +5,43 @@
 
 #include "i2c_ARM.h"
 
-typedef struct __myADCStruct myADCStruct;
-typedef struct __navigationStruct navigationStruct;
-typedef struct __motorControlStruct motorControlStruct;
-typedef struct __mappingStruct mappingStruct;
 typedef struct __speedLimitControlStruct speedLimitControlStruct;
 
 // Our data structures for our tasks:
-struct __myADCStruct{
-    myI2CStruct *i2cData;
-    vtLCDStruct *lcdData;
-    xQueueHandle inQ;
-};
-
-struct __navigationStruct{
+typedef struct __navigationStruct{
     motorControlStruct *motorControl;
     mappingStruct *mapData;
     speedLimitControlStruct *speedData;
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
-};
+} navigationStruct;
 
-struct __motorControlStruct {
+typedef struct __motorControlStruct {
     myI2CStruct *i2cData;
     navigationStruct *navData;
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
-};
+} motorControlStruct;
 
-struct __mappingStruct{
+typedef struct __mappingStruct{
     navigationStruct *navData;
     speedLimitControlStruct * speedData;
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
-};
+} mappingStruct;
 
-struct __speedLimitControlStruct{
+typedef struct __speedLimitControlStruct{
     myI2CStruct *i2cData;
     navigationStruct *navData;
     mappingStruct *mapData;
     xQueueHandle inQ;
-};
-
-//ADC thread incoming message types
-#define ADCMsgTypeTimer 1
-#define vtI2CMsgTypeADCSend 2
+} speedLimitControlStruct;
 
 //I2C thread incoming and outgoing message types
 #define vtI2CMsgTypeMotor 1
 #define vtI2CMsgTypeRead 2
 #define i2cMsgTypeTimer 3
 #define notifyRqstRecvdType 4
-#define vtI2CMsgTypeADC 5
 
 //Motor Control thread incoming message types
 #define moveForwardMsg 1
@@ -95,18 +80,22 @@ struct __speedLimitControlStruct{
 #define IR_EMPTY_MESSAGE 0x52
 #define ADC_EMPTY_MESSAGE 0x53
 #define GENERIC_EMPTY_MESSAGE 0x54
+#define PIC2680_EMPTY_MESSAGE 0x55
+#define PIC26J50_EMPTY_MESSAGE 0x56
 //Non-empty messages
 #define COLOR_SENSOR_MESSAGE 0x10
 #define ENCODERS_MESSAGE 0x11
 #define IR_MESSAGE 0x12
-#define ADC_MESSAGE 0x13
+#define PIC2680_ADC_MESSAGE 0x13
+#define PIC26J50_ADC_MESSAGE 0x14
 
 //I2C error message types to be sent to Web Server
 #define COLOR_SENSOR_RQST_DROPPED 0xF0
 #define ENCODERS_RQST_DROPPED 0xF1
 #define IR_RQST_DROPPED 0xF2
 #define MOTOR_RQST_DROPPED 0xF3
-#define ADC_RQST_DROPPED 0xF4
+#define PIC2680_ERROR 0xF4
+#define PIC26J50_ERROR 0xF5
 
 //Error codes
 #define VT_I2C_Q_FULL 1

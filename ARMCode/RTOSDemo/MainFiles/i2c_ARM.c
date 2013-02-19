@@ -75,43 +75,6 @@ portBASE_TYPE sendi2cTimerMsg(myI2CStruct *i2cData,portTickType ticksElapsed,por
     return(xQueueSend(i2cData->inQ,(void *) (&buffer),ticksToBlock));
 }
 
-portBASE_TYPE sendi2cMotorMsg(myI2CStruct *i2cData,uint8_t rightValue,uint8_t leftValue,portTickType ticksToBlock)
-{
-    if (i2cData == NULL) {
-        VT_HANDLE_FATAL_ERROR(0);
-    }
-    myi2cMsg buffer;
-    buffer.length = 4;
-    if (buffer.length > vti2cMaxLen) {
-        // no room for this message
-        VT_HANDLE_FATAL_ERROR(INCORRECT_I2C_MSG_FORMAT);
-    }
-    buffer.buf[0] = 0xBB;
-    buffer.buf[1] = 0x00;
-    buffer.buf[2] = leftValue;
-    buffer.buf[3] = rightValue;
-    buffer.msgType = vtI2CMsgTypeMotor;
-    return(xQueueSend(i2cData->inQ,(void *) (&buffer),ticksToBlock));
-}
-
-// portBASE_TYPE sendi2cADCMsg(myI2CStruct *i2cData,uint8_t msgType,uint8_t value, portTickType ticksToBlock) {
-//     if (i2cData == NULL) {
-//         VT_HANDLE_FATAL_ERROR(0);
-//     }
-//     myi2cMsg buffer;
-//     buffer.length = 4;
-//     if (buffer.length > vti2cMaxLen) {
-//         // no room for this message
-//         VT_HANDLE_FATAL_ERROR(INCORRECT_I2C_MSG_FORMAT);
-//     }
-//     buffer.buf[0] = 0xBB;
-//     buffer.buf[1] = 0x00;
-//     buffer.buf[2] = leftValue;
-//     buffer.buf[3] = rightValue;
-//     buffer.msgType = vtI2CMsgTypeADC;
-//     return(xQueueSend(i2cData->inQ,(void *) (&buffer),ticksToBlock));
-// }
-
 portBASE_TYPE notifyRequestRecvd(myI2CStruct *i2cData,portTickType ticksToBlock)
 {
     if (i2cData == NULL) {
@@ -137,10 +100,15 @@ void notifyRequestSent(){
     requestSent = 1;
 }
 
-uint8_t getMsgType(myi2cMsg *buffer)
+int getMsgType(myi2cMsg *buffer)
 {
     return(buffer->msgType);
 }
+
+    // I2C commands for the ADC
+    const uint8_t i2cCmdInit[]= {0xAC,0x00};
+    const uint8_t i2cCmdStartConvert[]= {0xEE};
+    const uint8_t i2cCmdReadVals[]= {0xAA};
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vi2cUpdateTask, pvParameters )
@@ -166,20 +134,12 @@ static portTASK_FUNCTION( vi2cUpdateTask, pvParameters )
                 if (vtI2CEnQ(devPtr,vtI2CMsgTypeRead,SLAVE_ADDR,0,0,I2C_MSG_SIZE) != pdTRUE) {
                     VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
                 }
-                break;
             }
             case vtI2CMsgTypeMotor: {
                 //Send motor command to local 2680
                 if (vtI2CEnQ(devPtr,vtI2CMsgTypeMotor,SLAVE_ADDR,msgBuffer.length,msgBuffer.buf,0) != pdTRUE){
                     VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
                 }
-                break;
-            }
-            case vtI2CMsgTypeADC: {
-                if (vtI2CEnQ(devPtr,vtI2CMsgTypeADC,SLAVE_ADDR,msgBuffer.length,msgBuffer.buf,0) != pdTRUE){
-                    VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
-                }
-                break;
             }
             case notifyRqstRecvdType: {
                 if(requestSent == 0){
@@ -196,3 +156,30 @@ static portTASK_FUNCTION( vi2cUpdateTask, pvParameters )
     }
 }
 #endif
+
+            /*case i2cMsgTypeTimer: {
+                //Poll local 2680 for data
+                notifyRequestSent();
+                if (vtI2CEnQ(devPtr,vtI2CMsgTypeRead,SLAVE_ADDR,0,0,I2C_MSG_SIZE) != pdTRUE) {
+                    VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
+                }
+                break;
+            }
+            case vtI2CMsgTypeMotor: {
+                //Send motor command to local 2680
+                if (vtI2CEnQ(devPtr,vtI2CMsgTypeMotor,SLAVE_ADDR,msgBuffer.length,msgBuffer.buf,0) != pdTRUE){
+                    VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
+                }
+                break;
+            }
+            case notifyRqstRecvdType: {
+                if(requestSent == 0){
+                    // Send I2C Error Message to Web Server
+                }
+                requestSent = 0;
+                break;
+            }
+            default: {
+                VT_HANDLE_FATAL_ERROR(UNKNOWN_I2C_MSG_TYPE);
+                break;
+            }*/

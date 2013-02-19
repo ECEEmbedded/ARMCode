@@ -8,6 +8,7 @@
 // Do not touch...
 typedef struct __i2cStruct {
     vtI2CStruct *dev;
+    vtLCDStruct *lcdData;
     xQueueHandle inQ;
 } myI2CStruct;
 // Maximum length of a message that can be received by this task
@@ -16,6 +17,9 @@ typedef struct __i2cStruct {
 #define I2C_MSG_SIZE 4
 
 #define SLAVE_ADDR 0x4F
+
+#define PIC2680 0
+#define PIC26J50 1
 
 // Public API
 //
@@ -34,7 +38,10 @@ void starti2cTask(myI2CStruct *i2cData,unsigned portBASE_TYPE uxPriority, vtI2CS
 // Return:
 //   Result of the call to xQueueSend()
 portBASE_TYPE sendi2cTimerMsg(myI2CStruct *i2cData,portTickType ticksElapsed,portTickType ticksToBlock);
-//
+
+// portBASE_TYPE sendi2cValueMsg(myI2CStruct *i2cData,uint8_t msgType,uint8_t* value, uint8_t length, portTickType ticksToBlock);
+
+
 // Send a value message to the I2C task
 // Args:
 //   i2cData -- a pointer to a variable of type myI2CStruct
@@ -43,7 +50,7 @@ portBASE_TYPE sendi2cTimerMsg(myI2CStruct *i2cData,portTickType ticksElapsed,por
 //   ticksToBlock -- how long the routine should wait if the queue is full
 // Return:
 //   Result of the call to xQueueSend()
-portBASE_TYPE sendi2cMotorMsg(myI2CStruct *i2cData,uint8_t leftValue,uint8_t rightValue, portTickType ticksToBlock);
+//portBASE_TYPE sendi2cMotorMsg(myI2CStruct *i2cData,uint8_t leftValue,uint8_t rightValue, portTickType ticksToBlock);
 
 portBASE_TYPE notifyRequestRecvd(myI2CStruct *i2cData,portTickType ticksToBlock);
 #endif

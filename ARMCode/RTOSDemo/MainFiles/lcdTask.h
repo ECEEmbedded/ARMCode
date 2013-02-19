@@ -22,6 +22,9 @@ typedef struct __vtLCDStruct {
 #define WIDTH 320;
 #define HEIGHT 240;
 
+#define PIC2680_LINE 0
+#define PIC26J50_LINE 4
+
 // Structure used to define the messages that are sent to the LCD thread
 //   the maximum length of a message to be printed is the size of the "buf" field below
 #define vtLCDMaxLen 20
@@ -52,7 +55,7 @@ void StartLCDTask(vtLCDStruct *lcdData,unsigned portBASE_TYPE uxPriority);
 //   ticksToBlock -- how long the routine should wait if the queue is full
 // Return:
 //   Result of the call to xQueueSend()
-portBASE_TYPE SendLCDTimerMsg(vtLCDStruct *lcdData,portTickType ticksElapsed,portTickType ticksToBlock);
+//portBASE_TYPE SendLCDTimerMsg(vtLCDStruct *lcdData,portTickType ticksElapsed,portTickType ticksToBlock);
 // Send a string message to the LCD task for it to print
 // Args:
 //   lcdData -- a pointer to a variable of type vtLCDStruct
@@ -61,7 +64,7 @@ portBASE_TYPE SendLCDTimerMsg(vtLCDStruct *lcdData,portTickType ticksElapsed,por
 //   ticksToBlock -- how long the routine should wait if the queue is full
 // Return:
 //   Result of the call to xQueueSend()
-portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData,int length,char *pString,portTickType ticksToBlock);
+//portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData,int length,char *pString,portTickType ticksToBlock);
 
 // Send an integer message to the LCD task for it to output to the LCD screen as a point in the waveform
 // Args:
@@ -70,7 +73,12 @@ portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData,int length,char *pString,port
 //	 ticksToBlock -- how long the routine should wait if the queue is full
 // Return:
 //	 Result of the call to xQueueSend()
-portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData,int data,portTickType ticksToBlock);
+//portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData,int data,portTickType ticksToBlock);
+
+portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData,int data, uint8_t type, uint8_t errCount, portTickType ticksToBlock);
+
+portBASE_TYPE SendLCDErrorMsg(vtLCDStruct *lcdData, uint8_t type, portTickType ticksToBlock);
+
 /* ********************************************************************* */
 
 void LCDTimerCallback(xTimerHandle);

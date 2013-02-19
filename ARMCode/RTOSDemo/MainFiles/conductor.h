@@ -18,7 +18,7 @@ typedef struct __ConductorStruct {
     motorControlStruct *motorControl;
     navigationStruct *navData;
     speedLimitControlStruct *speedData;
-    myADCStruct *adcData;
+    vtLCDStruct *lcdData;
 } vtConductorStruct;
 
 // Public API
@@ -34,6 +34,7 @@ typedef struct __ConductorStruct {
 //   _mc: pointer to the data structure for the motor control task
 //   _nav: pointer to the data structure for the navigation task
 //   _speed: pointer to the data structure for the speed limit control task
-void vStartConductorTask(vtConductorStruct *_conductorData,unsigned portBASE_TYPE _uxPriority, vtI2CStruct *_i2c,myI2CStruct *_myi2c, motorControlStruct *_mc, navigationStruct *_nav, speedLimitControlStruct *_speed, myADCStruct *_adc);
+void vStartConductorTask(vtConductorStruct *_conductorData,unsigned portBASE_TYPE _uxPriority, vtI2CStruct *_i2c,myI2CStruct *_myi2c, motorControlStruct *_mc, navigationStruct *_nav, speedLimitControlStruct *_speed, vtLCDStruct *_lcd);
+
 #endif
 #endif

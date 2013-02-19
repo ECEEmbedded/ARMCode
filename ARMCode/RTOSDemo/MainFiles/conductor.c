@@ -21,7 +21,6 @@
 #include "motorControl.h"
 #include "navigation.h"
 #include "speedLimit.h"
-#include "myADC.h"
 
 /* *********************************************** */
 // definitions and data structures that are private to this file
@@ -43,7 +42,7 @@ static portTASK_FUNCTION_PROTO( vConductorUpdateTask, pvParameters );
 
 /*-----------------------------------------------------------*/
 // Public API
-void vStartConductorTask(vtConductorStruct *_params,unsigned portBASE_TYPE _uxPriority, vtI2CStruct *_i2c, myI2CStruct *_myi2c, motorControlStruct *_mc, navigationStruct *_nav, speedLimitControlStruct *_speed, myADCStruct *_adc)
+void vStartConductorTask(vtConductorStruct *_params,unsigned portBASE_TYPE _uxPriority, vtI2CStruct *_i2c, myI2CStruct *_myi2c, motorControlStruct *_mc, navigationStruct *_nav, speedLimitControlStruct *_speed, vtLCDStruct *_lcd)
 {
 	/* Start the task */
 	portBASE_TYPE retval;
@@ -52,8 +51,7 @@ void vStartConductorTask(vtConductorStruct *_params,unsigned portBASE_TYPE _uxPr
 	_params->motorControl = _mc;
 	_params->navData = _nav;
 	_params->speedData = _speed;
-	_params->adcData = _adc;
-	//_params->ADC_HERE_FFS  THIS IS FINALLY WHAT I WAS LOOKING FOR FFS!!
+	_params->lcdData = _lcd;
 	if ((retval = xTaskCreate( vConductorUpdateTask, ( signed char * ) "Conductor", conSTACK_SIZE, (void *) _params, _uxPriority, ( xTaskHandle * ) NULL )) != pdPASS) {
 		VT_HANDLE_FATAL_ERROR(retval);
 	}
@@ -70,11 +68,16 @@ uint8_t getI2CMsgCount(uint8_t *buffer) {
 	return buffer[1];
 }
 
+int geti2cADCValue(myi2cMsg *buffer){
+    return (((int)buffer->buf[3])<<8)|(int)buffer->buf[2];
+}
+
 // This is the actual task that is run
 static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 {
 	uint8_t rxLen, status;
 	uint8_t Buffer[vtI2CMLen];
+	uint8_t *valPtr = &(Buffer[0]);
 
 	// Get the parameters
 	vtConductorStruct *param = (vtConductorStruct *) pvParameters;
@@ -88,13 +91,21 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 	navigationStruct *nav = param->navData;
 	// Get the Speed Limit task pointer
 	speedLimitControlStruct *speed = param->speedData;
-	// Get the ADC task pointer
-	myADCStruct *adc = param->adcData;
+    // Get the LCD pointer information
+    vtLCDStruct *lcdData = param->lcdData;
+
+	// Message counts
+	uint8_t colorSensorMsgCount = 0, encodersMsgCount = 0, IRMsgCount = 0;
 
 	uint8_t recvMsgType;
 
-	// Message counts
-	uint8_t colorSensorMsgCount = 0, encodersMsgCount = 0, IRMsgCount = 0, adcMsgCount = 0;
+	int pic2680reqSent = 0;
+    int pic26J50reqSent = 0;
+
+    uint8_t sent2680ADCCount = 0;
+    uint8_t sent26J50ADCCount = 0;
+    uint8_t received2680ADCCount = 0;
+    uint8_t received26J50ADCCount = 0;
 
 	// Like all good tasks, this should never exit
 	for(;;)
@@ -136,14 +147,15 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 							IRMsgCount = getI2CMsgCount(Buffer);
 						}
 					}
-					case ADC_EMPTY_MESSAGE: {
+					case PIC2680_EMPTY_MESSAGE:{
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						adcMsgCount++;
-						if(adcMsgCount != getI2CMsgCount(Buffer)){
-							//Send Web Server an error with getI2CMsgCount(Buffer) - adcMsgCount
-							adcMsgCount = getI2CMsgCount(Buffer);
-						}
-					break;
+						pic2680reqSent = 0;
+						break;
+					}
+					case PIC26J50_EMPTY_MESSAGE:{
+						notifyRequestRecvd(i2cData,portMAX_DELAY);
+						pic26J50reqSent	= 0;
+						break;
 					}
 					case GENERIC_EMPTY_MESSAGE: {
 					break;
@@ -178,15 +190,27 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 						}
 					break;
 					}
-					case ADC_MESSAGE: {
-						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						sendADCDataMsg(adc, (Buffer + 2), 2);
-						adcMsgCount++;
-						if(adcMsgCount != getI2CMsgCount(Buffer)){
-							//Send Web Server an error with getI2CMsgCount(Buffer) - IRMsgCount
-							adcMsgCount = getI2CMsgCount(Buffer);
+					case PIC2680_ADC_MESSAGE:{
+						received2680ADCCount++;
+						int value = geti2cADCValue(&msgBuffer);
+						uint8_t errCount = count - received2680ADCCount;
+						received2680ADCCount = count;
+						pic2680reqSent = 0;
+						if(SendLCDADCMsg(lcdData,value,type,errCount, portMAX_DELAY) != pdTRUE) {
+							VT_HANDLE_FATAL_ERROR(0);
 						}
 					break;
+					}
+					case PIC26J50_ADC_MESSAGE:{
+						received26J50ADCCount++;
+						int value = geti2cADCValue(&msgBuffer);
+						uint8_t errCount = count - received26J50ADCCount;
+						received26J50ADCCount = count;
+						pic26J50reqSent = 0;
+						if(SendLCDADCMsg(lcdData,value,type,errCount, portMAX_DELAY) != pdTRUE) {
+							VT_HANDLE_FATAL_ERROR(0);
+						}
+						break;
 					}
 				}
 			break;
