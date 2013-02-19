@@ -1,6 +1,5 @@
 #include "myDefs.h"
 #include "lcdTask.h"
-
 #include "i2c_ARM.h"
 #include "myTypes.h"
 
@@ -14,7 +13,7 @@
 //   uxPriority -- the priority you want this task to be run at
 //   myi2c: pointer to the data structure for an i2c task
 //   lcdData: pointer to the data structure for an LCD task (may be NULL)
-void vStartADCTask(vtADCStruct *adcData,unsigned portBASE_TYPE uxPriority, myI2CStruct *myi2c, vtLCDStruct *lcdData);
+void vStartADCTask(myADCStruct *adcData,unsigned portBASE_TYPE uxPriority, myI2CStruct *myi2c, vtLCDStruct *lcdData);
 //
 // Send a value message to the ADC task
 // Args:
@@ -24,7 +23,7 @@ void vStartADCTask(vtADCStruct *adcData,unsigned portBASE_TYPE uxPriority, myI2C
 //   ticksToBlock -- how long the routine should wait if the queue is full
 // Return:
 //   Result of the call to xQueueSend()
-portBASE_TYPE SendADCDataMsg(vtADCStruct *adcData,uint8_t msgType,uint8_t value,portTickType ticksToBlock);
+portBASE_TYPE SendADCDataMsg(myADCStruct *adcData,uint8_t msgType,uint8_t value,portTickType ticksToBlock);
 //
 // Send a timer message to the ADC task
 // Args:
@@ -33,5 +32,5 @@ portBASE_TYPE SendADCDataMsg(vtADCStruct *adcData,uint8_t msgType,uint8_t value,
 //   ticksToBlock -- how long the routine should wait if the queue is full
 // Return:
 //   Result of the call to xQueueSend()
-portBASE_TYPE SendADCTimerMsg(vtADCStruct *adcData,portTickType ticksElapsed,portTickType ticksToBlock);
+portBASE_TYPE SendADCTimerMsg(myADCStruct *adcData,portTickType ticksElapsed,portTickType ticksToBlock);
 

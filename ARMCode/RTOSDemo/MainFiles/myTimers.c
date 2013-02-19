@@ -124,7 +124,7 @@ void ADCTimerCallback(xTimerHandle pxTimer)
 		//   ADC structure as the "timer ID" so that I could access
 		//   that structure here -- which I need to do to get the
 		//   address of the message queue to send to
-		vtADCStruct *ptr = (vtADCStruct *) pvTimerGetTimerID(pxTimer);
+		myADCStruct *ptr = (myADCStruct *) pvTimerGetTimerID(pxTimer);
 		// Make this non-blocking *but* be aware that if the queue is full, this routine
 		// will not care, so if you care, you need to check something
 		if (SendADCTimerMsg(ptr,adcWRITE_RATE_BASE,0) == errQUEUE_FULL) {
@@ -134,11 +134,11 @@ void ADCTimerCallback(xTimerHandle pxTimer)
 	}
 }
 
-void startTimerForADC(vtADCStruct *vtADCdata) {
-	if (sizeof(long) != sizeof(vtADCStruct *)) {
+void startTimerForADC(myADCStruct *myADCdata) {
+	if (sizeof(long) != sizeof(myADCStruct *)) {
 		VT_HANDLE_FATAL_ERROR(0);
 	}
-	xTimerHandle ADCTimerHandle = xTimerCreate((const signed char *)"ADC Timer",adcWRITE_RATE_BASE,pdTRUE,(void *) vtADCdata,ADCTimerCallback);
+	xTimerHandle ADCTimerHandle = xTimerCreate((const signed char *)"ADC Timer",adcWRITE_RATE_BASE,pdTRUE,(void *) myADCdata,ADCTimerCallback);
 	if (ADCTimerHandle == NULL) {
 		VT_HANDLE_FATAL_ERROR(0);
 	} else {

@@ -94,7 +94,7 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 	uint8_t recvMsgType;
 
 	// Message counts
-	uint8_t colorSensorMsgCount = 0, encodersMsgCount = 0, IRMsgCount = 0; adcMsgCount = 0;
+	uint8_t colorSensorMsgCount = 0, encodersMsgCount = 0, IRMsgCount = 0, adcMsgCount = 0;
 
 	// Like all good tasks, this should never exit
 	for(;;)
@@ -135,6 +135,7 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 							//Send Web Server an error with getI2CMsgCount(Buffer) - IRMsgCount
 							IRMsgCount = getI2CMsgCount(Buffer);
 						}
+					}
 					case ADC_EMPTY_MESSAGE: {
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
 						adcMsgCount++;
@@ -149,7 +150,7 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 					}
 					case COLOR_SENSOR_MESSAGE: {
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						sendColorSensorDataMsg(nav, (Buffer + 2), 2);
+						sendColorSensorDataMsg(speed, (Buffer + 2), 2);
 						colorSensorMsgCount++;
 						if(colorSensorMsgCount != getI2CMsgCount(Buffer)){
 							//Send Web Server an error with getI2CMsgCount(Buffer) - colorSensorMsgCount
@@ -169,7 +170,7 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 					}
 					case IR_MESSAGE: {
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						sendIRDataMsg(speed, (Buffer + 2), 2);
+						sendIRDataMsg(nav, (Buffer + 2), 2);
 						IRMsgCount++;
 						if(IRMsgCount != getI2CMsgCount(Buffer)){
 							//Send Web Server an error with getI2CMsgCount(Buffer) - IRMsgCount
@@ -187,7 +188,6 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 						}
 					break;
 					}
-
 				}
 			break;
 			}

@@ -5,41 +5,47 @@
 
 #include "i2c_ARM.h"
 
+typedef struct __myADCStruct myADCStruct;
+typedef struct __navigationStruct navigationStruct;
+typedef struct __motorControlStruct motorControlStruct;
+typedef struct __mappingStruct mappingStruct;
+typedef struct __speedLimitControlStruct speedLimitControlStruct;
+
 // Our data structures for our tasks:
-typedef struct __myADCStruct{
+struct __myADCStruct{
     myI2CStruct *i2cData;
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
-} myADCStruct;
+};
 
-typedef struct __navigationStruct{
+struct __navigationStruct{
     motorControlStruct *motorControl;
     mappingStruct *mapData;
     speedLimitControlStruct *speedData;
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
-} navigationStruct;
+};
 
-typedef struct __motorControlStruct {
+struct __motorControlStruct {
     myI2CStruct *i2cData;
     navigationStruct *navData;
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
-} motorControlStruct;
+};
 
-typedef struct __mappingStruct{
+struct __mappingStruct{
     navigationStruct *navData;
     speedLimitControlStruct * speedData;
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
-} mappingStruct;
+};
 
-typedef struct __speedLimitControlStruct{
+struct __speedLimitControlStruct{
     myI2CStruct *i2cData;
     navigationStruct *navData;
     mappingStruct *mapData;
     xQueueHandle inQ;
-} speedLimitControlStruct;
+};
 
 //ADC thread incoming message types
 #define ADCMsgTypeTimer 1
@@ -50,7 +56,7 @@ typedef struct __speedLimitControlStruct{
 #define vtI2CMsgTypeRead 2
 #define i2cMsgTypeTimer 3
 #define notifyRqstRecvdType 4
-//#define vtI2CMsgTypeADC 5
+#define vtI2CMsgTypeADC 5
 
 //Motor Control thread incoming message types
 #define moveForwardMsg 1

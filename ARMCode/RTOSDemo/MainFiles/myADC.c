@@ -20,13 +20,13 @@
 /* *********************************************** */
 // definitions and data structures that are private to this file
 // Length of the queue to this task
-#define vtADCQLen 10
+#define myADCQLen 10
 // actual data structure that is sent in a message
-typedef struct __vtADCMsg {
+typedef struct __myADCMsg {
     uint8_t msgType;
     uint8_t length;  // Length of the message to be printed
     uint8_t buf[maxADCMsgLen+1]; // On the way in, message to be sent, on the way out, message received (if any)
-} vtADCMsg;
+} myADCMsg;
 
 // I have set this to a large stack size because of (a) using printf() and (b) the depth of function calls
 //   for some of the i2c operations -- almost certainly too large, see LCDTask.c for details on how to check the size
@@ -45,10 +45,10 @@ static portTASK_FUNCTION_PROTO( vADCUpdateTask, pvParameters );
 
 /*-----------------------------------------------------------*/
 // Public API
-void vStartADCTask(vtADCStruct *params,unsigned portBASE_TYPE uxPriority, myI2CStruct *myi2c,vtLCDStruct *lcd)
+void vStartADCTask(myADCStruct *params,unsigned portBASE_TYPE uxPriority, myI2CStruct *myi2c,vtLCDStruct *lcd)
 {
     // Create the queue that will be used to talk to this task
-    if ((params->inQ = xQueueCreate(vtADCQLen,sizeof(vtADCMsg))) == NULL) {
+    if ((params->inQ = xQueueCreate(myADCQLen,sizeof(myADCMsg))) == NULL) {
         VT_HANDLE_FATAL_ERROR(0);
     }
     /* Start the task */
@@ -60,12 +60,12 @@ void vStartADCTask(vtADCStruct *params,unsigned portBASE_TYPE uxPriority, myI2CS
     }
 }
 
-portBASE_TYPE SendADCTimerMsg(vtADCStruct *adcData,portTickType ticksElapsed,portTickType ticksToBlock)
+portBASE_TYPE SendADCTimerMsg(myADCStruct *adcData,portTickType ticksElapsed,portTickType ticksToBlock)
 {
     if (adcData == NULL) {
         VT_HANDLE_FATAL_ERROR(0);
     }
-    vtADCMsg adcBuffer;
+    myADCMsg adcBuffer;
     adcBuffer.length = sizeof(ticksElapsed);
     if (adcBuffer.length > maxADCMsgLen) {
         // no room for this message
@@ -76,15 +76,15 @@ portBASE_TYPE SendADCTimerMsg(vtADCStruct *adcData,portTickType ticksElapsed,por
     return(xQueueSend(adcData->inQ,(void *) (&adcBuffer),ticksToBlock));
 }
 
-portBASE_TYPE SendADCDataMsg(vtADCStruct *adcData,uint8_t msgType,uint8_t value,portTickType ticksToBlock)
+portBASE_TYPE SendADCDataMsg(myADCStruct *adcData,uint8_t msgType,uint8_t value,portTickType ticksToBlock)
 {
-    vtADCMsg adcBuffer;
+    myADCMsg adcBuffer;
 
     if (adcData == NULL) {
         VT_HANDLE_FATAL_ERROR(0);
     }
     adcBuffer.length = sizeof(value);
-    if (adcBuffer.length > vtADCMaxLen) {
+    if (adcBuffer.length > maxADCMsgLen) {
         // no room for this message
         VT_HANDLE_FATAL_ERROR(adcBuffer.length);
     }
@@ -95,18 +95,18 @@ portBASE_TYPE SendADCDataMsg(vtADCStruct *adcData,uint8_t msgType,uint8_t value,
 
 // End of Public API
 /*-----------------------------------------------------------*/
-int getMsgType(vtADCMsg *Buffer)
+int getMsgType(myADCMsg *Buffer)
 {
     return(Buffer->msgType);
 }
 
 // The below getValue function was changed by Matthew Ibarra on 2/2/2013
-void getValue(int *target, vtADCMsg *msgBuffer)
+void getValue(int *target, myADCMsg *msgBuffer)
 {
     *(target) = (int) msgBuffer->buf[0];
 }
 
-static vtADCStruct *param;
+static myADCStruct *param;
 static myI2CStruct *i2cData;
 static vtLCDStruct *lcdData;
 
@@ -116,14 +116,14 @@ const uint8_t i2cCmdReadVals[]= {0xAA};
 static portTASK_FUNCTION( vADCUpdateTask, pvParameters )
 {
     // Get the parameters
-    param = (vtADCStruct *) pvParameters;
+    param = (myADCStruct *) pvParameters;
     // Get the I2C task pointer
     i2cData = param->i2cData;
     // Get the LCD information pointer
-    vtLCDStruct *lcdData = param->lcdData;
+    lcdData = param->lcdData;
 
     // Buffer for receiving messages
-    vtADCMsg msgBuffer;
+    myADCMsg msgBuffer;
 
     // Like all good tasks, this should never exit
     for(;;)
@@ -135,25 +135,25 @@ static portTASK_FUNCTION( vADCUpdateTask, pvParameters )
 
         // Now, based on the type of the message and the state, we decide on the new state and action to take
         switch(getMsgType(&msgBuffer)) {
-        case ADCMsgTypeTimer: {
-            if (vtI2CEnQ(devPtr,vtI2CMsgTypeADCSend,0x4F,sizeof(i2cCmdReadVals),i2cCmdReadVals,1) != pdTRUE) {
-                VT_HANDLE_FATAL_ERROR(0);
-            }
-            break;
-        }
-        case vtI2CMsgTypeADCSend: {
-            // Read value from ADC and send to LCD thread
-            int value = -1;
-            getValue(&value, &msgBuffer);
-            if(SendLCDADCMsg(lcdData,value,portMAX_DELAY) != pdTRUE) {
-                VT_HANDLE_FATAL_ERROR(0);
-            }
-            break;
-        }
-        default: {
-            VT_HANDLE_FATAL_ERROR(getMsgType(&msgBuffer));
-            break;
-        }
+	        case ADCMsgTypeTimer: {
+	            if (vtI2CEnQ(i2cData,vtI2CMsgTypeADCSend,0x4F,sizeof(i2cCmdReadVals),i2cCmdReadVals,1) != pdTRUE) {
+	                VT_HANDLE_FATAL_ERROR(0);
+	            }
+	            break;
+	        }
+	        case vtI2CMsgTypeADCSend: {
+	            // Read value from ADC and send to LCD thread
+	            int value = -1;
+	            getValue(&value, &msgBuffer);
+	            if(SendLCDADCMsg(lcdData,value,portMAX_DELAY) != pdTRUE) {
+	                VT_HANDLE_FATAL_ERROR(0);
+	            }
+	            break;
+	        }
+	        default: {
+	            VT_HANDLE_FATAL_ERROR(getMsgType(&msgBuffer));
+	            break;
+	        }
         }
     }
 }

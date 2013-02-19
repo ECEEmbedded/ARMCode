@@ -212,7 +212,7 @@ int main( void )
 	}
 
 	// start up a "conductor" task that will move messages around
-	vStartConductorTask(&conductorData,mainCONDUCTOR_TASK_PRIORITY,&vtI2C0,&i2cData,&motorControl,&navData,&speedData);
+	vStartConductorTask(&conductorData,mainCONDUCTOR_TASK_PRIORITY,&vtI2C0,&i2cData,&motorControl,&navData,&speedData,&adcData);
 
     // Start the I2C task
     starti2cTask(&i2cData,mainI2C_TASK_PRIORITY,&vtI2C0);

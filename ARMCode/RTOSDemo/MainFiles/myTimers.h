@@ -12,7 +12,7 @@
 
 void startTimerFori2c(myI2CStruct *i2cdata);
 void startTimerForMotor(motorControlStruct *motordata);
-void startTimerForADC(vtADCStruct *vtADCdata);
+void startTimerForADC(myADCStruct *myADCdata);
 
 #endif
 #endif

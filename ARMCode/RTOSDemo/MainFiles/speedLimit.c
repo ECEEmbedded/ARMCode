@@ -71,7 +71,7 @@ portBASE_TYPE sendColorSensorDataMsg(speedLimitControlStruct *speedData,uint8_t 
         VT_HANDLE_FATAL_ERROR(INCORRECT_SPEED_LIMIT_MSG_FORMAT);
     }
     memcpy(buffer.buf,data,length);
-    buffer.msgType = colorSensorSLDataMsg;
+    buffer.msgType = colorSensorDataMsg;
     return(xQueueSend(speedData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 

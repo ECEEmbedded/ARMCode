@@ -127,7 +127,7 @@ portBASE_TYPE updateRotateCounterclockwiseMsg(navigationStruct *navData,uint8_t 
 
 portBASE_TYPE sendSpeedLimitDataMsg(navigationStruct *navData,uint8_t *data, uint8_t length)
 {
-    if (navigationData == NULL) {
+    if (navData == NULL) {
         VT_HANDLE_FATAL_ERROR(0);
     }
     navigationMsg buffer;
