@@ -45,7 +45,7 @@ uint8_t requestSent = 0;
 
 /*-----------------------------------------------------------*/
 // Public API
-void starti2cTask(myI2CStruct *params,unsigned portBASE_TYPE uxPriority, vtI2CStruct *i2c)
+void starti2cTask(myI2CStruct *params, unsigned portBASE_TYPE uxPriority, vtI2CStruct *i2c)
 {
     // Create the queue that will be used to talk to this task
     if ((params->inQ = xQueueCreate(vti2cQLen,sizeof(myi2cMsg))) == NULL) {
@@ -72,6 +72,25 @@ portBASE_TYPE sendi2cTimerMsg(myI2CStruct *i2cData,portTickType ticksElapsed,por
     }
     memcpy(buffer.buf,(char *)&ticksElapsed,sizeof(ticksElapsed));
     buffer.msgType = i2cMsgTypeTimer;
+    return(xQueueSend(i2cData->inQ,(void *) (&buffer),ticksToBlock));
+}
+
+portBASE_TYPE sendi2cMotorMsg(myI2CStruct *i2cData, uint8_t leftValue, uint8_t rightValue, portTickType ticksToBlock)
+{
+    if (i2cData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    myi2cMsg buffer;
+    buffer.length = 4;
+    if (buffer.length > vti2cMaxLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_I2C_MSG_FORMAT);
+    }
+    buffer.buf[0] = 0xBB;
+    buffer.buf[1] = 0x00;
+    buffer.buf[2] = leftValue;
+    buffer.buf[3] = rightValue;
+    buffer.msgType = vtI2CMsgTypeMotor;
     return(xQueueSend(i2cData->inQ,(void *) (&buffer),ticksToBlock));
 }
 
@@ -157,29 +176,3 @@ static portTASK_FUNCTION( vi2cUpdateTask, pvParameters )
 }
 #endif
 
-            /*case i2cMsgTypeTimer: {
-                //Poll local 2680 for data
-                notifyRequestSent();
-                if (vtI2CEnQ(devPtr,vtI2CMsgTypeRead,SLAVE_ADDR,0,0,I2C_MSG_SIZE) != pdTRUE) {
-                    VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
-                }
-                break;
-            }
-            case vtI2CMsgTypeMotor: {
-                //Send motor command to local 2680
-                if (vtI2CEnQ(devPtr,vtI2CMsgTypeMotor,SLAVE_ADDR,msgBuffer.length,msgBuffer.buf,0) != pdTRUE){
-                    VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
-                }
-                break;
-            }
-            case notifyRqstRecvdType: {
-                if(requestSent == 0){
-                    // Send I2C Error Message to Web Server
-                }
-                requestSent = 0;
-                break;
-            }
-            default: {
-                VT_HANDLE_FATAL_ERROR(UNKNOWN_I2C_MSG_TYPE);
-                break;
-            }*/

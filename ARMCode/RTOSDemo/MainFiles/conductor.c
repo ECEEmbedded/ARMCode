@@ -19,8 +19,10 @@
 #include "myTypes.h"
 #include "conductor.h"
 #include "motorControl.h"
-#include "navigation.h"
+#include "irControl.h"
 #include "speedLimit.h"
+// #include "power.h"
+#include "lcdTask.h"
 
 /* *********************************************** */
 // definitions and data structures that are private to this file
@@ -42,17 +44,18 @@ static portTASK_FUNCTION_PROTO( vConductorUpdateTask, pvParameters );
 
 /*-----------------------------------------------------------*/
 // Public API
-void vStartConductorTask(vtConductorStruct *_params,unsigned portBASE_TYPE _uxPriority, vtI2CStruct *_i2c, myI2CStruct *_myi2c, motorControlStruct *_mc, navigationStruct *_nav, speedLimitControlStruct *_speed, vtLCDStruct *_lcd)
+void vStartConductorTask(vtConductorStruct *params, unsigned portBASE_TYPE uxPriority, vtI2CStruct *i2c, myI2CStruct * myi2c, motorControlStruct *motorControl, irControlStruct *irData, speedLimitControlStruct *speedData, powerStruct *powerData, vtLCDStruct *lcdData)
 {
 	/* Start the task */
 	portBASE_TYPE retval;
-	_params->dev = _i2c;
-	_params->i2cData = _myi2c;
-	_params->motorControl = _mc;
-	_params->navData = _nav;
-	_params->speedData = _speed;
-	_params->lcdData = _lcd;
-	if ((retval = xTaskCreate( vConductorUpdateTask, ( signed char * ) "Conductor", conSTACK_SIZE, (void *) _params, _uxPriority, ( xTaskHandle * ) NULL )) != pdPASS) {
+	params->dev = i2c;
+	params->i2cData = myi2c;
+	params->motorControl = motorControl;
+	params->irData = irData;
+	params->speedData = speedData;
+	params->powerData = powerData;
+	params->lcdData = lcdData;
+	if ((retval = xTaskCreate( vConductorUpdateTask, ( signed char * ) "Conductor", conSTACK_SIZE, (void *) params, uxPriority, ( xTaskHandle * ) NULL )) != pdPASS) {
 		VT_HANDLE_FATAL_ERROR(retval);
 	}
 }
@@ -87,10 +90,12 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 	myI2CStruct *i2cData = param->i2cData;
 	// Get the Motor Control task pointer
 	motorControlStruct *motorControl = param->motorControl;
-	// Get the Navigation task pointer
-	navigationStruct *nav = param->navData;
+	// Get the IR Control task pointer
+	irControlStruct *irData = params->irData;
 	// Get the Speed Limit task pointer
-	speedLimitControlStruct *speed = param->speedData;
+	speedLimitControlStruct *speedData = param->speedData;
+	//Get the Power task pointer
+	powerStruct *powerData = param->powerData;
     // Get the LCD pointer information
     vtLCDStruct *lcdData = param->lcdData;
 

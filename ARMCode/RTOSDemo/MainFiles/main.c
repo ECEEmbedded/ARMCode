@@ -88,10 +88,11 @@ You should read the note above.
 #include "conductor.h"
 #include "motorControl.h"
 #include "navigation.h"
-#include "mapping.h"
 #include "speedLimit.h"
 #include "myTypes.h"
-#include "myADC.h"
+//#include "myADC.h"
+// #include "power.h"
+// #include "webServer.h"
 
 /* syscalls initialization -- *must* occur first */
 #include "syscalls.h"
@@ -119,8 +120,10 @@ tick hook). */
 #define mainCONDUCTOR_TASK_PRIORITY			( tskIDLE_PRIORITY)
 #define mainMOTOR_CONTROL_TASK_PRIORITY     ( tskIDLE_PRIORITY)
 #define mainNAVIGATION_TASK_PRIORITY        ( tskIDLE_PRIORITY)
-#define mainMAPPING_TASK_PRIORITY           ( tskIDLE_PRIORITY)
+#define mainIR_CONTROL_TASK_PRIORITY        ( tskIDLE_PRIORITY)
 #define mainSPEED_LIMIT_TASK_PRIORITY       ( tskIDLE_PRIORITY)
+#define mainPOWER_TASK_PRIORITY             ( tskIDLE_PRIORITY)
+#define mainWEB_SERVER_TASK_PRIORITY        ( tskIDLE_PRIORITY)
 
 /* The WEB server has a larger stack as it utilises stack hungry string
 handling library calls. */
@@ -171,10 +174,12 @@ static vtLCDStruct vtLCDdata;
 static motorControlStruct motorControl;
 // Required data structure for Navigation task
 static navigationStruct navData;
-// Required data structure for Mapping task
-static mappingStruct mapData;
+// Required data structure for IR Control task
+static irControlStruct irData
 // Required data structure for Speed Limit task
 static speedLimitControlStruct speedData;
+// Required data structure for web server task
+//static webServerStruct webData;
 
 /*-----------------------------------------------------------*/
 
@@ -209,18 +214,18 @@ int main( void )
 	}
 
 	// start up a "conductor" task that will move messages around
-	vStartConductorTask(&conductorData,mainCONDUCTOR_TASK_PRIORITY,&vtI2C0,&i2cData,&motorControl,&navData,&speedData,&vtLCDdata);
+	vStartConductorTask(&conductorData,mainCONDUCTOR_TASK_PRIORITY,&vtI2C0,&i2cData,&motorControl,&irData,&speedData,&powerData,&vtLCDdata);
 
     // Start the I2C task
     starti2cTask(&i2cData,mainI2C_TASK_PRIORITY,&vtI2C0);
     // Start the Motor Control task
-    vStartMotorControlTask(&motorControl,mainMOTOR_CONTROL_TASK_PRIORITY,&i2cData,&navData,&vtLCDdata);
+    vStartMotorControlTask(&motorControl,mainMOTOR_CONTROL_TASK_PRIORITY,&i2cData,&webData,&vtLCDdata);
     // Start the Navigation task
-    vStartNavigationTask(&navData,mainNAVIGATION_TASK_PRIORITY,&motorControl,&mapData,&speedData, &vtLCDdata);
-    // Start the Mapping task
-    vStartMappingTask(&mapData,mainMAPPING_TASK_PRIORITY,&navData,&speedData,&vtLCDdata);
+    vStartNavigationTask(&navData,mainNAVIGATION_TASK_PRIORITY,&motorControl,&vtLCDdata);
+    // Start the IR Control task
+    vStartIRTask(&irData,mainIR_CONTROL_TASK_PRIORITY,&navData);
     // Start the Speed Limit task
-    vStartSpeedLimitTask(&speedData,mainSPEED_LIMIT_TASK_PRIORITY,&i2cData,&navData,&mapData);
+    vStartSpeedLimitTask(&speedData,mainSPEED_LIMIT_TASK_PRIORITY,&motorControl,&navData,&webData);
 
     startTimerFori2c(&i2cData);
     //startTimerForMotor(&motorControl);

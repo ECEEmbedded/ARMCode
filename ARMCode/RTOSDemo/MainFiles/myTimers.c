@@ -1,5 +1,6 @@
-// Cleaned up this file for milestone 2
-// Matthew Ibarra 2/10/2013
+// File has been cleaned up for milestone 2 & beyond
+// 2.26.2013
+
 #include "myDefs.h"
 #if MILESTONE_2==1
 

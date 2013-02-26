@@ -17,8 +17,6 @@
 #include "myTypes.h"
 #include "motorControl.h"
 #include "navigation.h"
-#include "mapping.h"
-#include "speedLimit.h"
 #include "lcdTask.h"
 /* *********************************************** */
 
@@ -44,7 +42,7 @@ static portTASK_FUNCTION_PROTO( vNavigationTask, pvParameters );
 
 /*-----------------------------------------------------------*/
 // Public API
-void vStartNavigationTask(navigationStruct *params,unsigned portBASE_TYPE uxPriority, motorControlStruct *mc, mappingStruct *mapData, speedLimitControlStruct *speedData, vtLCDStruct *lcdData)
+void vStartNavigationTask(navigationStruct *params, unsigned portBASE_TYPE uxPriority, motorControlStruct *motorControl, vtLCDStruct *lcdData)
 {
     // Create the queue that will be used to talk to this task
     if ((params->inQ = xQueueCreate(navigationQLen,sizeof(navigationMsg))) == NULL) {
@@ -52,16 +50,71 @@ void vStartNavigationTask(navigationStruct *params,unsigned portBASE_TYPE uxPrio
     }
     /* Start the task */
     portBASE_TYPE retval;
-    params->motorControl = mc;
-    params->mapData = mapData;
-    params->speedData = speedData;
+    params->motorControl = motorControl;
     params->lcdData = lcdData;
     if ((retval = xTaskCreate( vNavigationTask, ( signed char * ) "Navigation", conSTACK_SIZE, (void *) params, uxPriority, ( xTaskHandle * ) NULL )) != pdPASS) {
         VT_HANDLE_FATAL_ERROR(TASK_CREATION_ERROR);
     }
 }
 
-portBASE_TYPE updateMoveForwardMsg(navigationStruct *navData,uint8_t centimeters)
+portBASE_TYPE AIUpdateDistences(navigationStruct *navData, uint8_t l1, uint8_t l2, uint8_t l3, uint8_t r1, uint8_t r2, uint8_t r3)
+{
+    if (navData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    navigationMsg buffer;
+    buffer.length = 6;
+    if (buffer.length > maxNavigationMsgLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_NAVIGATION_MSG_FORMAT);
+    }
+    buffer.buf[0] = l1;
+    buffer.buf[1] = l2;
+    buffer.buf[2] = l3;
+    buffer.buf[3] = r1;
+    buffer.buf[4] = r2;
+    buffer.buf[5] = r3;
+    buffer.msgType = AIUpdateDistancesMsg;
+    return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
+}
+
+portBASE_TYPE AIUpdateWallAngles(navigationStruct *navData, uint8_t l, uint8_t r)
+{
+    if (navData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    navigationMsg buffer;
+    buffer.length = 2;
+    if (buffer.length > maxNavigationMsgLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_NAVIGATION_MSG_FORMAT);
+    }
+    buffer.buf[0] = l;
+    buffer.buf[1] = r;
+    buffer.msgType = AIUpdateWallAnglesMsgType;
+    return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
+}
+
+portBASE_TYPE AIUpdateIsWalls(navigationStruct *navData, uint8_t wallFront, uint8_t wallBack, uint8_t wallLeft, uint8_t wallRight)
+{
+    if (navData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    navigationMsg buffer;
+    buffer.length = 4;
+    if (buffer.length > maxNavigationMsgLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_NAVIGATION_MSG_FORMAT);
+    }
+    buffer.buf[0] = wallFront;
+    buffer.buf[1] = wallBack;
+    buffer.buf[2] = wallLeft;
+    buffer.buf[3] = wallRight;
+    buffer.msgType = AIUpdateIsWallsMsgType;
+    return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
+}
+
+portBASE_TYPE AIUpdateFinishLine(navigationStruct *navData, uint8_t finishLine)
 {
     if (navData == NULL) {
         VT_HANDLE_FATAL_ERROR(0);
@@ -72,72 +125,8 @@ portBASE_TYPE updateMoveForwardMsg(navigationStruct *navData,uint8_t centimeters
         // no room for this message
         VT_HANDLE_FATAL_ERROR(INCORRECT_NAVIGATION_MSG_FORMAT);
     }
-    buffer.buf[0] = centimeters;
-    buffer.msgType = updateMoveForwardMsgType;
-    return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
-}
-
-portBASE_TYPE updateMoveBackwardMsg(navigationStruct *navData,uint8_t centimeters)
-{
-    if (navData == NULL) {
-        VT_HANDLE_FATAL_ERROR(0);
-    }
-    navigationMsg buffer;
-    buffer.length = 1;
-    if (buffer.length > maxNavigationMsgLen) {
-        // no room for this message
-        VT_HANDLE_FATAL_ERROR(INCORRECT_NAVIGATION_MSG_FORMAT);
-    }
-    buffer.buf[0] = centimeters;
-    buffer.msgType = updateMoveBackwardMsgType;
-    return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
-}
-
-portBASE_TYPE updateRotateClockwiseMsg(navigationStruct *navData,uint8_t degrees)
-{
-    if (navData == NULL) {
-        VT_HANDLE_FATAL_ERROR(0);
-    }
-    navigationMsg buffer;
-    buffer.length = 1;
-    if (buffer.length > maxNavigationMsgLen) {
-        // no room for this message
-        VT_HANDLE_FATAL_ERROR(INCORRECT_NAVIGATION_MSG_FORMAT);
-    }
-    buffer.buf[0] = degrees;
-    buffer.msgType = updateRotateClockwiseMsgType;
-    return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
-}
-
-portBASE_TYPE updateRotateCounterclockwiseMsg(navigationStruct *navData,uint8_t degrees)
-{
-    if (navData == NULL) {
-        VT_HANDLE_FATAL_ERROR(0);
-    }
-    navigationMsg buffer;
-    buffer.length = 1;
-    if (buffer.length > maxNavigationMsgLen) {
-        // no room for this message
-        VT_HANDLE_FATAL_ERROR(INCORRECT_NAVIGATION_MSG_FORMAT);
-    }
-    buffer.buf[0] = degrees;
-    buffer.msgType = updateRotateCounterclockwiseMsgType;
-    return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
-}
-
-portBASE_TYPE sendSpeedLimitDataMsg(navigationStruct *navData,uint8_t *data, uint8_t length)
-{
-    if (navData == NULL) {
-        VT_HANDLE_FATAL_ERROR(0);
-    }
-    navigationMsg buffer;
-    buffer.length = length;
-    if (buffer.length > maxNavigationMsgLen) {
-        // no room for this message
-        VT_HANDLE_FATAL_ERROR(INCORRECT_NAVIGATION_MSG_FORMAT);
-    }
-    memcpy(buffer.buf,data,length);
-    buffer.msgType = updateSpeedLimitDataMsgType;
+    buffer.buf[0] = finishLine;
+    buffer.msgType = AIUpdateFinishLineMsgType;
     return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -167,20 +156,21 @@ uint8_t getDegrees(navigationMsg *buffer){
 // Here is where the declaration of any necessary variables occurs:
 // ...
 
+static navigationStruct *param;
+static motorControlStruct *motorControl;
+static vtLCDStruct *lcdData;
+static navigationMsg msgBuffer;
+
 // This is the actual task that is run
 static portTASK_FUNCTION( vNavigationTask, pvParameters )
 {
     // Get the parameters
-    navigationStruct *param = (navigationStruct *) pvParameters;
+    param = (navigationStruct *) pvParameters;
     // Get the other necessary tasks' task pointers like this:
     // Get the Motor Control task pointer
-    motorControlStruct *motorControl = param->motorControl;
-    // Get the Mapping task pointer
-    mappingStruct *mapData = param->mapData;
+    motorControl = param->motorControl;
     // Get the LCD task pointer
-    vtLCDStruct *lcdData = param->lcdData;
-    // Buffer for receiving messages
-    navigationMsg msgBuffer;
+    lcdData = param->lcdData;
 
     // Initialize variables you declared above this function if necessary
     // ...
@@ -193,23 +183,19 @@ static portTASK_FUNCTION( vNavigationTask, pvParameters )
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
         switch(msgBuffer.msgType){
-            case updateMoveForwardMsgType:
+            case AIUpdateDistancesMsgType:
             {
                 break;
             }
-            case updateMoveBackwardMsgType:
+            case AIUpdateWallAnglesMsgType:
             {
                 break;
             }
-            case updateRotateClockwiseMsgType:
+            case AIUpdateIsWallsMsgType:
             {
                 break;
             }
-            case updateRotateCounterclockwiseMsgType:
-            {
-                break;
-            }
-            case updateSpeedLimitDataMsgType:
+            case AIUpdateFinishLineMsgType:
             {
                 break;
             }

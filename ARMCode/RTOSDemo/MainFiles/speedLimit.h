@@ -2,8 +2,10 @@
 #if MILESTONE_2==1
 #ifndef SPEEDLIMIT_H
 #define SPEEDLIMIT_H
-#include "i2c_ARM.h"
 #include "myTypes.h"
+//#include "webServer.h"
+#include "motorControl.h"
+#include "navigation.h"
 
 #define maxSpeedLimitMsgLen 5
 
@@ -17,7 +19,7 @@
 //   myi2c: pointer to the data structure for the i2c task
 //   navData: pointer to the data structure for the Navigation Task
 //   mapData: pointer to the data structure for the Mapping Task
-void vStartSpeedLimitTask(speedLimitControlStruct *speedData,unsigned portBASE_TYPE uxPriority, myI2CStruct *myi2c, navigationStruct *navData, mappingStruct *mapData);
+void vStartSpeedLimitTask(speedLimitControlStruct *speedData, unsigned portBASE_TYPE uxPriority, motorControlStruct *motorControl, navigationStruct *navData, webServerStruct *webData);
 
 // Send the Speed Limit Control thread color sensor data from the I2C bus
 // Args:
@@ -26,7 +28,7 @@ void vStartSpeedLimitTask(speedLimitControlStruct *speedData,unsigned portBASE_T
 //   length -- length of the data buffer
 // Return:
 //   Result of the call to xQueueSend()
-portBASE_TYPE sendColorSensorDataMsg(speedLimitControlStruct *speedData,uint8_t *data, uint8_t length);
+portBASE_TYPE conductorSendColorSensorDataMsg(speedLimitControlStruct *speedData,uint8_t *data, uint8_t length);
 
 #endif
 #endif

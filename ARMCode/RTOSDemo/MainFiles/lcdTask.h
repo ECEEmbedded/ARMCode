@@ -18,10 +18,11 @@ typedef struct __vtLCDStruct {
 } vtLCDStruct;
 
 // Added by Matthew Ibarra 2/2/2013
-// This defines the width and height of the LCD screen
+// These define the width and height of the LCD screen
 #define WIDTH 320;
 #define HEIGHT 240;
 
+// These define the lines on the LCD where the 2680 & 26J50 ADC data gets displayed
 #define PIC2680_LINE 0
 #define PIC26J50_LINE 4
 
@@ -46,34 +47,7 @@ typedef struct __vtLCDMsg {
 // Args:
 //   lcdData -- a pointer to a variable of type vtLCDStruct
 //   uxPriority -- the priority you want this task to be run at
-void StartLCDTask(vtLCDStruct *lcdData,unsigned portBASE_TYPE uxPriority);
-//
-// Send a timer message to the LCD task
-// Args:
-//   lcdData -- a pointer to a variable of type vtLCDStruct
-//   ticksElapsed -- number of ticks since the last message (this will be sent in the message)
-//   ticksToBlock -- how long the routine should wait if the queue is full
-// Return:
-//   Result of the call to xQueueSend()
-//portBASE_TYPE SendLCDTimerMsg(vtLCDStruct *lcdData,portTickType ticksElapsed,portTickType ticksToBlock);
-// Send a string message to the LCD task for it to print
-// Args:
-//   lcdData -- a pointer to a variable of type vtLCDStruct
-//   length -- number of characters in the string -- the call will result in a fatal error if you exceed the maximum length
-//   pString -- string to print to the LCD
-//   ticksToBlock -- how long the routine should wait if the queue is full
-// Return:
-//   Result of the call to xQueueSend()
-//portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData,int length,char *pString,portTickType ticksToBlock);
-
-// Send an integer message to the LCD task for it to output to the LCD screen as a point in the waveform
-// Args:
-//	 lcdData -- a pointer to a variable of type vtLCDStruct
-//	 data -- the integer value that will be plotted
-//	 ticksToBlock -- how long the routine should wait if the queue is full
-// Return:
-//	 Result of the call to xQueueSend()
-//portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData,int data,portTickType ticksToBlock);
+void StartLCDTask(vtLCDStruct *lcdData, unsigned portBASE_TYPE uxPriority);
 
 portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData,int data, uint8_t type, uint8_t errCount, portTickType ticksToBlock);
 

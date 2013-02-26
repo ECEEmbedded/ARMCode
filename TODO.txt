@@ -1,0 +1,4 @@
+Things to fix in current code, Embedded:
+1. I2C_ARM.h & .c files need to have some ADC support like what was added (and working) last semester.
+2. How to use this group 04 "10 byte" packet instead of the "4 byte" packet used last semester.
+3. Get a new chair... I'm 24 for fucks sake... This shit shouldn't happen to my back.

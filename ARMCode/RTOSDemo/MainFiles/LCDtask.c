@@ -57,40 +57,7 @@ void StartLCDTask(vtLCDStruct *ptr, unsigned portBASE_TYPE uxPriority)
 	}
 }
 
-// portBASE_TYPE SendLCDTimerMsg(vtLCDStruct *lcdData,portTickType ticksElapsed,portTickType ticksToBlock)
-// {
-// 	if (lcdData == NULL) {
-// 		VT_HANDLE_FATAL_ERROR(0);
-// 	}
-// 	vtLCDMsg lcdBuffer;
-// 	lcdBuffer.length = sizeof(ticksElapsed);
-// 	if (lcdBuffer.length > vtLCDMaxLen) {
-// 		// no room for this message
-// 		VT_HANDLE_FATAL_ERROR(lcdBuffer.length);
-// 	}
-// 	memcpy(lcdBuffer.buf,(char *)&ticksElapsed,sizeof(ticksElapsed));
-// 	lcdBuffer.msgType = LCDMsgTypeTimer;
-// 	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
-// }
-
-// portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData,int length,char *pString,portTickType ticksToBlock)
-// {
-// 	if (lcdData == NULL) {
-// 		VT_HANDLE_FATAL_ERROR(0);
-// 	}
-// 	vtLCDMsg lcdBuffer;
-
-// 	if (length > vtLCDMaxLen) {
-// 		// no room for this message
-// 		VT_HANDLE_FATAL_ERROR(lcdBuffer.length);
-// 	}
-// 	lcdBuffer.length = strnlen(pString,vtLCDMaxLen);
-// 	lcdBuffer.msgType = LCDMsgTypePrint;
-// 	strncpy((char *)lcdBuffer.buf,pString,vtLCDMaxLen);
-// 	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
-// }
-
-portBASE_TYPE SendLCDADCMsgvtLCDStruct *lcdData,int data, uint8_t type, uint8_t errCount, portTickType ticksToBlock)
+portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData, int data, uint8_t type, uint8_t errCount, portTickType ticksToBlock)
 {
 	if (lcdData == NULL) {
 		VT_HANDLE_FATAL_ERROR(0);
@@ -139,6 +106,7 @@ portBASE_TYPE SendLCDErrorMsg(vtLCDStruct *lcdData, uint8_t type, portTickType t
 }
 
 // Private routines used to unpack the message buffers
+
 //   I do not want to access the message buffer data structures outside of these routines
 // portTickType unpackTimerMsg(vtLCDMsg *lcdBuffer)
 // {
@@ -192,14 +160,16 @@ void errorCountIntToString(int value, unsigned char *returnVal){
 
 // End of private routines for message buffers
 
+static vtLCDStruct *lcdPtr;
+static vtLCDMsg msgBuffer;
+
 // This is the actual task that is run
 static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 {
 	unsigned short screenColor = 0;
 	unsigned short tscr;
 
-	vtLCDMsg msgBuffer;
-	vtLCDStruct *lcdPtr = (vtLCDStruct *) pvParameters;
+	lcdPtr = (vtLCDStruct *) pvParameters;
 
 	/* Initialize the LCD and set the initial colors */
 	GLCD_Init();

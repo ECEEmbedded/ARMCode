@@ -4,38 +4,45 @@
 #define TYPES_H
 
 #include "i2c_ARM.h"
-
-typedef struct __speedLimitControlStruct speedLimitControlStruct;
+#include "motorControl.h"
+#include "mapping.h"
+#include "speedLimit.h"
+#include "lcdTask.h"
 
 // Our data structures for our tasks:
 typedef struct __navigationStruct{
     motorControlStruct *motorControl;
-    mappingStruct *mapData;
-    speedLimitControlStruct *speedData;
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
 } navigationStruct;
 
 typedef struct __motorControlStruct {
     myI2CStruct *i2cData;
-    navigationStruct *navData;
+    webServerStruct *webData;
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
 } motorControlStruct;
 
-typedef struct __mappingStruct{
-    navigationStruct *navData;
-    speedLimitControlStruct * speedData;
-    vtLCDStruct *lcdData;
-    xQueueHandle inQ;
-} mappingStruct;
-
 typedef struct __speedLimitControlStruct{
-    myI2CStruct *i2cData;
+    motorControlStruct *motorControl;
     navigationStruct *navData;
-    mappingStruct *mapData;
+    webServerStruct *webData;
     xQueueHandle inQ;
 } speedLimitControlStruct;
+
+typedef struct __irControlStruct{
+    navigationStruct *navData;
+    xQueueHandle inQ;
+} irControlStruct;
+
+typedef struct __powerStruct{
+    navigationStruct *navData;
+    xQueueHandle inQ;
+} powerStruct;
+
+typedef struct __webServerStruct{
+    xQueueHandle inQ;
+} webServerStruct;
 
 //I2C thread incoming and outgoing message types
 #define vtI2CMsgTypeMotor 1
@@ -43,24 +50,23 @@ typedef struct __speedLimitControlStruct{
 #define i2cMsgTypeTimer 3
 #define notifyRqstRecvdType 4
 
+//IR Control thread incoming message types
+#define irDataMsg 1
+
 //Motor Control thread incoming message types
-#define moveForwardMsg 1
-#define moveBackwardMsg 2
-#define rotateClockwiseMsg 3
-#define rotateCounterclockwiseMsg 4
-#define abortMsg 5
-#define encoderDataMsg 6
-#define motorTimerMsg 7
+#define setDirForwardMsg 1
+#define setDirReverseMsg 2
+#define setMotorSpeedMsg 3
+#define turnLeftMsg 4
+#define turnRightMsg 5
+#define motorStopMsg 6
+#define encoderDataMsg 7
 
 //Navigation thread incoming message types
-#define updateMoveForwardMsgType 1
-#define updateMoveBackwardMsgType 2
-#define updateRotateClockwiseMsgType 3
-#define updateRotateCounterclockwiseMsgType 4
-#define updateSpeedLimitDataMsgType 5
-
-//Mapping thread incoming message types
-#define angleMsg 1
+#define AIUpdateDistancesMsgType 1
+#define AIUpdateWallAnglesMsgType 2
+#define AIUpdateIsWallsMsgType 3
+#define AIUpdateFinishLineMsgType 4
 
 //Speed limit thread incoming message types
 #define colorSensorDataMsg 1
@@ -114,6 +120,8 @@ typedef struct __speedLimitControlStruct{
 #define UNKNOWN_MAPPING_MSG_TYPE 14
 #define INCORRECT_SPEED_LIMIT_MSG_FORMAT 15
 #define UNKNOWN_SPEED_LIMIT_MSG_TYPE 16
+#define INCORRECT_IR_MSG_FORMAT 17
+#define UNKNOWN_IR_MSG_TYPE 18
 
 #endif
 #endif

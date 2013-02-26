@@ -6,9 +6,10 @@
 #include "vtI2C.h"
 #include "i2c_ARM.h"
 #include "motorControl.h"
-#include "navigation.h"
+#include "irControl.h"
 #include "speedLimit.h"
-#include "myADC.h"
+// #include "power.h"
+#include "lcdTask.h"
 
 // Structure used to pass parameters to the task
 // Do not touch...
@@ -16,8 +17,9 @@ typedef struct __ConductorStruct {
 	vtI2CStruct *dev;
 	myI2CStruct *i2cData;
     motorControlStruct *motorControl;
-    navigationStruct *navData;
+    irControlStruct *irData;
     speedLimitControlStruct *speedData;
+    powerStruct *powerData;
     vtLCDStruct *lcdData;
 } vtConductorStruct;
 
@@ -27,14 +29,16 @@ typedef struct __ConductorStruct {
 //   threads.
 // Start the task.
 // Args:
-//   _conductorData: Data structure used by the task
-//   _uxPriority -- the priority you want this task to be run at
-//   _i2c: pointer to the data structure for an i2c interrupt handler
-//   _myi2c: pointer to the data structure for the i2c task
-//   _mc: pointer to the data structure for the motor control task
-//   _nav: pointer to the data structure for the navigation task
-//   _speed: pointer to the data structure for the speed limit control task
-void vStartConductorTask(vtConductorStruct *_conductorData,unsigned portBASE_TYPE _uxPriority, vtI2CStruct *_i2c,myI2CStruct *_myi2c, motorControlStruct *_mc, navigationStruct *_nav, speedLimitControlStruct *_speed, vtLCDStruct *_lcd);
+//   conductorData: Data structure used by the task
+//   uxPriority -- the priority you want this task to be run at
+//   i2cData: pointer to the data structure for an i2c interrupt handler
+//   myi2cData: pointer to the data structure for the i2c task
+//   motorControl: pointer to the data structure for the motor control task
+//   irData: pointer to the data structure for the IR control task
+//   speedData: pointer to the data structure for the speed limit control task
+//   powerData: pointer to the data structure for the power analysis task
+//   lcdData: pointer to the data structure for the LCD task
+void vStartConductorTask(vtConductorStruct *conductorData, unsigned portBASE_TYPE uxPriority, vtI2CStruct *i2c, myI2CStruct * myi2c, motorControlStruct *motorControl, irControlStruct *irData, speedLimitControlStruct *speedData, powerStruct *powerData, vtLCDStruct *lcdData);
 
 #endif
 #endif
