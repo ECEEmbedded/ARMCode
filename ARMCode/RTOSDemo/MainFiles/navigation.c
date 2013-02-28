@@ -156,6 +156,13 @@ uint8_t getDegrees(navigationMsg *buffer){
 // Here is where the declaration of any necessary variables occurs:
 // ...
 
+static typedef struct __navigationMsg {
+    uint8_t msgType;
+    uint8_t length;  // Length of the message
+    uint8_t buf[maxNavigationMsgLen+1]; // On the way in, message to be sent, on the way out, message received (if any)
+} navigationMsg;
+
+
 static navigationStruct *param;
 static motorControlStruct *motorControl;
 static vtLCDStruct *lcdData;

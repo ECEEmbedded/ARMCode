@@ -36,7 +36,6 @@ typedef struct __irControlStruct{
 } irControlStruct;
 
 typedef struct __powerStruct{
-    navigationStruct *navData;
     xQueueHandle inQ;
 } powerStruct;
 
@@ -53,6 +52,9 @@ typedef struct __webServerStruct{
 //IR Control thread incoming message types
 #define irDataMsg 1
 
+//Power thread incoming message types
+#define powerDataMsg 1
+
 //Motor Control thread incoming message types
 #define setDirForwardMsg 1
 #define setDirReverseMsg 2
@@ -67,6 +69,14 @@ typedef struct __webServerStruct{
 #define AIUpdateWallAnglesMsgType 2
 #define AIUpdateIsWallsMsgType 3
 #define AIUpdateFinishLineMsgType 4
+
+//Web Server thread incoming message types
+#define webNotifyCurrentSpeedMsgType 1
+#define webNotifySpeedLimitZoneMsgType 2
+#define webNotifyFinishLineMsgType 3
+#define webNotifyPowerMsgType 4
+#define webNotifyFastestTimeMsgType 5
+#define webNotifySpeedViolationMsgType 6
 
 //Speed limit thread incoming message types
 #define colorSensorDataMsg 1
@@ -122,6 +132,10 @@ typedef struct __webServerStruct{
 #define UNKNOWN_SPEED_LIMIT_MSG_TYPE 16
 #define INCORRECT_IR_MSG_FORMAT 17
 #define UNKNOWN_IR_MSG_TYPE 18
+#define INCORRECT_POWER_MSG_FORMAT 19
+#define UNKNOWN_POWER_MSG_TYPE 20
+#define INCORRECT_WEB_SERVER_MSG_FORMAT 21
+#define UNKNOWN_WEB_SERVER_MSG_TYPE 22
 
 #endif
 #endif

@@ -124,20 +124,24 @@ int getMsgType(myi2cMsg *buffer)
     return(buffer->msgType);
 }
 
-    // I2C commands for the ADC
-    const uint8_t i2cCmdInit[]= {0xAC,0x00};
-    const uint8_t i2cCmdStartConvert[]= {0xEE};
-    const uint8_t i2cCmdReadVals[]= {0xAA};
+static myI2CStruct *param;
+static vtI2CStruct *devPtr;
+
+// Buffer for receiving messages
+static myi2cMsg msgBuffer;
+
+// I2C commands for the ADC
+const uint8_t i2cCmdInit[]= {0xAC,0x00};
+const uint8_t i2cCmdStartConvert[]= {0xEE};
+const uint8_t i2cCmdReadVals[]= {0xAA};
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vi2cUpdateTask, pvParameters )
 {
     // Get the parameters
-    myI2CStruct *param = (myI2CStruct *) pvParameters;
+    param = (myI2CStruct *) pvParameters;
     // Get the I2C device pointer
-    vtI2CStruct *devPtr = param->dev;
-    // Buffer for receiving messages
-    myi2cMsg msgBuffer;
+    devPtr = param->dev;
 
     // Like all good tasks, this should never exit
     for(;;)

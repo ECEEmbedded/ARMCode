@@ -1,10 +1,10 @@
 #include "myDefs.h"
 #if MILESTONE_2==1
-#ifndef MAPPING_H
-#define MAPPING_H
+#ifndef POWER_H
+#define POWER_H
 #include "myTypes.h"
 
-#define maxMappingMsgLen 5
+#define maxPowerMsgLen 5
 
 // Public API
 //
@@ -14,7 +14,7 @@
 //   mapData: Data structure used by the task
 //   uxPriority -- the priority you want this task to be run at
 //   navData: pointer to the data structure for the navigation task
-void vStartMappingTask(mappingStruct *mapData,unsigned portBASE_TYPE uxPriority, navigationStruct *navData, speedLimitControlStruct *speedData, vtLCDStruct *lcdData);
+void vStartPowerTask(powerStruct *powerData, unsigned portBASE_TYPE uxPriority);
 
 // Request the orientation information of the rover from the Navigation thread
 // Args:
@@ -22,7 +22,7 @@ void vStartMappingTask(mappingStruct *mapData,unsigned portBASE_TYPE uxPriority,
 //   degrees -- the orientation of rover is facing in degrees
 // Return:
 //   Result of the call to xQueueSend()
-portBASE_TYPE sendAngleMsg(mappingStruct *mapData,uint8_t degrees);
+portBASE_TYPE conductorSendPowerDataMsg(powerStruct *powerData, uint8_t *data, uint8_t length);
 
 #endif
 #endif

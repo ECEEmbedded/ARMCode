@@ -43,7 +43,7 @@ static portTASK_FUNCTION_PROTO( vMotorControlTask, pvParameters );
 
 /*-----------------------------------------------------------*/
 // Public API
-void vStartMotorControlTask(motorControlStruct *motorControlData, unsigned portBASE_TYPE uxPriority, myI2CStruct *myi2c, webServerStruct *webData, vtLCDStruct *lcdData)
+void vStartMotorControlTask(motorControlStruct *params, unsigned portBASE_TYPE uxPriority, myI2CStruct *myi2c, webServerStruct *webData, vtLCDStruct *lcdData)
 {
     // Create the queue that will be used to talk to this task
     if ((params->inQ = xQueueCreate(motorControlQLen,sizeof(motorControlMsg))) == NULL) {

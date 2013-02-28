@@ -43,7 +43,7 @@ static portTASK_FUNCTION_PROTO( vSpeedLimitTask, pvParameters );
 
 /*-----------------------------------------------------------*/
 // Public API
-void vStartSpeedLimitTask(speedLimitControlStruct *speedData, unsigned portBASE_TYPE uxPriority, motorControlStruct *motorControl, navigationStruct *navData, webServerStruct *webData)
+void vStartSpeedLimitTask(speedLimitControlStruct *params, unsigned portBASE_TYPE uxPriority, motorControlStruct *motorControl, navigationStruct *navData, webServerStruct *webData)
 {
     // Create the queue that will be used to talk to this task
     if ((params->inQ = xQueueCreate(speedQLen,sizeof(speedLimitMsg))) == NULL) {
