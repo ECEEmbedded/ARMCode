@@ -15,7 +15,7 @@
 /* include files. */
 #include "vtUtilities.h"
 #include "myTypes.h"
-//#include "webServer.h"
+#include "webServer.h"
 #include "motorControl.h"
 #include "navigation.h"
 #include "speedLimit.h"

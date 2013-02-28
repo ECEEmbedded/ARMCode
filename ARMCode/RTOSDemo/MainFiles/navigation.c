@@ -17,7 +17,7 @@
 #include "myTypes.h"
 #include "motorControl.h"
 #include "navigation.h"
-#include "lcdTask.h"
+#include "LCDtask.h"
 /* *********************************************** */
 
 #define INSPECT_STACK 1

@@ -15,6 +15,7 @@
 /* include files. */
 #include "vtUtilities.h"
 #include "myTypes.h"
+#include "power.h"
 /* *********************************************** */
 
 #define INSPECT_STACK 1

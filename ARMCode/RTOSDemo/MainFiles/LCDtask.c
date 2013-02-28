@@ -10,7 +10,7 @@
 /* include files. */
 #include "GLCD.h"
 #include "vtUtilities.h"
-#include "lcdTask.h"
+#include "LCDtask.h"
 #include "string.h"
 #include "myTypes.h"
 

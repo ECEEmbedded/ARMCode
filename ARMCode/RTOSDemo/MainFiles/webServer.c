@@ -15,9 +15,7 @@
 /* include files. */
 #include "vtUtilities.h"
 #include "myTypes.h"
-#include "motorControl.h"
-#include "navigation.h"
-#include "lcdTask.h"
+#include "webServer.h"
 /* *********************************************** */
 
 #define INSPECT_STACK 1

@@ -4,10 +4,6 @@
 #define TYPES_H
 
 #include "i2c_ARM.h"
-#include "motorControl.h"
-#include "mapping.h"
-#include "speedLimit.h"
-#include "lcdTask.h"
 
 // Our data structures for our tasks:
 typedef struct __navigationStruct{

@@ -3,6 +3,7 @@
 #ifndef IR_CONTROL_H
 #define IR_CONTROL_H
 #include "myTypes.h"
+#include "navigation.h"
 
 #define maxIRMsgLen 5
 

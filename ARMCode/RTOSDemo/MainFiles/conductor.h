@@ -8,8 +8,8 @@
 #include "motorControl.h"
 #include "irControl.h"
 #include "speedLimit.h"
-// #include "power.h"
-#include "lcdTask.h"
+#include "power.h"
+#include "LCDtask.h"
 
 // Structure used to pass parameters to the task
 // Do not touch...

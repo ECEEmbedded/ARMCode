@@ -81,7 +81,7 @@ You should read the note above.
 
 // Include files for rover racer project
 #include "vtUtilities.h"
-#include "lcdTask.h"
+#include "LCDtask.h"
 #include "i2c_ARM.h"
 #include "vtI2C.h"
 #include "myTimers.h"
@@ -91,8 +91,8 @@ You should read the note above.
 #include "speedLimit.h"
 #include "myTypes.h"
 //#include "myADC.h"
-// #include "power.h"
-// #include "webServer.h"
+#include "power.h"
+#include "webServer.h"
 
 /* syscalls initialization -- *must* occur first */
 #include "syscalls.h"

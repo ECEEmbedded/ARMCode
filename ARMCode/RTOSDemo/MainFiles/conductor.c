@@ -21,8 +21,8 @@
 #include "motorControl.h"
 #include "irControl.h"
 #include "speedLimit.h"
-// #include "power.h"
-#include "lcdTask.h"
+#include "power.h"
+#include "LCDtask.h"
 
 /* *********************************************** */
 // definitions and data structures that are private to this file

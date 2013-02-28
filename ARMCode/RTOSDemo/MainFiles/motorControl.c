@@ -17,8 +17,8 @@
 #include "i2c_ARM.h"
 #include "myTypes.h"
 #include "motorControl.h"
-//#include "webServer.h"
-#include "lcdTask.h"
+#include "webServer.h"
+#include "LCDtask.h"
 /* *********************************************** */
 
 #define INSPECT_STACK 1

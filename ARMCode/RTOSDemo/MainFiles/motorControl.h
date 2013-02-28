@@ -3,9 +3,9 @@
 #ifndef MOTOR_CONTROL_H
 #define MOTOR_CONTROL_H
 #include "i2c_ARM.h"
-//#include "webServer.h"
+#include "webServer.h"
 #include "myTypes.h"
-#include "lcdTask.h"
+#include "LCDtask.h"
 
 #define maxMotorMsgLen 5
 

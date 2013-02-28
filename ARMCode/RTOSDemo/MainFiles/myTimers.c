@@ -12,7 +12,7 @@
 
 /* include files. */
 #include "vtUtilities.h"
-#include "lcdTask.h"
+#include "LCDtask.h"
 #include "myTimers.h"
 #include "myTypes.h"
 

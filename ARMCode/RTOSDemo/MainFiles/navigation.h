@@ -3,6 +3,8 @@
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 #include "myTypes.h"
+#include "motorControl.h"
+#include "LCDtask.h"
 
 #define maxNavigationMsgLen 5
 
