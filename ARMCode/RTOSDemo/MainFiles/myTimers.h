@@ -9,7 +9,8 @@
 #include "motorControl.h"
 
 void startTimerFori2c(myI2CStruct *i2cdata);
-// void startTimerForMotor(motorControlStruct *motordata);
+void startTimerForMotor(motorControlStruct *motordata);
+void startTimerForNav(navigationStruct *navData);
 
 #endif
 #endif

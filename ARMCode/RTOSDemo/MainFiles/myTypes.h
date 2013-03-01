@@ -65,6 +65,7 @@ typedef struct __webServerStruct{
 #define AIUpdateWallAnglesMsgType 2
 #define AIUpdateIsWallsMsgType 3
 #define AIUpdateFinishLineMsgType 4
+#define navTimerMsgType 5
 
 //Web Server thread incoming message types
 #define webNotifyCurrentSpeedMsgType 1

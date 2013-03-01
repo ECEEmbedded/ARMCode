@@ -130,28 +130,41 @@ portBASE_TYPE AIUpdateFinishLine(navigationStruct *navData, uint8_t finishLine)
     return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
+portBASE_TYPE sendNavTimerMsg(navigationStruct *navData, portTickType ticksElapsed, portTickType ticksToBlock)
+{
+    if (navData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    navigationMsg buffer;
+    buffer.length = sizeof(ticksElapsed);
+    if (buffer.length > maxNavigationMsgLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(buffer.length);
+    }
+    memcpy(buffer.buf,(char *)&ticksElapsed,sizeof(ticksElapsed));
+    buffer.msgType = navTimerMsgType;
+    return(xQueueSend(navData->inQ,(void *) (&buffer),ticksToBlock));
+}
+
 // End of Public API
 /*-----------------------------------------------------------*/
 
 // Here is where the declaration of any custom helper functions occurs:
 // ...
 
-uint8_t getCentimeters(navigationMsg *buffer){
-    return buffer->buf[0];
-}
+// Just some example functions that you could use to pull out your data
+// depending on what msg type it is and what not...
 
-uint8_t getDegrees(navigationMsg *buffer){
-    return buffer->buf[0];
-}
+    // uint8_t getCentimeters(navigationMsg *buffer){
+    //     return buffer->buf[0];
+    // }
+
+    // uint8_t getDegrees(navigationMsg *buffer){
+    //     return buffer->buf[0];
+    // }
 
 // Here is where the declaration of any custom #define statements occurs:
 // ...
-
-#define None 0
-#define MoveForward 1
-#define RotateClockwise 2
-#define RotateCounterClockwise 3
-#define MoveBackward 4
 
 // Here is where the declaration of any necessary variables occurs:
 // ...
@@ -190,6 +203,10 @@ static portTASK_FUNCTION( vNavigationTask, pvParameters )
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
         switch(msgBuffer.msgType){
+            case navTimerMsgType:
+            {
+                break;
+            }
             case AIUpdateDistancesMsgType:
             {
                 break;
