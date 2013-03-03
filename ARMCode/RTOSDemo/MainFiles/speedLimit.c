@@ -71,7 +71,7 @@ portBASE_TYPE conductorSendColorSensorDataMsg(speedLimitControlStruct *speedData
         VT_HANDLE_FATAL_ERROR(INCORRECT_SPEED_LIMIT_MSG_FORMAT);
     }
     memcpy(buffer.buf,data,length);
-    buffer.msgType = colorSensorDataMsg;
+    buffer.msgType = colorSensorDataMsgType;
     return(xQueueSend(speedData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -121,7 +121,7 @@ static portTASK_FUNCTION( vSpeedLimitTask, pvParameters )
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
         switch(msgBuffer.msgType){
-            case colorSensorDataMsg:
+            case colorSensorDataMsgType:
             {
                 break;
             }

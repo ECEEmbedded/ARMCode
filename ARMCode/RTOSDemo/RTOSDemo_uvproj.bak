@@ -616,49 +616,24 @@
               <FilePath>.\MainFiles\myDefs.h</FilePath>
             </File>
             <File>
-              <FileName>conductor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\MainFiles\conductor.h</FilePath>
-            </File>
-            <File>
               <FileName>I2CTaskMsgTypes.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\MainFiles\I2CTaskMsgTypes.h</FilePath>
             </File>
             <File>
-              <FileName>i2cTemp.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\MainFiles\i2cTemp.h</FilePath>
-            </File>
-            <File>
               <FileName>i2cTemp_milestone1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\MainFiles\i2cTemp_milestone1.c</FilePath>
-            </File>
-            <File>
-              <FileName>lcdTask.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\MainFiles\lcdTask.h</FilePath>
+              <FilePath>.\MainFiles/i2cTemp_milestone1.c</FilePath>
             </File>
             <File>
               <FileName>myADC.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\MainFiles\myADC.c</FilePath>
-            </File>
-            <File>
-              <FileName>myADC.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\MainFiles\myADC.h</FilePath>
-            </File>
-            <File>
-              <FileName>myTimers.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\MainFiles\myTimers.h</FilePath>
+              <FilePath>.\MainFiles/myADC.c</FilePath>
             </File>
             <File>
               <FileName>myTimers_milestone1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\MainFiles\myTimers_milestone1.c</FilePath>
+              <FilePath>.\MainFiles/myTimers_milestone1.c</FilePath>
             </File>
           </Files>
         </Group>

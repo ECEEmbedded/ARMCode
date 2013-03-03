@@ -1,4 +1,4 @@
-ObjectFiles/conductor.o: MainFiles/conductor.c MainFiles/myDefs.h \
+ObjectFiles/ircontrol.o: MainFiles/irControl.c MainFiles/myDefs.h \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/stdlib.h \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/machine/ieeefp.h \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/_ansi.h \
@@ -36,11 +36,9 @@ ObjectFiles/conductor.o: MainFiles/conductor.c MainFiles/myDefs.h \
  ../FreeRTOS/Source/include/projdefs.h \
  ../FreeRTOS/Source/include/semphr.h ../FreeRTOS/Source/include/queue.h \
  ../vtCode/vtUtilities.h ../NXPDrivers/include/lpc_types.h \
- C:/Keil/ARM/INC/NXP/LPC17xx/lpc17xx.h ../vtCode/vtI2C/vtI2C.h \
+ C:/Keil/ARM/INC/NXP/LPC17xx/lpc17xx.h MainFiles/irControl.h \
+ MainFiles/myTypes.h MainFiles/i2c_ARM.h ../vtCode/vtI2C/vtI2C.h \
  ../NXPDrivers/include/lpc17xx_i2c.h ../NXPDrivers/include/lpc_types.h \
- ../FreeRTOS/Source/include/projDefs.h MainFiles/i2c_ARM.h \
- MainFiles/LCDtask.h ../FreeRTOS/Source/include/queue.h \
- ../FreeRTOS/Source/include/timers.h MainFiles/myTypes.h \
- MainFiles/conductor.h MainFiles/motorControl.h MainFiles/webServer.h \
- MainFiles/irControl.h MainFiles/navigation.h MainFiles/speedLimit.h \
- MainFiles/power.h
+ ../FreeRTOS/Source/include/projDefs.h MainFiles/LCDtask.h \
+ ../FreeRTOS/Source/include/queue.h ../FreeRTOS/Source/include/timers.h \
+ MainFiles/navigation.h MainFiles/motorControl.h MainFiles/webServer.h

@@ -6,11 +6,9 @@
 #include "i2c_ARM.h"
 
 // Our data structures for our tasks:
-typedef struct __navigationStruct{
-    motorControlStruct *motorControl;
-    vtLCDStruct *lcdData;
+typedef struct __webServerStruct{
     xQueueHandle inQ;
-} navigationStruct;
+} webServerStruct;
 
 typedef struct __motorControlStruct {
     myI2CStruct *i2cData;
@@ -18,6 +16,12 @@ typedef struct __motorControlStruct {
     vtLCDStruct *lcdData;
     xQueueHandle inQ;
 } motorControlStruct;
+
+typedef struct __navigationStruct{
+    motorControlStruct *motorControl;
+    vtLCDStruct *lcdData;
+    xQueueHandle inQ;
+} navigationStruct;
 
 typedef struct __speedLimitControlStruct{
     motorControlStruct *motorControl;
@@ -35,37 +39,34 @@ typedef struct __powerStruct{
     xQueueHandle inQ;
 } powerStruct;
 
-typedef struct __webServerStruct{
-    xQueueHandle inQ;
-} webServerStruct;
-
 //I2C thread incoming and outgoing message types
-#define vtI2CMsgTypeMotor 1
-#define vtI2CMsgTypeRead 2
-#define i2cMsgTypeTimer 3
-#define notifyRqstRecvdType 4
+#define vtI2CMotorMsgType 1
+#define vtI2CReadMsgType 2
+#define i2cTimerMsgType 3
+#define notifyRqstRecvdMsgType 4
 
 //IR Control thread incoming message types
-#define irDataMsg 1
+#define irDataMsgType 1
 
 //Power thread incoming message types
-#define powerDataMsg 1
+#define powerDataMsgType 1
 
 //Motor Control thread incoming message types
-#define setDirForwardMsg 1
-#define setDirReverseMsg 2
-#define setMotorSpeedMsg 3
-#define turnLeftMsg 4
-#define turnRightMsg 5
-#define motorStopMsg 6
-#define encoderDataMsg 7
+#define motorTimerMsgType 1
+#define setDirForwardMsgType 2
+#define setDirReverseMsgType 3
+#define setMotorSpeedMsgType 4
+#define turnLeftMsgType 5
+#define turnRightMsgType 6
+#define motorStopMsgType 7
+#define encoderDataMsgType 8
 
 //Navigation thread incoming message types
-#define AIUpdateDistancesMsgType 1
-#define AIUpdateWallAnglesMsgType 2
-#define AIUpdateIsWallsMsgType 3
-#define AIUpdateFinishLineMsgType 4
-#define navTimerMsgType 5
+#define navTimerMsgType 1
+#define AIUpdateDistancesMsgType 2
+#define AIUpdateWallAnglesMsgType 3
+#define AIUpdateIsWallsMsgType 4
+#define AIUpdateFinishLineMsgType 5
 
 //Web Server thread incoming message types
 #define webNotifyCurrentSpeedMsgType 1
@@ -76,15 +77,15 @@ typedef struct __webServerStruct{
 #define webNotifySpeedViolationMsgType 6
 
 //Speed limit thread incoming message types
-#define colorSensorDataMsg 1
+#define colorSensorDataMsgType 1
 
 //LCD message types
 // a timer message -- not to be printed
-#define LCDMsgTypeTimer 1
+#define LCDTimerMsgType 1
 // a message to be printed
-#define LCDMsgTypePrint 2
+#define LCDPrintMsgType 2
 // Added by Matthew Ibarra for ADC LCD Task Message 2/4/2013
-#define LCDMsgTypeADC 3
+#define LCDADCMsgType 3
 
 //I2C message types
 //Empty Messages
@@ -92,23 +93,29 @@ typedef struct __webServerStruct{
 #define ENCODERS_EMPTY_MESSAGE 0x51
 #define IR_EMPTY_MESSAGE 0x52
 #define ADC_EMPTY_MESSAGE 0x53
-#define GENERIC_EMPTY_MESSAGE 0x54
+#define POWER_EMPTY_MESSAGE 0x54
 #define PIC2680_EMPTY_MESSAGE 0x55
 #define PIC26J50_EMPTY_MESSAGE 0x56
+#define GENERIC_EMPTY_MESSAGE 0x57
+
 //Non-empty messages
 #define COLOR_SENSOR_MESSAGE 0x10
 #define ENCODERS_MESSAGE 0x11
 #define IR_MESSAGE 0x12
-#define PIC2680_ADC_MESSAGE 0x13
-#define PIC26J50_ADC_MESSAGE 0x14
+#define ADC_MESSAGE 0x13
+#define POWER_MESSAGE 0x14
+#define PIC2680_ADC_MESSAGE 0x15
+#define PIC26J50_ADC_MESSAGE 0x16
 
 //I2C error message types to be sent to Web Server
 #define COLOR_SENSOR_RQST_DROPPED 0xF0
 #define ENCODERS_RQST_DROPPED 0xF1
 #define IR_RQST_DROPPED 0xF2
 #define MOTOR_RQST_DROPPED 0xF3
-#define PIC2680_ERROR 0xF4
-#define PIC26J50_ERROR 0xF5
+#define ADC_RQST_DROPPED 0xF4		//Not sure if this is needed yet but adding anyways
+#define POWER_RQST_DROPPED 0xF5		//Not sure if this is needed yet but adding anyways
+#define PIC2680_ERROR 0xF6
+#define PIC26J50_ERROR 0xF7
 
 //Error codes
 #define VT_I2C_Q_FULL 1

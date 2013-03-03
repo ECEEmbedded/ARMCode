@@ -78,6 +78,6 @@ portBASE_TYPE sendMotorStop(motorControlStruct *motorControlData);
 //   Result of the call to xQueueSend()
 portBASE_TYPE conductorSendMotorEncoderDataMsg(motorControlStruct *motorControlData, uint8_t *data, uint8_t length);
 
-//portBASE_TYPE sendmotorTimerMsg(motorControlStruct *motorData, portTickType ticksElapsed, portTickType ticksToBlock);
+portBASE_TYPE sendMotorTimerMsg(motorControlStruct *motorData, portTickType ticksElapsed, portTickType ticksToBlock);
 #endif
 #endif

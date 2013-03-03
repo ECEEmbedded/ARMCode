@@ -85,7 +85,7 @@ void motorTimerCallback(xTimerHandle pxTimer)
 		motorControlStruct *ptr = (motorControlStruct *) pvTimerGetTimerID(pxTimer);
 		// Make this non-blocking *but* be aware that if the queue is full, this routine
 		// will not care, so if you care, you need to check something
-		if (sendmotorTimerMsg(ptr,motorWRITE_RATE_BASE,0) == errQUEUE_FULL) {
+		if (sendMotorTimerMsg(ptr,motorWRITE_RATE_BASE,0) == errQUEUE_FULL) {
 			// Here is where you would do something if you wanted to handle the queue being full
 			VT_HANDLE_FATAL_ERROR(I2C_Q_FULL);
 		}

@@ -74,7 +74,7 @@ portBASE_TYPE AIUpdateDistences(navigationStruct *navData, uint8_t l1, uint8_t l
     buffer.buf[3] = r1;
     buffer.buf[4] = r2;
     buffer.buf[5] = r3;
-    buffer.msgType = AIUpdateDistancesMsg;
+    buffer.msgType = AIUpdateDistancesMsgType;
     return(xQueueSend(navData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -168,13 +168,6 @@ portBASE_TYPE sendNavTimerMsg(navigationStruct *navData, portTickType ticksElaps
 
 // Here is where the declaration of any necessary variables occurs:
 // ...
-
-static typedef struct __navigationMsg {
-    uint8_t msgType;
-    uint8_t length;  // Length of the message
-    uint8_t buf[maxNavigationMsgLen+1]; // On the way in, message to be sent, on the way out, message received (if any)
-} navigationMsg;
-
 
 static navigationStruct *param;
 static motorControlStruct *motorControl;

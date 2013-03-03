@@ -175,11 +175,13 @@ static motorControlStruct motorControl;
 // Required data structure for Navigation task
 static navigationStruct navData;
 // Required data structure for IR Control task
-static irControlStruct irData
+static irControlStruct irData;
 // Required data structure for Speed Limit task
 static speedLimitControlStruct speedData;
-// Required data structure for web server task
-//static webServerStruct webData;
+// Required data structure for Web Server task
+static webServerStruct webData;
+// Required data structure for Power task
+static powerStruct powerData;
 
 /*-----------------------------------------------------------*/
 

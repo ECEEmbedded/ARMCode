@@ -13,13 +13,15 @@ ObjectFiles/main.o: MainFiles/main.c MainFiles/myDefs.h \
  ../FreeRTOS/Source/include/task.h ../FreeRTOS/Source/include/list.h \
  ../FreeRTOS/Demo/Common/include/partest.h ../vtCode/vtUtilities.h \
  ../NXPDrivers/include/lpc_types.h C:/Keil/ARM/INC/NXP/LPC17xx/lpc17xx.h \
- MainFiles/lcdTask.h ../FreeRTOS/Source/include/queue.h \
- ../FreeRTOS/Source/include/timers.h MainFiles/i2cTemp.h \
+ MainFiles/LCDtask.h ../FreeRTOS/Source/include/queue.h \
+ ../FreeRTOS/Source/include/timers.h MainFiles/i2c_ARM.h \
  ../vtCode/vtI2C/vtI2C.h ../NXPDrivers/include/lpc17xx_i2c.h \
  ../NXPDrivers/include/lpc_types.h ../FreeRTOS/Source/include/projDefs.h \
  ../FreeRTOS/Source/include/semphr.h ../FreeRTOS/Source/include/queue.h \
- MainFiles/myTimers.h MainFiles/conductor.h ../SystemFiles/syscalls.h \
- ../LPCUSB/extUSB.h \
+ MainFiles/myTimers.h MainFiles/navigation.h MainFiles/myTypes.h \
+ MainFiles/motorControl.h MainFiles/webServer.h MainFiles/conductor.h \
+ MainFiles/irControl.h MainFiles/speedLimit.h MainFiles/power.h \
+ ../SystemFiles/syscalls.h ../LPCUSB/extUSB.h \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/stdio.h \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/_ansi.h \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/newlib.h \

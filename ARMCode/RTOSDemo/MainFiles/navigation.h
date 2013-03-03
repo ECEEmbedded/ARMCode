@@ -31,5 +31,7 @@ portBASE_TYPE AIUpdateIsWalls(navigationStruct *navData, uint8_t wallFront, uint
 
 portBASE_TYPE AIUpdateFinishLine(navigationStruct *navData, uint8_t finishLine);
 
+portBASE_TYPE sendNavTimerMsg(navigationStruct *navData, portTickType ticksElapsed, portTickType ticksToBlock);
+
 #endif
 #endif

@@ -14,6 +14,7 @@
 
 /* include files. */
 #include "vtUtilities.h"
+#include "irControl.h"
 #include "myTypes.h"
 #include "navigation.h"
 /* *********************************************** */
@@ -66,7 +67,7 @@ portBASE_TYPE conductorSendIRSensorDataMsg(irControlStruct *irData, uint8_t *dat
         VT_HANDLE_FATAL_ERROR(INCORRECT_IR_MSG_FORMAT);
     }
     memcpy(buffer.buf, data, length);
-    buffer.msgType = irDataMsg;
+    buffer.msgType = irDataMsgType;
     return(xQueueSend(irData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -79,6 +80,14 @@ portBASE_TYPE conductorSendIRSensorDataMsg(irControlStruct *irData, uint8_t *dat
 // Here is where the declaration of any custom #define statements occurs:
 // ...
 
+
+// Here is where the declaration of static task pointers occurs; they will be initialized below.
+static irControlStruct *param;
+static navigationStruct *navData;
+
+// Buffer for receiving messages - declaration
+static irMsg msgBuffer;
+
 // Here is where the declaration of any necessary variables occurs:
 // ...
 static unsigned int t;
@@ -89,13 +98,11 @@ static int y;
 static portTASK_FUNCTION( vIRTask, pvParameters )
 {
     // Get the parameters
-    irControlStruct *param = (irControlStruct *) pvParameters;
+    param = (irControlStruct *) pvParameters;
     // Get the other necessary tasks' task pointers like this:
-    navigationStruct *navData = param->navData;
+    navData = param->navData;
     // Repeat as necessary
     // ...
-    // Buffer for receiving messages
-    irMsg msgBuffer;
 
     // Initialize variables you declared above this function
     t = 0;
@@ -110,7 +117,7 @@ static portTASK_FUNCTION( vIRTask, pvParameters )
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
         switch(msgBuffer.msgType){
-            case irDataMsg:
+            case irDataMsgType:
             {
                 break;
             }

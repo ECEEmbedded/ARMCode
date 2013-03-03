@@ -71,7 +71,7 @@ portBASE_TYPE sendi2cTimerMsg(myI2CStruct *i2cData,portTickType ticksElapsed,por
         VT_HANDLE_FATAL_ERROR(buffer.length);
     }
     memcpy(buffer.buf,(char *)&ticksElapsed,sizeof(ticksElapsed));
-    buffer.msgType = i2cMsgTypeTimer;
+    buffer.msgType = i2cTimerMsgType;
     return(xQueueSend(i2cData->inQ,(void *) (&buffer),ticksToBlock));
 }
 
@@ -90,7 +90,7 @@ portBASE_TYPE sendi2cMotorMsg(myI2CStruct *i2cData, uint8_t leftValue, uint8_t r
     buffer.buf[1] = 0x00;
     buffer.buf[2] = leftValue;
     buffer.buf[3] = rightValue;
-    buffer.msgType = vtI2CMsgTypeMotor;
+    buffer.msgType = vtI2CMotorMsgType;
     return(xQueueSend(i2cData->inQ,(void *) (&buffer),ticksToBlock));
 }
 
@@ -105,7 +105,7 @@ portBASE_TYPE notifyRequestRecvd(myI2CStruct *i2cData,portTickType ticksToBlock)
         // no room for this message
         VT_HANDLE_FATAL_ERROR(INCORRECT_I2C_MSG_FORMAT);
     }
-    buffer.msgType = notifyRqstRecvdType;
+    buffer.msgType = notifyRqstRecvdMsgType;
     return(xQueueSend(i2cData->inQ,(void *) (&buffer),ticksToBlock));
 }
 
@@ -151,20 +151,20 @@ static portTASK_FUNCTION( vi2cUpdateTask, pvParameters )
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
         switch(getMsgType(&msgBuffer)) {
-            case i2cMsgTypeTimer: {
-                //Poll local 2680 for data
+            case i2cTimerMsgType: {
+                // Poll local 2680 for data
                 notifyRequestSent();
-                if (vtI2CEnQ(devPtr,vtI2CMsgTypeRead,SLAVE_ADDR,0,0,I2C_MSG_SIZE) != pdTRUE) {
+                if (vtI2CEnQ(devPtr,vtI2CReadMsgType,SLAVE_ADDR,0,0,I2C_MSG_SIZE) != pdTRUE) {
                     VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
                 }
             }
-            case vtI2CMsgTypeMotor: {
-                //Send motor command to local 2680
-                if (vtI2CEnQ(devPtr,vtI2CMsgTypeMotor,SLAVE_ADDR,msgBuffer.length,msgBuffer.buf,0) != pdTRUE){
+            case vtI2CMotorMsgType: {
+                // Send motor command to local 2680
+                if (vtI2CEnQ(devPtr,vtI2CMotorMsgType,SLAVE_ADDR,msgBuffer.length,msgBuffer.buf,0) != pdTRUE){
                     VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
                 }
             }
-            case notifyRqstRecvdType: {
+            case notifyRqstRecvdMsgType: {
                 if(requestSent == 0){
                     // Send I2C Error Message to Web Server
                 }

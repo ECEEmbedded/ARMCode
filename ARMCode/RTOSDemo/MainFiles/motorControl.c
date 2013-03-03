@@ -70,7 +70,7 @@ portBASE_TYPE sendMotorSetDirForward(motorControlStruct *motorControlData)
         // no room for this message
         VT_HANDLE_FATAL_ERROR(INCORRECT_MOTOR_CONTROL_MSG_FORMAT);
     }
-    buffer.msgType = setDirForwardMsg;
+    buffer.msgType = setDirForwardMsgType;
     return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -85,7 +85,7 @@ portBASE_TYPE sendMotorSetDirReverse(motorControlStruct *motorControlData)
         // no room for this message
         VT_HANDLE_FATAL_ERROR(INCORRECT_MOTOR_CONTROL_MSG_FORMAT);
     }
-    buffer.msgType = setDirReverseMsg;
+    buffer.msgType = setDirReverseMsgType;
     return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -101,7 +101,7 @@ portBASE_TYPE sendMotorSetSpeed(motorControlStruct *motorControlData, uint8_t sp
         VT_HANDLE_FATAL_ERROR(INCORRECT_MOTOR_CONTROL_MSG_FORMAT);
     }
     buffer.buf[0] = speed;
-    buffer.msgType = setMotorSpeedMsg;
+    buffer.msgType = setMotorSpeedMsgType;
     return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -117,7 +117,7 @@ portBASE_TYPE sendMotorTurnLeft(motorControlStruct *motorControlData, uint8_t ma
         VT_HANDLE_FATAL_ERROR(INCORRECT_MOTOR_CONTROL_MSG_FORMAT);
     }
     buffer.buf[0] = mag;
-    buffer.msgType = turnLeftMsg;
+    buffer.msgType = turnLeftMsgType;
     return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -133,7 +133,7 @@ portBASE_TYPE sendMotorTurnRight(motorControlStruct *motorControlData, uint8_t m
         VT_HANDLE_FATAL_ERROR(INCORRECT_MOTOR_CONTROL_MSG_FORMAT);
     }
     buffer.buf[0] = mag;
-    buffer.msgType = turnRightMsg;
+    buffer.msgType = turnRightMsgType;
     return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -148,7 +148,7 @@ portBASE_TYPE sendMotorStop(motorControlStruct *motorControlData)
         // no room for this message
         VT_HANDLE_FATAL_ERROR(INCORRECT_MOTOR_CONTROL_MSG_FORMAT);
     }
-    buffer.msgType = motorStopMsg;
+    buffer.msgType = motorStopMsgType;
     return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -164,8 +164,24 @@ portBASE_TYPE conductorSendMotorEncoderDataMsg(motorControlStruct *motorControlD
         VT_HANDLE_FATAL_ERROR(INCORRECT_MOTOR_CONTROL_MSG_FORMAT);
     }
     memcpy(buffer.buf,data,length);
-    buffer.msgType = encoderDataMsg;
+    buffer.msgType = encoderDataMsgType;
     return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
+}
+
+portBASE_TYPE sendMotorTimerMsg(motorControlStruct *motorData, portTickType ticksElapsed, portTickType ticksToBlock)
+{
+    if (motorData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    motorControlMsg buffer;
+    buffer.length = sizeof(ticksElapsed);
+    if (buffer.length > maxMotorMsgLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(buffer.length);
+    }
+    memcpy(buffer.buf,(char *)&ticksElapsed,sizeof(ticksElapsed));
+    buffer.msgType = motorTimerMsgType;
+    return(xQueueSend(motorData->inQ,(void *) (&buffer),ticksToBlock));
 }
 
 // End of Public API
@@ -186,7 +202,7 @@ portBASE_TYPE conductorSendMotorEncoderDataMsg(motorControlStruct *motorControlD
 #define FORWARD 1
 #define RIGHT 2
 #define LEFT 3
-#define BACKWARD 4
+#define REVERSE 4
 
 //#define SEND_COUNTS_TO_LCD
 
@@ -220,13 +236,13 @@ static vtLCDStruct *lcdData;
 // Buffer for receiving messages
 static motorControlMsg msgBuffer;
 static unsigned int leftEncoderCount, rightEncoderCount;
-static unsigned int targetVal;
+// static unsigned int targetVal;
 
-static unsigned int forward, backward, right, left;
+// static unsigned int forward, backward, right, left;
 
-static uint8_t delay;
+// static uint8_t delay;
 
-static char msg[12];
+// static char msg[12];
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vMotorControlTask, pvParameters )
@@ -253,7 +269,11 @@ static portTASK_FUNCTION( vMotorControlTask, pvParameters )
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
         switch(msgBuffer.msgType){
-            case setDirectionMsg:
+			case motorTimerMsgType:
+			{
+				break;
+			}
+            case setDirForwardMsgType:
             {
                 currentOp = FORWARD;
                 lastOp = FORWARD;
@@ -263,25 +283,29 @@ static portTASK_FUNCTION( vMotorControlTask, pvParameters )
                 //sendi2cMotorMsg(i2cData,MOTOR_FORWARD_SPEED + RIGHT_MOTOR_OFFSET,MOTOR_FORWARD_SPEED, portMAX_DELAY);
                 break;
             }
-            case setMotorSpeedMsg:
+			case setDirReverseMsgType:
             {
                 break;
             }
-            case turnLeftMsg:
+            case setMotorSpeedMsgType:
             {
                 break;
             }
-            case turnRightMsg:
+            case turnLeftMsgType:
             {
                 break;
             }
-            case motorStopMsg:
+            case turnRightMsgType:
+            {
+                break;
+            }
+            case motorStopMsgType:
             {
                 currentOp = NONE;
                 //sendi2cMotorMsg(i2cData,MOTOR_STOP_SPEED + RIGHT_MOTOR_OFFSET,MOTOR_STOP_SPEED, portMAX_DELAY);
                 break;
             }
-            case encoderDataMsg:
+            case encoderDataMsgType:
             {
                 rightEncoderCount += getRightCount(&msgBuffer);
                 leftEncoderCount += getLeftCount(&msgBuffer);

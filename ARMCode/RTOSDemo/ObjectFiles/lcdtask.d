@@ -36,4 +36,8 @@ ObjectFiles/lcdtask.o: MainFiles/LCDtask.c MainFiles/myDefs.h \
  MainFiles/LCDtask.h ../FreeRTOS/Source/include/queue.h \
  ../FreeRTOS/Source/include/timers.h \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/string.h \
- c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/sys/string.h
+ c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/sys/string.h \
+ MainFiles/myTypes.h MainFiles/i2c_ARM.h ../vtCode/vtI2C/vtI2C.h \
+ ../NXPDrivers/include/lpc17xx_i2c.h ../NXPDrivers/include/lpc_types.h \
+ ../FreeRTOS/Source/include/projDefs.h \
+ ../FreeRTOS/Source/include/semphr.h ../FreeRTOS/Source/include/queue.h

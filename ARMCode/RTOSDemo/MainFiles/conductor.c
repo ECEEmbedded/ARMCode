@@ -71,10 +71,6 @@ uint8_t getI2CMsgCount(uint8_t *buffer) {
 	return buffer[1];
 }
 
-int geti2cADCValue(myi2cMsg *buffer){
-    return (((int)buffer->buf[3])<<8)|(int)buffer->buf[2];
-}
-
 // This is the actual task that is run
 static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 {
@@ -91,7 +87,7 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 	// Get the Motor Control task pointer
 	motorControlStruct *motorControl = param->motorControl;
 	// Get the IR Control task pointer
-	irControlStruct *irData = params->irData;
+	irControlStruct *irData = param->irData;
 	// Get the Speed Limit task pointer
 	speedLimitControlStruct *speedData = param->speedData;
 	//Get the Power task pointer
@@ -100,17 +96,17 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
     vtLCDStruct *lcdData = param->lcdData;
 
 	// Message counts
-	uint8_t colorSensorMsgCount = 0, encodersMsgCount = 0, IRMsgCount = 0;
+	uint8_t colorSensorMsgCount = 0, encodersMsgCount = 0, IRMsgCount = 0, ADCMsgCount = 0, powerMsgCount = 0;
 
 	uint8_t recvMsgType;
 
 	int pic2680reqSent = 0;
     int pic26J50reqSent = 0;
 
-    uint8_t sent2680ADCCount = 0;
-    uint8_t sent26J50ADCCount = 0;
-    uint8_t received2680ADCCount = 0;
-    uint8_t received26J50ADCCount = 0;
+//    uint8_t sent2680ADCCount = 0;
+//    uint8_t sent26J50ADCCount = 0;
+//    uint8_t received2680ADCCount = 0;
+//    uint8_t received26J50ADCCount = 0;
 
 	// Like all good tasks, this should never exit
 	for(;;)
@@ -123,7 +119,7 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 		// Decide where to send the message
 		// This isn't a state machine, it is just acting as a router for messages
 		switch(recvMsgType) {
-			case vtI2CMsgTypeRead: {
+			case vtI2CReadMsgType: {
 				// If it is a read, send it to the appropriate task
 				switch(getI2CMsgType(Buffer)){
 					case COLOR_SENSOR_EMPTY_MESSAGE: {
@@ -152,6 +148,22 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 							IRMsgCount = getI2CMsgCount(Buffer);
 						}
 					}
+					case ADC_EMPTY_MESSAGE:	{
+						notifyRequestRecvd(i2cData,portMAX_DELAY);
+						ADCMsgCount++;
+						if(ADCMsgCount != getI2CMsgCount(Buffer)){
+							//Send Web Server an error with getI2CMsgCount(Buffer) - ADCMsgCount
+							ADCMsgCount = getI2CMsgCount(Buffer);
+						}
+					}
+					case POWER_EMPTY_MESSAGE:	{
+						notifyRequestRecvd(i2cData,portMAX_DELAY);
+						powerMsgCount++;
+						if(powerMsgCount != getI2CMsgCount(Buffer)){
+							//Send Web Server an error with getI2CMsgCount(Buffer) - powerMsgCount
+							powerMsgCount = getI2CMsgCount(Buffer);
+						}
+					}
 					case PIC2680_EMPTY_MESSAGE:{
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
 						pic2680reqSent = 0;
@@ -163,64 +175,85 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 						break;
 					}
 					case GENERIC_EMPTY_MESSAGE: {
-					break;
+						break;
 					}
 					case COLOR_SENSOR_MESSAGE: {
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						sendColorSensorDataMsg(speed, (Buffer + 2), 2);
+						conductorSendColorSensorDataMsg(speedData, (Buffer + 2), 2);
 						colorSensorMsgCount++;
 						if(colorSensorMsgCount != getI2CMsgCount(Buffer)){
 							//Send Web Server an error with getI2CMsgCount(Buffer) - colorSensorMsgCount
 							colorSensorMsgCount = getI2CMsgCount(Buffer);
 						}
-					break;
+						break;
 					}
 					case ENCODERS_MESSAGE: {
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						sendEncoderDataMsg(motorControl, (Buffer + 2), 2);
+						conductorSendMotorEncoderDataMsg(motorControl, (Buffer + 2), 2);
 						encodersMsgCount++;
 						if(encodersMsgCount != getI2CMsgCount(Buffer)){
 							//Send Web Server an error with getI2CMsgCount(Buffer) - encodersMsgCount
 							encodersMsgCount = getI2CMsgCount(Buffer);
 						}
-					break;
+						break;
 					}
 					case IR_MESSAGE: {
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						sendIRDataMsg(nav, (Buffer + 2), 2);
+						conductorSendIRSensorDataMsg(irData, (Buffer + 2), 2);
 						IRMsgCount++;
 						if(IRMsgCount != getI2CMsgCount(Buffer)){
 							//Send Web Server an error with getI2CMsgCount(Buffer) - IRMsgCount
 							IRMsgCount = getI2CMsgCount(Buffer);
 						}
-					break;
-					}
-					case PIC2680_ADC_MESSAGE:{
-						received2680ADCCount++;
-						int value = geti2cADCValue(&msgBuffer);
-						uint8_t errCount = count - received2680ADCCount;
-						received2680ADCCount = count;
-						pic2680reqSent = 0;
-						if(SendLCDADCMsg(lcdData,value,type,errCount, portMAX_DELAY) != pdTRUE) {
-							VT_HANDLE_FATAL_ERROR(0);
-						}
-					break;
-					}
-					case PIC26J50_ADC_MESSAGE:{
-						received26J50ADCCount++;
-						int value = geti2cADCValue(&msgBuffer);
-						uint8_t errCount = count - received26J50ADCCount;
-						received26J50ADCCount = count;
-						pic26J50reqSent = 0;
-						if(SendLCDADCMsg(lcdData,value,type,errCount, portMAX_DELAY) != pdTRUE) {
-							VT_HANDLE_FATAL_ERROR(0);
-						}
 						break;
 					}
+					case ADC_MESSAGE: {	  //Still working this one out
+						notifyRequestRecvd(i2cData,portMAX_DELAY);
+						//conductorSendADCDataMsg(adcData, (Buffer + 2), 2);
+						//ADCMsgCount++;
+						//if(ADCMsgCount != getI2CMsgCount(Buffer)){
+						//	//Send Web Server an error with getI2CMsgCount(Buffer) - ADCMsgCount
+						//	ADCMsgCount = getI2CMsgCount(Buffer);
+						//}
+						break;
+					}
+					case POWER_MESSAGE: {
+						notifyRequestRecvd(i2cData,portMAX_DELAY);
+						conductorSendPowerDataMsg(powerData, (Buffer + 2), 2);
+						powerMsgCount++;
+						if(powerMsgCount != getI2CMsgCount(Buffer)){
+							//Send Web Server an error with getI2CMsgCount(Buffer) - powerMsgCount
+							powerMsgCount = getI2CMsgCount(Buffer);
+						}
+					break;
+					}
+//					case PIC2680_ADC_MESSAGE:{	//Still working this one out; should be useful for MS2
+//						received2680ADCCount++;
+//						int value = geti2cADCValue(&msgBuffer);
+//						uint8_t errCount = count - received2680ADCCount;
+//						received2680ADCCount = count;
+//						pic2680reqSent = 0;
+//						if(SendLCDADCMsg(lcdData,value,type,errCount, portMAX_DELAY) != pdTRUE) {
+//							VT_HANDLE_FATAL_ERROR(0);
+//						}
+//					break;
+//					}
+//					case PIC26J50_ADC_MESSAGE:{	//Still working this one out; should be useful for MS2
+//						received26J50ADCCount++;
+//						int value = geti2cADCValue(&msgBuffer);
+//						uint8_t errCount = count - received26J50ADCCount;
+//						received26J50ADCCount = count;
+//						pic26J50reqSent = 0;
+//						if(SendLCDADCMsg(lcdData,value,type,errCount, portMAX_DELAY) != pdTRUE) {
+//							VT_HANDLE_FATAL_ERROR(0);
+//						}
+//						break;
+//					}
+					// Need to add more cases here.
 				}
 			break;
 			}
-			case vtI2CMsgTypeMotor: {
+			case vtI2CMotorMsgType: {
 				// If it is a I2C motor message, just recognize that this is an ack from the slave
 				// Nothing else to do here
 				break;

@@ -66,7 +66,7 @@ portBASE_TYPE conductorSendPowerDataMsg(powerStruct *powerData, uint8_t *data, u
         VT_HANDLE_FATAL_ERROR(INCORRECT_POWER_MSG_FORMAT);
     }
     memcpy(buffer.buf,data,length);
-    buffer.msgType = powerDataMsg;
+    buffer.msgType = powerDataMsgType;
     return(xQueueSend(powerData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -109,7 +109,7 @@ static portTASK_FUNCTION( vPowerTask, pvParameters )
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
         switch(msgBuffer.msgType){
-            case powerDataMsg:
+            case powerDataMsgType:
             {
                 break;
             }

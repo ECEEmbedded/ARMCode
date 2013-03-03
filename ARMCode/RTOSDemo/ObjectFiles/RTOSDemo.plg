@@ -4,6 +4,677 @@
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
 C:\ARMCode\RTOSDemo\RTOSDemo.uvproj
-Project File Date:  02/04/2013
+Project File Date:  02/28/2013
 
 <h2>Output:</h2>
+Build target 'WebServerELF'
+compiling list.c...
+compiling queue.c...
+compiling tasks.c...
+compiling port.c...
+compiling timers.c...
+compiling main.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/main.c(180): error: expected '=', ',', ';', 'asm' or '__attribute__' before 'static'
+MainFiles/main.c: In function 'main':
+MainFiles/main.c(217): error: 'irData' undeclared (first use in this function)
+MainFiles/main.c(217): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/main.c(217): error: 'speedData' undeclared (first use in this function)
+MainFiles/main.c(217): error: 'powerData' undeclared (first use in this function)
+MainFiles/main.c(222): error: 'webData' undeclared (first use in this function)
+compiling vtUtilities.c...
+compiling ParTest.c...
+compiling LCDtask.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+compiling myTimers.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTimers.c: In function 'motorTimerCallback':
+MainFiles/myTimers.c(88): warning: implicit declaration of function 'sendmotorTimerMsg'
+MainFiles/myTimers.c: In function 'navTimerCallback':
+MainFiles/myTimers.c(131): warning: implicit declaration of function 'sendNavTimerMsg'
+compiling conductor.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/conductor.c(74): error: expected ')' before '*' token
+MainFiles/conductor.c: In function 'vConductorUpdateTask':
+MainFiles/conductor.c(94): error: 'params' undeclared (first use in this function)
+MainFiles/conductor.c(94): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/conductor.c(170): warning: implicit declaration of function 'sendColorSensorDataMsg'
+MainFiles/conductor.c(170): error: 'speed' undeclared (first use in this function)
+MainFiles/conductor.c(180): warning: implicit declaration of function 'sendEncoderDataMsg'
+MainFiles/conductor.c(190): warning: implicit declaration of function 'sendIRDataMsg'
+MainFiles/conductor.c(190): error: 'nav' undeclared (first use in this function)
+MainFiles/conductor.c(200): warning: implicit declaration of function 'geti2cADCValue'
+MainFiles/conductor.c(200): error: 'msgBuffer' undeclared (first use in this function)
+MainFiles/conductor.c(201): error: 'count' undeclared (first use in this function)
+MainFiles/conductor.c(204): error: 'type' undeclared (first use in this function)
+MainFiles/conductor.c(111): warning: unused variable 'sent26J50ADCCount'
+MainFiles/conductor.c(110): warning: unused variable 'sent2680ADCCount'
+MainFiles/conductor.c(98): warning: unused variable 'powerData'
+MainFiles/conductor.c(96): warning: unused variable 'speedData'
+MainFiles/conductor.c(94): warning: unused variable 'irData'
+MainFiles/conductor.c(83): warning: unused variable 'valPtr'
+compiling i2c_ARM.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+compiling irControl.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/irControl.c(35): error: 'maxIRMsgLen' undeclared here (not in a function)
+MainFiles/irControl.c: In function 'vIRTask':
+MainFiles/irControl.c(94): warning: unused variable 'navData'
+compiling motorControl.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/motorControl.c: In function 'vStartMotorControlTask':
+MainFiles/motorControl.c(49): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c(55): error: 'motorControlStruct' has no member named 'webData'
+MainFiles/motorControl.c(56): error: 'motorControlStruct' has no member named 'lcdData'
+MainFiles/motorControl.c: In function 'sendMotorSetDirForward':
+MainFiles/motorControl.c(74): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorSetDirReverse':
+MainFiles/motorControl.c(89): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorSetSpeed':
+MainFiles/motorControl.c(105): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorTurnLeft':
+MainFiles/motorControl.c(121): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorTurnRight':
+MainFiles/motorControl.c(137): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorStop':
+MainFiles/motorControl.c(152): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'conductorSendMotorEncoderDataMsg':
+MainFiles/motorControl.c(168): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'vMotorControlTask':
+MainFiles/motorControl.c(239): error: 'motorControlStruct' has no member named 'webData'
+MainFiles/motorControl.c(241): error: 'motorControlStruct' has no member named 'lcdData'
+MainFiles/motorControl.c(252): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c(256): error: 'setDirectionMsg' undeclared (first use in this function)
+MainFiles/motorControl.c(256): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/motorControl.c: At top level:
+MainFiles/motorControl.c(223): warning: 'targetVal' defined but not used
+MainFiles/motorControl.c(225): warning: 'forward' defined but not used
+MainFiles/motorControl.c(225): warning: 'backward' defined but not used
+MainFiles/motorControl.c(225): warning: 'right' defined but not used
+MainFiles/motorControl.c(225): warning: 'left' defined but not used
+MainFiles/motorControl.c(227): warning: 'delay' defined but not used
+MainFiles/motorControl.c(229): warning: 'msg' defined but not used
+MainFiles/motorControl.c: In function 'conductorSendMotorEncoderDataMsg':
+MainFiles/motorControl.c(169): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorStop':
+MainFiles/motorControl.c(153): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorTurnRight':
+MainFiles/motorControl.c(138): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorTurnLeft':
+MainFiles/motorControl.c(122): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorSetSpeed':
+MainFiles/motorControl.c(106): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorSetDirReverse':
+MainFiles/motorControl.c(90): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorSetDirForward':
+MainFiles/motorControl.c(75): warning: control reaches end of non-void function
+compiling navigation.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/navigation.c: In function 'vStartNavigationTask':
+MainFiles/navigation.c(48): error: 'navigationStruct' has no member named 'inQ'
+MainFiles/navigation.c(53): error: 'navigationStruct' has no member named 'motorControl'
+MainFiles/navigation.c(54): error: 'navigationStruct' has no member named 'lcdData'
+MainFiles/navigation.c: In function 'AIUpdateDistences':
+MainFiles/navigation.c(77): error: 'AIUpdateDistancesMsg' undeclared (first use in this function)
+MainFiles/navigation.c(77): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/navigation.c(78): error: 'navigationStruct' has no member named 'inQ'
+MainFiles/navigation.c: In function 'AIUpdateWallAngles':
+MainFiles/navigation.c(95): error: 'navigationStruct' has no member named 'inQ'
+MainFiles/navigation.c: In function 'AIUpdateIsWalls':
+MainFiles/navigation.c(114): error: 'navigationStruct' has no member named 'inQ'
+MainFiles/navigation.c: In function 'AIUpdateFinishLine':
+MainFiles/navigation.c(130): error: 'navigationStruct' has no member named 'inQ'
+MainFiles/navigation.c: In function 'sendNavTimerMsg':
+MainFiles/navigation.c(146): error: 'navigationStruct' has no member named 'inQ'
+MainFiles/navigation.c: At top level:
+MainFiles/navigation.c(172): error: multiple storage classes in declaration specifiers
+MainFiles/navigation.c(172): error: redefinition of 'struct __navigationMsg'
+MainFiles/navigation.c(34): error: note: originally defined here
+MainFiles/navigation.c(176): error: 'navigationMsg' redeclared as different kind of symbol
+MainFiles/navigation.c(38): error: note: previous declaration of 'navigationMsg' was here
+MainFiles/navigation.c(182): error: expected '=', ',', ';', 'asm' or '__attribute__' before 'msgBuffer'
+MainFiles/navigation.c: In function 'vNavigationTask':
+MainFiles/navigation.c(191): error: 'navigationStruct' has no member named 'motorControl'
+MainFiles/navigation.c(193): error: 'navigationStruct' has no member named 'lcdData'
+MainFiles/navigation.c(202): error: 'navigationStruct' has no member named 'inQ'
+MainFiles/navigation.c(202): error: 'msgBuffer' undeclared (first use in this function)
+MainFiles/navigation.c: At top level:
+MainFiles/navigation.c(176): warning: 'navigationMsg' defined but not used
+MainFiles/navigation.c: In function 'sendNavTimerMsg':
+MainFiles/navigation.c(147): warning: control reaches end of non-void function
+MainFiles/navigation.c: In function 'AIUpdateFinishLine':
+MainFiles/navigation.c(131): warning: control reaches end of non-void function
+MainFiles/navigation.c: In function 'AIUpdateIsWalls':
+MainFiles/navigation.c(115): warning: control reaches end of non-void function
+MainFiles/navigation.c: In function 'AIUpdateWallAngles':
+MainFiles/navigation.c(96): warning: control reaches end of non-void function
+MainFiles/navigation.c: In function 'AIUpdateDistences':
+MainFiles/navigation.c(79): warning: control reaches end of non-void function
+compiling power.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+compiling speedLimit.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/speedLimit.c: In function 'vStartSpeedLimitTask':
+MainFiles/speedLimit.c(49): error: 'speedLimitControlStruct' has no member named 'inQ'
+MainFiles/speedLimit.c(56): error: 'speedLimitControlStruct' has no member named 'webData'
+MainFiles/speedLimit.c: In function 'conductorSendColorSensorDataMsg':
+MainFiles/speedLimit.c(75): error: 'speedLimitControlStruct' has no member named 'inQ'
+MainFiles/speedLimit.c: In function 'vSpeedLimitTask':
+MainFiles/speedLimit.c(108): error: 'speedLimitControlStruct' has no member named 'webData'
+MainFiles/speedLimit.c(120): error: 'speedLimitControlStruct' has no member named 'inQ'
+MainFiles/speedLimit.c: In function 'conductorSendColorSensorDataMsg':
+MainFiles/speedLimit.c(76): warning: control reaches end of non-void function
+compiling webServer.c...
+MainFiles/myTypes.h(10): error: expected specifier-qualifier-list before 'motorControlStruct'
+MainFiles/myTypes.h(17): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTypes.h(25): error: expected specifier-qualifier-list before 'webServerStruct'
+compiling syscalls.c...
+compiling system_LPC17xx.c...
+assembling startup_LPC17xx.s...
+compiling USB_CDC.c...
+compiling usbcontrol.c...
+compiling usbhw_lpc.c...
+compiling usbinit.c...
+compiling usbstdreq.c...
+compiling BlockQ.c...
+compiling blocktim.c...
+compiling flash.c...
+compiling GenQTest.c...
+compiling integer.c...
+compiling PollQ.c...
+compiling QPeek.c...
+compiling recmutex.c...
+compiling semtest.c...
+compiling emac.c...
+compiling httpd.c...
+compiling httpd-cgi.c...
+compiling httpd-fs.c...
+compiling http-strings.c...
+compiling uIP_Task.c...
+compiling psock.c...
+compiling timer.c...
+compiling uip_arp.c...
+compiling uip.c...
+compiling vtSSP.c...
+compiling GLCD_SPI_LPC1700.c...
+compiling lpc17xx_clkpwr.c...
+compiling lpc17xx_i2c.c...
+../NXPDrivers/source/lpc17xx_i2c.c: In function 'I2C_Init':
+../NXPDrivers/source/lpc17xx_i2c.c(213): warning: 'temp' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_i2c.c: In function 'I2C_SlaveTransferData':
+../NXPDrivers/source/lpc17xx_i2c.c(985): warning: 'CodeStatus' may be used uninitialized in this function
+compiling lpc17xx_libcfg_default.c...
+compiling lpc17xx_pinsel.c...
+compiling lpc17xx_gpio.c...
+compiling lpc17xx_ssp.c...
+../NXPDrivers/source/lpc17xx_ssp.c: In function 'SSP_ReadWrite':
+../NXPDrivers/source/lpc17xx_ssp.c(342): warning: 'rdata8' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_ssp.c(343): warning: 'wdata8' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_ssp.c(344): warning: 'rdata16' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_ssp.c(345): warning: 'wdata16' may be used uninitialized in this function
+compiling vtI2C.c...
+Target not created
+Build target 'WebServerELF'
+compiling main.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/main.c(180): error: expected '=', ',', ';', 'asm' or '__attribute__' before 'static'
+MainFiles/main.c: In function 'main':
+MainFiles/main.c(217): error: 'irData' undeclared (first use in this function)
+MainFiles/main.c(217): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/main.c(217): error: 'speedData' undeclared (first use in this function)
+MainFiles/main.c(217): error: 'powerData' undeclared (first use in this function)
+MainFiles/main.c(222): error: 'webData' undeclared (first use in this function)
+compiling LCDtask.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+compiling myTimers.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/myTimers.c: In function 'motorTimerCallback':
+MainFiles/myTimers.c(88): warning: implicit declaration of function 'sendmotorTimerMsg'
+MainFiles/myTimers.c: In function 'navTimerCallback':
+MainFiles/myTimers.c(131): warning: implicit declaration of function 'sendNavTimerMsg'
+compiling conductor.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/conductor.c(74): error: expected ')' before '*' token
+MainFiles/conductor.c: In function 'vConductorUpdateTask':
+MainFiles/conductor.c(94): error: 'params' undeclared (first use in this function)
+MainFiles/conductor.c(94): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/conductor.c(170): warning: implicit declaration of function 'sendColorSensorDataMsg'
+MainFiles/conductor.c(170): error: 'speed' undeclared (first use in this function)
+MainFiles/conductor.c(180): warning: implicit declaration of function 'sendEncoderDataMsg'
+MainFiles/conductor.c(190): warning: implicit declaration of function 'sendIRDataMsg'
+MainFiles/conductor.c(190): error: 'nav' undeclared (first use in this function)
+MainFiles/conductor.c(200): warning: implicit declaration of function 'geti2cADCValue'
+MainFiles/conductor.c(200): error: 'msgBuffer' undeclared (first use in this function)
+MainFiles/conductor.c(201): error: 'count' undeclared (first use in this function)
+MainFiles/conductor.c(204): error: 'type' undeclared (first use in this function)
+MainFiles/conductor.c(111): warning: unused variable 'sent26J50ADCCount'
+MainFiles/conductor.c(110): warning: unused variable 'sent2680ADCCount'
+MainFiles/conductor.c(98): warning: unused variable 'powerData'
+MainFiles/conductor.c(96): warning: unused variable 'speedData'
+MainFiles/conductor.c(94): warning: unused variable 'irData'
+MainFiles/conductor.c(83): warning: unused variable 'valPtr'
+compiling i2c_ARM.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+compiling irControl.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/irControl.c(35): error: 'maxIRMsgLen' undeclared here (not in a function)
+MainFiles/irControl.c: In function 'vIRTask':
+MainFiles/irControl.c(94): warning: unused variable 'navData'
+compiling motorControl.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/motorControl.c: In function 'vStartMotorControlTask':
+MainFiles/motorControl.c(49): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c(55): error: 'motorControlStruct' has no member named 'webData'
+MainFiles/motorControl.c(56): error: 'motorControlStruct' has no member named 'lcdData'
+MainFiles/motorControl.c: In function 'sendMotorSetDirForward':
+MainFiles/motorControl.c(74): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorSetDirReverse':
+MainFiles/motorControl.c(89): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorSetSpeed':
+MainFiles/motorControl.c(105): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorTurnLeft':
+MainFiles/motorControl.c(121): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorTurnRight':
+MainFiles/motorControl.c(137): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'sendMotorStop':
+MainFiles/motorControl.c(152): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'conductorSendMotorEncoderDataMsg':
+MainFiles/motorControl.c(168): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c: In function 'vMotorControlTask':
+MainFiles/motorControl.c(239): error: 'motorControlStruct' has no member named 'webData'
+MainFiles/motorControl.c(241): error: 'motorControlStruct' has no member named 'lcdData'
+MainFiles/motorControl.c(252): error: 'motorControlStruct' has no member named 'inQ'
+MainFiles/motorControl.c(256): error: 'setDirectionMsg' undeclared (first use in this function)
+MainFiles/motorControl.c(256): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/motorControl.c: At top level:
+MainFiles/motorControl.c(223): warning: 'targetVal' defined but not used
+MainFiles/motorControl.c(225): warning: 'forward' defined but not used
+MainFiles/motorControl.c(225): warning: 'backward' defined but not used
+MainFiles/motorControl.c(225): warning: 'right' defined but not used
+MainFiles/motorControl.c(225): warning: 'left' defined but not used
+MainFiles/motorControl.c(227): warning: 'delay' defined but not used
+MainFiles/motorControl.c(229): warning: 'msg' defined but not used
+MainFiles/motorControl.c: In function 'conductorSendMotorEncoderDataMsg':
+MainFiles/motorControl.c(169): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorStop':
+MainFiles/motorControl.c(153): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorTurnRight':
+MainFiles/motorControl.c(138): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorTurnLeft':
+MainFiles/motorControl.c(122): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorSetSpeed':
+MainFiles/motorControl.c(106): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorSetDirReverse':
+MainFiles/motorControl.c(90): warning: control reaches end of non-void function
+MainFiles/motorControl.c: In function 'sendMotorSetDirForward':
+MainFiles/motorControl.c(75): warning: control reaches end of non-void function
+compiling navigation.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+MainFiles/navigation.c: In function 'AIUpdateDistences':
+MainFiles/navigation.c(77): error: 'AIUpdateDistancesMsg' undeclared (first use in this function)
+MainFiles/navigation.c(77): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/navigation.c: At top level:
+MainFiles/navigation.c(172): error: multiple storage classes in declaration specifiers
+MainFiles/navigation.c(172): error: redefinition of 'struct __navigationMsg'
+MainFiles/navigation.c(34): error: note: originally defined here
+MainFiles/navigation.c(176): error: 'navigationMsg' redeclared as different kind of symbol
+MainFiles/navigation.c(38): error: note: previous declaration of 'navigationMsg' was here
+MainFiles/navigation.c(182): error: expected '=', ',', ';', 'asm' or '__attribute__' before 'msgBuffer'
+MainFiles/navigation.c: In function 'vNavigationTask':
+MainFiles/navigation.c(202): error: 'msgBuffer' undeclared (first use in this function)
+MainFiles/navigation.c: At top level:
+MainFiles/navigation.c(176): warning: 'navigationMsg' defined but not used
+compiling power.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+compiling speedLimit.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+compiling webServer.c...
+MainFiles/myTypes.h(11): error: expected specifier-qualifier-list before 'webServerStruct'
+Target not created
+Build target 'WebServerELF'
+compiling main.c...
+MainFiles/main.c(180): error: expected '=', ',', ';', 'asm' or '__attribute__' before 'static'
+MainFiles/main.c: In function 'main':
+MainFiles/main.c(217): error: 'irData' undeclared (first use in this function)
+MainFiles/main.c(217): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/main.c(217): error: 'speedData' undeclared (first use in this function)
+MainFiles/main.c(217): error: 'powerData' undeclared (first use in this function)
+MainFiles/main.c(222): error: 'webData' undeclared (first use in this function)
+compiling LCDtask.c...
+compiling myTimers.c...
+MainFiles/myTimers.c: In function 'motorTimerCallback':
+MainFiles/myTimers.c(88): warning: implicit declaration of function 'sendmotorTimerMsg'
+MainFiles/myTimers.c: In function 'navTimerCallback':
+MainFiles/myTimers.c(131): warning: implicit declaration of function 'sendNavTimerMsg'
+compiling conductor.c...
+MainFiles/conductor.c(74): error: expected ')' before '*' token
+MainFiles/conductor.c: In function 'vConductorUpdateTask':
+MainFiles/conductor.c(94): error: 'params' undeclared (first use in this function)
+MainFiles/conductor.c(94): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/conductor.c(170): warning: implicit declaration of function 'sendColorSensorDataMsg'
+MainFiles/conductor.c(170): error: 'speed' undeclared (first use in this function)
+MainFiles/conductor.c(180): warning: implicit declaration of function 'sendEncoderDataMsg'
+MainFiles/conductor.c(190): warning: implicit declaration of function 'sendIRDataMsg'
+MainFiles/conductor.c(190): error: 'nav' undeclared (first use in this function)
+MainFiles/conductor.c(200): warning: implicit declaration of function 'geti2cADCValue'
+MainFiles/conductor.c(200): error: 'msgBuffer' undeclared (first use in this function)
+MainFiles/conductor.c(201): error: 'count' undeclared (first use in this function)
+MainFiles/conductor.c(204): error: 'type' undeclared (first use in this function)
+MainFiles/conductor.c(111): warning: unused variable 'sent26J50ADCCount'
+MainFiles/conductor.c(110): warning: unused variable 'sent2680ADCCount'
+MainFiles/conductor.c(98): warning: unused variable 'powerData'
+MainFiles/conductor.c(96): warning: unused variable 'speedData'
+MainFiles/conductor.c(94): warning: unused variable 'irData'
+MainFiles/conductor.c(83): warning: unused variable 'valPtr'
+compiling i2c_ARM.c...
+compiling irControl.c...
+MainFiles/irControl.c(35): error: 'maxIRMsgLen' undeclared here (not in a function)
+MainFiles/irControl.c: In function 'vIRTask':
+MainFiles/irControl.c(94): warning: unused variable 'navData'
+compiling motorControl.c...
+MainFiles/motorControl.c: In function 'vMotorControlTask':
+MainFiles/motorControl.c(256): error: 'setDirectionMsg' undeclared (first use in this function)
+MainFiles/motorControl.c(256): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/motorControl.c: At top level:
+MainFiles/motorControl.c(223): warning: 'targetVal' defined but not used
+MainFiles/motorControl.c(225): warning: 'forward' defined but not used
+MainFiles/motorControl.c(225): warning: 'backward' defined but not used
+MainFiles/motorControl.c(225): warning: 'right' defined but not used
+MainFiles/motorControl.c(225): warning: 'left' defined but not used
+MainFiles/motorControl.c(227): warning: 'delay' defined but not used
+MainFiles/motorControl.c(229): warning: 'msg' defined but not used
+compiling navigation.c...
+MainFiles/navigation.c: In function 'AIUpdateDistences':
+MainFiles/navigation.c(77): error: 'AIUpdateDistancesMsg' undeclared (first use in this function)
+MainFiles/navigation.c(77): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/navigation.c: At top level:
+MainFiles/navigation.c(172): error: multiple storage classes in declaration specifiers
+MainFiles/navigation.c(172): error: redefinition of 'struct __navigationMsg'
+MainFiles/navigation.c(34): error: note: originally defined here
+MainFiles/navigation.c(176): error: 'navigationMsg' redeclared as different kind of symbol
+MainFiles/navigation.c(38): error: note: previous declaration of 'navigationMsg' was here
+MainFiles/navigation.c(182): error: expected '=', ',', ';', 'asm' or '__attribute__' before 'msgBuffer'
+MainFiles/navigation.c: In function 'vNavigationTask':
+MainFiles/navigation.c(202): error: 'msgBuffer' undeclared (first use in this function)
+MainFiles/navigation.c: At top level:
+MainFiles/navigation.c(176): warning: 'navigationMsg' defined but not used
+compiling power.c...
+compiling speedLimit.c...
+compiling webServer.c...
+Target not created
+Build target 'WebServerELF'
+compiling main.c...
+compiling myTimers.c...
+compiling conductor.c...
+MainFiles/conductor.c(74): error: expected ')' before '*' token
+MainFiles/conductor.c: In function 'vConductorUpdateTask':
+MainFiles/conductor.c(94): error: 'params' undeclared (first use in this function)
+MainFiles/conductor.c(94): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/conductor.c(170): warning: implicit declaration of function 'sendColorSensorDataMsg'
+MainFiles/conductor.c(170): error: 'speed' undeclared (first use in this function)
+MainFiles/conductor.c(180): warning: implicit declaration of function 'sendEncoderDataMsg'
+MainFiles/conductor.c(190): warning: implicit declaration of function 'sendIRDataMsg'
+MainFiles/conductor.c(190): error: 'nav' undeclared (first use in this function)
+MainFiles/conductor.c(200): warning: implicit declaration of function 'geti2cADCValue'
+MainFiles/conductor.c(200): error: 'msgBuffer' undeclared (first use in this function)
+MainFiles/conductor.c(201): error: 'count' undeclared (first use in this function)
+MainFiles/conductor.c(204): error: 'type' undeclared (first use in this function)
+MainFiles/conductor.c(111): warning: unused variable 'sent26J50ADCCount'
+MainFiles/conductor.c(110): warning: unused variable 'sent2680ADCCount'
+MainFiles/conductor.c(98): warning: unused variable 'powerData'
+MainFiles/conductor.c(96): warning: unused variable 'speedData'
+MainFiles/conductor.c(94): warning: unused variable 'irData'
+MainFiles/conductor.c(83): warning: unused variable 'valPtr'
+compiling i2c_ARM.c...
+compiling irControl.c...
+MainFiles/irControl.c(35): error: 'maxIRMsgLen' undeclared here (not in a function)
+MainFiles/irControl.c: In function 'vIRTask':
+MainFiles/irControl.c(94): warning: unused variable 'navData'
+compiling motorControl.c...
+MainFiles/motorControl.c: In function 'vMotorControlTask':
+MainFiles/motorControl.c(276): error: 'setDirectionMsg' undeclared (first use in this function)
+MainFiles/motorControl.c(276): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/motorControl.c: At top level:
+MainFiles/motorControl.c(239): warning: 'targetVal' defined but not used
+MainFiles/motorControl.c(241): warning: 'forward' defined but not used
+MainFiles/motorControl.c(241): warning: 'backward' defined but not used
+MainFiles/motorControl.c(241): warning: 'right' defined but not used
+MainFiles/motorControl.c(241): warning: 'left' defined but not used
+MainFiles/motorControl.c(243): warning: 'delay' defined but not used
+MainFiles/motorControl.c(245): warning: 'msg' defined but not used
+compiling navigation.c...
+MainFiles/navigation.c: In function 'AIUpdateDistences':
+MainFiles/navigation.c(77): error: 'AIUpdateDistancesMsg' undeclared (first use in this function)
+MainFiles/navigation.c(77): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/navigation.c: At top level:
+MainFiles/navigation.c(172): error: multiple storage classes in declaration specifiers
+MainFiles/navigation.c(172): error: redefinition of 'struct __navigationMsg'
+MainFiles/navigation.c(34): error: note: originally defined here
+MainFiles/navigation.c(176): error: 'navigationMsg' redeclared as different kind of symbol
+MainFiles/navigation.c(38): error: note: previous declaration of 'navigationMsg' was here
+MainFiles/navigation.c(182): error: expected '=', ',', ';', 'asm' or '__attribute__' before 'msgBuffer'
+MainFiles/navigation.c: In function 'vNavigationTask':
+MainFiles/navigation.c(202): error: 'msgBuffer' undeclared (first use in this function)
+MainFiles/navigation.c: At top level:
+MainFiles/navigation.c(176): warning: 'navigationMsg' defined but not used
+compiling power.c...
+compiling speedLimit.c...
+compiling webServer.c...
+Target not created
+Build target 'WebServerELF'
+compiling list.c...
+compiling queue.c...
+compiling tasks.c...
+compiling port.c...
+compiling timers.c...
+compiling main.c...
+compiling vtUtilities.c...
+compiling ParTest.c...
+compiling LCDtask.c...
+compiling myTimers.c...
+compiling conductor.c...
+MainFiles/conductor.c: In function 'vConductorUpdateTask':
+MainFiles/conductor.c(122): error: 'vtI2CMsgTypeRead' undeclared (first use in this function)
+MainFiles/conductor.c(122): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/conductor.c(256): error: 'vtI2CMsgTypeMotor' undeclared (first use in this function)
+MainFiles/conductor.c(109): warning: unused variable 'received26J50ADCCount'
+MainFiles/conductor.c(108): warning: unused variable 'received2680ADCCount'
+MainFiles/conductor.c(107): warning: unused variable 'sent26J50ADCCount'
+MainFiles/conductor.c(106): warning: unused variable 'sent2680ADCCount'
+MainFiles/conductor.c(96): warning: unused variable 'lcdData'
+MainFiles/conductor.c(79): warning: unused variable 'valPtr'
+compiling i2c_ARM.c...
+compiling irControl.c...
+MainFiles/irControl.c: In function 'conductorSendIRSensorDataMsg':
+MainFiles/irControl.c(70): error: 'irDataMsg' undeclared (first use in this function)
+MainFiles/irControl.c(70): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/irControl.c: In function 'vIRTask':
+MainFiles/irControl.c(120): error: 'irDataMsg' undeclared (first use in this function)
+compiling motorControl.c...
+MainFiles/motorControl.c: In function 'sendMotorSetDirForward':
+MainFiles/motorControl.c(73): error: 'setDirForwardMsg' undeclared (first use in this function)
+MainFiles/motorControl.c(73): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/motorControl.c: In function 'sendMotorSetDirReverse':
+MainFiles/motorControl.c(88): error: 'setDirReverseMsg' undeclared (first use in this function)
+MainFiles/motorControl.c: In function 'sendMotorSetSpeed':
+MainFiles/motorControl.c(104): error: 'setMotorSpeedMsg' undeclared (first use in this function)
+MainFiles/motorControl.c: In function 'sendMotorTurnLeft':
+MainFiles/motorControl.c(120): error: 'turnLeftMsg' undeclared (first use in this function)
+MainFiles/motorControl.c: In function 'sendMotorTurnRight':
+MainFiles/motorControl.c(136): error: 'turnRightMsg' undeclared (first use in this function)
+MainFiles/motorControl.c: In function 'sendMotorStop':
+MainFiles/motorControl.c(151): error: 'motorStopMsg' undeclared (first use in this function)
+MainFiles/motorControl.c: In function 'conductorSendMotorEncoderDataMsg':
+MainFiles/motorControl.c(167): error: 'encoderDataMsg' undeclared (first use in this function)
+MainFiles/motorControl.c: At top level:
+MainFiles/motorControl.c(243): warning: 'delay' defined but not used
+MainFiles/motorControl.c(245): warning: 'msg' defined but not used
+compiling navigation.c...
+compiling power.c...
+MainFiles/power.c: In function 'conductorSendPowerDataMsg':
+MainFiles/power.c(69): error: 'powerDataMsg' undeclared (first use in this function)
+MainFiles/power.c(69): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/power.c: In function 'vPowerTask':
+MainFiles/power.c(112): error: 'powerDataMsg' undeclared (first use in this function)
+compiling speedLimit.c...
+MainFiles/speedLimit.c: In function 'conductorSendColorSensorDataMsg':
+MainFiles/speedLimit.c(74): error: 'colorSensorDataMsg' undeclared (first use in this function)
+MainFiles/speedLimit.c(74): error: note: each undeclared identifier is reported only once for each function it appears in
+MainFiles/speedLimit.c: In function 'vSpeedLimitTask':
+MainFiles/speedLimit.c(124): error: 'colorSensorDataMsg' undeclared (first use in this function)
+compiling webServer.c...
+compiling syscalls.c...
+compiling system_LPC17xx.c...
+assembling startup_LPC17xx.s...
+compiling USB_CDC.c...
+compiling usbcontrol.c...
+compiling usbhw_lpc.c...
+compiling usbinit.c...
+compiling usbstdreq.c...
+compiling BlockQ.c...
+compiling blocktim.c...
+compiling flash.c...
+compiling GenQTest.c...
+compiling integer.c...
+compiling PollQ.c...
+compiling QPeek.c...
+compiling recmutex.c...
+compiling semtest.c...
+compiling emac.c...
+compiling httpd.c...
+compiling httpd-cgi.c...
+compiling httpd-fs.c...
+compiling http-strings.c...
+compiling uIP_Task.c...
+compiling psock.c...
+compiling timer.c...
+compiling uip_arp.c...
+compiling uip.c...
+compiling vtSSP.c...
+compiling GLCD_SPI_LPC1700.c...
+compiling lpc17xx_clkpwr.c...
+compiling lpc17xx_i2c.c...
+../NXPDrivers/source/lpc17xx_i2c.c: In function 'I2C_Init':
+../NXPDrivers/source/lpc17xx_i2c.c(213): warning: 'temp' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_i2c.c: In function 'I2C_SlaveTransferData':
+../NXPDrivers/source/lpc17xx_i2c.c(985): warning: 'CodeStatus' may be used uninitialized in this function
+compiling lpc17xx_libcfg_default.c...
+compiling lpc17xx_pinsel.c...
+compiling lpc17xx_gpio.c...
+compiling lpc17xx_ssp.c...
+../NXPDrivers/source/lpc17xx_ssp.c: In function 'SSP_ReadWrite':
+../NXPDrivers/source/lpc17xx_ssp.c(342): warning: 'rdata8' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_ssp.c(343): warning: 'wdata8' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_ssp.c(344): warning: 'rdata16' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_ssp.c(345): warning: 'wdata16' may be used uninitialized in this function
+compiling vtI2C.c...
+Target not created
+Build target 'WebServerELF'
+compiling list.c...
+compiling queue.c...
+compiling tasks.c...
+compiling port.c...
+compiling timers.c...
+compiling main.c...
+compiling vtUtilities.c...
+compiling ParTest.c...
+compiling LCDtask.c...
+compiling myTimers.c...
+compiling conductor.c...
+MainFiles/conductor.c: In function 'vConductorUpdateTask':
+MainFiles/conductor.c(96): warning: unused variable 'lcdData'
+MainFiles/conductor.c(79): warning: unused variable 'valPtr'
+compiling i2c_ARM.c...
+compiling irControl.c...
+compiling motorControl.c...
+compiling navigation.c...
+compiling power.c...
+compiling speedLimit.c...
+compiling webServer.c...
+compiling syscalls.c...
+compiling system_LPC17xx.c...
+assembling startup_LPC17xx.s...
+compiling USB_CDC.c...
+compiling usbcontrol.c...
+compiling usbhw_lpc.c...
+compiling usbinit.c...
+compiling usbstdreq.c...
+compiling BlockQ.c...
+compiling blocktim.c...
+compiling flash.c...
+compiling GenQTest.c...
+compiling integer.c...
+compiling PollQ.c...
+compiling QPeek.c...
+compiling recmutex.c...
+compiling semtest.c...
+compiling emac.c...
+compiling httpd.c...
+compiling httpd-cgi.c...
+compiling httpd-fs.c...
+compiling http-strings.c...
+compiling uIP_Task.c...
+compiling psock.c...
+compiling timer.c...
+compiling uip_arp.c...
+compiling uip.c...
+compiling vtSSP.c...
+compiling GLCD_SPI_LPC1700.c...
+compiling lpc17xx_clkpwr.c...
+compiling lpc17xx_i2c.c...
+../NXPDrivers/source/lpc17xx_i2c.c: In function 'I2C_Init':
+../NXPDrivers/source/lpc17xx_i2c.c(213): warning: 'temp' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_i2c.c: In function 'I2C_SlaveTransferData':
+../NXPDrivers/source/lpc17xx_i2c.c(985): warning: 'CodeStatus' may be used uninitialized in this function
+compiling lpc17xx_libcfg_default.c...
+compiling lpc17xx_pinsel.c...
+compiling lpc17xx_gpio.c...
+compiling lpc17xx_ssp.c...
+../NXPDrivers/source/lpc17xx_ssp.c: In function 'SSP_ReadWrite':
+../NXPDrivers/source/lpc17xx_ssp.c(342): warning: 'rdata8' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_ssp.c(343): warning: 'wdata8' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_ssp.c(344): warning: 'rdata16' may be used uninitialized in this function
+../NXPDrivers/source/lpc17xx_ssp.c(345): warning: 'wdata16' may be used uninitialized in this function
+compiling vtI2C.c...
+linking...
+".\ObjectFiles\RTOSDemo.elf" - 0 Error(s), 8 Warning(s).
+Build target 'WebServerELF'
+compiling conductor.c...
+MainFiles/conductor.c: In function 'vConductorUpdateTask':
+MainFiles/conductor.c(96): warning: unused variable 'lcdData'
+MainFiles/conductor.c(79): warning: unused variable 'valPtr'
+linking...
+".\ObjectFiles\RTOSDemo.elf" - 0 Error(s), 2 Warning(s).
+Build target 'WebServerELF'
+compiling conductor.c...
+MainFiles/conductor.c: In function 'vConductorUpdateTask':
+MainFiles/conductor.c(96): warning: unused variable 'lcdData'
+linking...
+".\ObjectFiles\RTOSDemo.elf" - 0 Error(s), 1 Warning(s).
+Build target 'WebServerELF'
+compiling conductor.c...
+MainFiles/conductor.c: In function 'vConductorUpdateTask':
+MainFiles/conductor.c(96): warning: unused variable 'lcdData'
+MainFiles/conductor.c(79): warning: unused variable 'valPtr'
+linking...
+".\ObjectFiles\RTOSDemo.elf" - 0 Error(s), 2 Warning(s).
