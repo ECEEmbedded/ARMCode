@@ -64,11 +64,11 @@ void vStartConductorTask(vtConductorStruct *params, unsigned portBASE_TYPE uxPri
 /*-----------------------------------------------------------*/
 
 uint8_t getI2CMsgType(uint8_t *buffer) {
-	return buffer[0];
+	return buffer[0];		//Don't change me!
 }
 
 uint8_t getI2CMsgCount(uint8_t *buffer) {
-	return buffer[1];
+	return buffer[1];		//Don't change me!
 }
 
 // This is the actual task that is run

@@ -12,9 +12,9 @@ typedef struct __i2cStruct {
     xQueueHandle inQ;
 } myI2CStruct;
 // Maximum length of a message that can be received by this task
-#define vti2cMaxLen   5
+#define vti2cMaxLen   9    //was 5
 
-#define I2C_MSG_SIZE 4
+#define I2C_MSG_SIZE 8      //was 4
 
 #define SLAVE_ADDR 0x4F
 

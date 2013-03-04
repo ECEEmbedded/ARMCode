@@ -81,15 +81,19 @@ portBASE_TYPE sendi2cMotorMsg(myI2CStruct *i2cData, uint8_t leftValue, uint8_t r
         VT_HANDLE_FATAL_ERROR(0);
     }
     myi2cMsg buffer;
-    buffer.length = 4;
+    buffer.length = 8;
     if (buffer.length > vti2cMaxLen) {
         // no room for this message
         VT_HANDLE_FATAL_ERROR(INCORRECT_I2C_MSG_FORMAT);
     }
-    buffer.buf[0] = 0xBB;
-    buffer.buf[1] = 0x00;
-    buffer.buf[2] = leftValue;
-    buffer.buf[3] = rightValue;
+    buffer.buf[0] = 0xBB;       //i2c id
+    buffer.buf[1] = 0x00;       //class id
+    buffer.buf[2] = 0x00;       //parity
+    buffer.buf[3] = 0x00;       //count
+    buffer.buf[4] = leftValue;  //data[0]
+    buffer.buf[5] = rightValue; //data[1]
+    buffer.buf[6] = 0x00;       //data[2]
+    buffer.buf[7] = 0x00;       //data[3]
     buffer.msgType = vtI2CMotorMsgType;
     return(xQueueSend(i2cData->inQ,(void *) (&buffer),ticksToBlock));
 }
