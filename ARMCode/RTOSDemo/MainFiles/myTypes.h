@@ -94,18 +94,15 @@ typedef struct __powerStruct{
 #define IR_EMPTY_MESSAGE 0x52
 #define ADC_EMPTY_MESSAGE 0x53
 #define POWER_EMPTY_MESSAGE 0x54
-#define PIC2680_EMPTY_MESSAGE 0x55
-#define PIC26J50_EMPTY_MESSAGE 0x56
-#define GENERIC_EMPTY_MESSAGE 0x57
+#define GENERIC_EMPTY_MESSAGE 0x55
 
 //Non-empty messages
 #define COLOR_SENSOR_MESSAGE 0x10
 #define ENCODERS_MESSAGE 0x11
 #define IR_MESSAGE 0x12
-#define ADC_MESSAGE 0x13
+// #define ADC_MESSAGE 0x13
+#define ADC_MESSAGE 50
 #define POWER_MESSAGE 0x14
-#define PIC2680_ADC_MESSAGE 0x15
-#define PIC26J50_ADC_MESSAGE 0x16
 
 //I2C error message types to be sent to Web Server
 #define COLOR_SENSOR_RQST_DROPPED 0xF0
