@@ -23,8 +23,8 @@ typedef struct __vtLCDStruct {
 #define HEIGHT 240;
 
 // These define the lines on the LCD where the 2680 & 26J50 ADC data gets displayed
-#define PIC2680_LINE 0
-#define PIC26J50_LINE 4
+#define PIC_LINE 0
+// #define PIC26J50_LINE 4
 
 // Structure used to define the messages that are sent to the LCD thread
 //   the maximum length of a message to be printed is the size of the "buf" field below

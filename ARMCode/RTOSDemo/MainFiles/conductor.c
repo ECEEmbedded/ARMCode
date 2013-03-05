@@ -64,15 +64,15 @@ void vStartConductorTask(vtConductorStruct *params, unsigned portBASE_TYPE uxPri
 /*-----------------------------------------------------------*/
 
 uint8_t getI2CMsgType(uint8_t *buffer) {
-	return buffer[0];		//Don't change me!
+	return buffer[0];		// Don't change me!
 }
 
 uint8_t getI2CMsgCount(uint8_t *buffer) {
-	return buffer[1];		//Don't change me!
+	return buffer[1];		// Don't change me!
 }
 
-int geti2cADCValue(myi2cMsg *buffer){
-	return (((int)buffer->buf[3])<<8)|(int)buffer->buf[2];
+int geti2cADCValue(uint8_t *buffer){
+	return (((int)buffer[3])<<8)|(int)buffer[2];		// I'm dumb!
 }
 
 // This is the actual task that is run
@@ -160,16 +160,16 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 							powerMsgCount = getI2CMsgCount(Buffer);
 						}
 					}
-					case PIC2680_EMPTY_MESSAGE:{
-						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						pic2680reqSent = 0;
-						break;
-					}
-					case PIC26J50_EMPTY_MESSAGE:{
-						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						pic26J50reqSent	= 0;
-						break;
-					}
+//					case PIC_EMPTY_MESSAGE:{
+//						notifyRequestRecvd(i2cData,portMAX_DELAY);
+//						pic2680reqSent = 0;
+//						break;
+//					}
+//					case PIC26J50_EMPTY_MESSAGE:{
+//						notifyRequestRecvd(i2cData,portMAX_DELAY);
+//						pic26J50reqSent	= 0;
+//						break;
+//					}
 					case GENERIC_EMPTY_MESSAGE: {
 						break;
 					}
@@ -206,7 +206,7 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 					case ADC_MESSAGE: {	  //Still working this one out
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
 						ADCMsgCount++;
-						int value = geti2cADCValue(&msgBuffer);
+						int value = geti2cADCValue(Buffer);
 						uint8_t errCount = ADCMsgCount - getI2CMsgCount(Buffer);
 						if(SendLCDADCMsg(lcdData,value,ADC_MESSAGE,errCount, portMAX_DELAY) != pdTRUE) {
 							VT_HANDLE_FATAL_ERROR(0);
@@ -217,7 +217,7 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 						//	//Send Web Server an error with getI2CMsgCount(Buffer) - ADCMsgCount
 						//	ADCMsgCount = getI2CMsgCount(Buffer);
 						//}
-						if(SendLCDADCMsg(lcdData,value,type,errCount, portMAX_DELAY) != pdTRUE) {
+						if(SendLCDADCMsg(lcdData,value,ADC_MESSAGE,errCount, portMAX_DELAY) != pdTRUE) {
 						VT_HANDLE_FATAL_ERROR(0);
 					}
 					break;

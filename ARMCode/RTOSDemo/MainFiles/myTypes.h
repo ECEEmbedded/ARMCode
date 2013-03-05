@@ -111,8 +111,8 @@ typedef struct __powerStruct{
 #define MOTOR_RQST_DROPPED 0xF3
 #define ADC_RQST_DROPPED 0xF4		//Not sure if this is needed yet but adding anyways
 #define POWER_RQST_DROPPED 0xF5		//Not sure if this is needed yet but adding anyways
-#define PIC2680_ERROR 0xF6
-#define PIC26J50_ERROR 0xF7
+#define PIC_ERROR 0xF6
+// #define PIC26J50_ERROR 0xF7
 
 //Error codes
 #define VT_I2C_Q_FULL 1

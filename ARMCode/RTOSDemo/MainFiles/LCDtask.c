@@ -30,10 +30,10 @@
 // Length of the queue to this task
 #define vtLCDQLen 10
 
-static unsigned int pic2680MsgDropCount = 0;
-static unsigned int pic26J50MsgDropCount = 0;
-static unsigned int pic2680errorCount = 0;
-static unsigned int pic26J50errorCount = 0;
+static unsigned int picMsgDropCount = 0;
+// static unsigned int pic26J50MsgDropCount = 0;
+static unsigned int picErrorCount = 0;
+// static unsigned int pic26J50errorCount = 0;
 
 /* definition for the LCD task. */
 static portTASK_FUNCTION_PROTO( vLCDUpdateTask, pvParameters );
@@ -67,12 +67,8 @@ portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData, int data, uint8_t type, uint8_
 	lcdBuffer.length = sizeof(data);
 	lcdBuffer.msgType = type;
 	switch(type){
-		case PIC2680_ADC_MESSAGE:{
-			pic2680MsgDropCount = pic2680MsgDropCount + errCount;
-			break;
-		}
-		case PIC26J50_ADC_MESSAGE:{
-			pic26J50MsgDropCount = pic26J50MsgDropCount + errCount;
+		case ADC_MESSAGE:{
+			picMsgDropCount = picMsgDropCount + errCount;
 			break;
 		}
 		default:{
@@ -91,12 +87,8 @@ portBASE_TYPE SendLCDErrorMsg(vtLCDStruct *lcdData, uint8_t type, portTickType t
 	vtLCDMsg lcdBuffer;
 	lcdBuffer.msgType = type;
 	switch(type){
-		case PIC2680_ADC_MESSAGE:{
-			pic2680errorCount++;
-			break;
-		}
-		case PIC26J50_ADC_MESSAGE:{
-			pic26J50errorCount++;
+		case ADC_MESSAGE:{
+			picErrorCount++;
 			break;
 		}
 		default:{
@@ -180,14 +172,14 @@ static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 	GLCD_Clear(screenColor);
 
 	//Set up constant text fields
-	GLCD_DisplayString(PIC2680_LINE,0,1, (unsigned char*) "2680 ADC:");
-	GLCD_DisplayString(PIC2680_LINE,15,1,(unsigned char*) "V");
-	GLCD_DisplayString(PIC2680_LINE + 1,0,1, (unsigned char*) "Msgs Missed:      0");
-	GLCD_DisplayString(PIC2680_LINE + 2,0,1, (unsigned char*) "Rqsts Drop:       0");
-	GLCD_DisplayString(PIC26J50_LINE,0,1, (unsigned char*) "26J50 ADC:");
-	GLCD_DisplayString(PIC26J50_LINE,16,1,(unsigned char*) "V");
-	GLCD_DisplayString(PIC26J50_LINE + 1,0,1, (unsigned char*) "Msgs Missed:      0");
-	GLCD_DisplayString(PIC26J50_LINE + 2,0,1, (unsigned char*) "Rqsts Drop:       0");
+	GLCD_DisplayString(PIC_LINE,0,1, (unsigned char*) "IR ADC:");
+	GLCD_DisplayString(PIC_LINE,15,1,(unsigned char*) "V");
+	GLCD_DisplayString(PIC_LINE + 1,0,1, (unsigned char*) "Msgs Missed:      0");
+	GLCD_DisplayString(PIC_LINE + 2,0,1, (unsigned char*) "Rqsts Drop:       0");
+//	GLCD_DisplayString(PIC26J50_LINE,0,1, (unsigned char*) "26J50 ADC:");
+//	GLCD_DisplayString(PIC26J50_LINE,16,1,(unsigned char*) "V");
+//	GLCD_DisplayString(PIC26J50_LINE + 1,0,1, (unsigned char*) "Msgs Missed:      0");
+//	GLCD_DisplayString(PIC26J50_LINE + 2,0,1, (unsigned char*) "Rqsts Drop:       0");
 
 	// This task should never exit
 	for(;;)
@@ -197,35 +189,35 @@ static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 			VT_HANDLE_FATAL_ERROR(0);
 		}
 		switch(getMsgType(&msgBuffer)){
-			case PIC2680_ADC_MESSAGE:{
+			case ADC_MESSAGE:{
 				unsigned char displayVal[8];
 				adcIntToString(getMsgValue(&msgBuffer), displayVal);
-				GLCD_DisplayString(PIC2680_LINE,10,1,displayVal);
-				errorCountIntToString(pic2680MsgDropCount, displayVal);
-				GLCD_DisplayString(PIC2680_LINE + 1,12,1,displayVal);
+				GLCD_DisplayString(PIC_LINE,10,1,displayVal);
+				errorCountIntToString(picMsgDropCount, displayVal);
+				GLCD_DisplayString(PIC_LINE + 1,12,1,displayVal);
 				break;
 			}
-			case PIC26J50_ADC_MESSAGE:{
-				unsigned char displayVal[5];
-				adcIntToString(getMsgValue(&msgBuffer), displayVal);
-				GLCD_DisplayString(PIC26J50_LINE,11,1,displayVal);
-				errorCountIntToString(pic26J50MsgDropCount, displayVal);
-				GLCD_DisplayString(PIC26J50_LINE + 1,12,1,displayVal);
-			}
-			case PIC2680_ERROR:{
-				pic2680errorCount++;
+//			case PIC26J50_ADC_MESSAGE:{
+//				unsigned char displayVal[5];
+//				adcIntToString(getMsgValue(&msgBuffer), displayVal);
+//				GLCD_DisplayString(PIC26J50_LINE,11,1,displayVal);
+//				errorCountIntToString(pic26J50MsgDropCount, displayVal);
+//				GLCD_DisplayString(PIC26J50_LINE + 1,12,1,displayVal);
+//			}
+			case PIC_ERROR:{
+				picErrorCount++;
 				unsigned char displayVal[8];
-				errorCountIntToString(pic2680errorCount, displayVal);
-				GLCD_DisplayString(PIC2680_LINE + 2,12,1,displayVal);
+				errorCountIntToString(picErrorCount, displayVal);
+				GLCD_DisplayString(PIC_LINE + 2,12,1,displayVal);
 				break;
 			}
-			case PIC26J50_ERROR:{
-				pic26J50errorCount++;
-				unsigned char displayVal[8];
-				errorCountIntToString(pic26J50errorCount, displayVal);
-				GLCD_DisplayString(PIC26J50_LINE + 2,12,1,displayVal);
-				break;
-			}
+//			case PIC26J50_ERROR:{
+//				pic26J50errorCount++;
+//				unsigned char displayVal[8];
+//				errorCountIntToString(pic26J50errorCount, displayVal);
+//				GLCD_DisplayString(PIC26J50_LINE + 2,12,1,displayVal);
+//				break;
+//			}
 			default:{
 				break;
 			}
