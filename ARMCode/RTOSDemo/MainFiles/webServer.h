@@ -1,10 +1,9 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 #ifndef WEB_SERVER_H
 #define WEB_SERVER_H
 #include "myTypes.h"
 
-#define maxWebServerMsgLen 5
+#define maxWebServerMsgLen 9
 
 // Public API
 //
@@ -38,5 +37,4 @@ portBASE_TYPE webNotifyFastestTime(webServerStruct *webServerData, uint8_t fastM
 //***speedViolation value is boolean!!!!
 portBASE_TYPE webNotifySpeedViolation(webServerStruct *webServerData, uint8_t speedViolation);
 
-#endif
 #endif

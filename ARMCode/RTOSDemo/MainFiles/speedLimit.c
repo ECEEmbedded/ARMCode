@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -78,14 +77,63 @@ portBASE_TYPE conductorSendColorSensorDataMsg(speedLimitControlStruct *speedData
 // End of Public API
 /*-----------------------------------------------------------*/
 
-// Here is where the declaration of any custom helper functions occurs:
-// ...
+// Private routines used to unpack the message buffers.
+// I do not want to access the message buffer data structures outside of these routines.
+// These routines are specific to accessing our packet protocol from the task struct.
 
-// Here is where the declaration of any custom #define statements occurs:
-// ...
+// For accessing data sent between ARM local tasks:
 
-// Here is where the declaration of any necessary variables occurs:
-// ...
+/**     N/A     **/
+// This means no ARM tasks (excluding the conductor) are sending data to this task
+
+// For accessing data sent between Rover PIC(s) and the ARM:
+
+uint8_t getPcktProtoID(speedLimitMsg *speedBuf){
+    return speedBuf->buf[0];
+}
+
+uint8_t getPcktProtoSensorNum(speedLimitMsg *speedBuf){
+    return speedBuf->buf[1];
+}
+
+uint8_t getPcktProtoParity(speedLimitMsg *speedBuf){
+    return speedBuf->buf[2];
+}
+
+uint8_t getPcktProtoCount(speedLimitMsg *speedBuf){
+    return speedBuf->buf[3];
+}
+
+uint8_t getPcktProtoData1(speedLimitMsg *speedBuf){
+    return speedBuf->buf[4];
+}
+
+uint8_t getPcktProtoData2(speedLimitMsg *speedBuf){
+    return speedBuf->buf[5];
+}
+
+uint8_t getPcktProtoData3(speedLimitMsg *speedBuf){
+    return speedBuf->buf[6];
+}
+
+uint8_t getPcktProtoData4(speedLimitMsg *speedBuf){
+    return speedBuf->buf[7];
+}
+
+// End of private routines for message buffers
+/*-----------------------------------------------------------*/
+
+// Private routines used for data manipulation, etc.
+// There should be NO accessing of our packet protocol from the task struct in these routines.
+
+int getMsgType(speedLimitMsg *speedBuf)
+{
+    return(speedBuf->msgType);
+}
+
+// End of private routines for data manipulation, etc.
+/*-----------------------------------------------------------*/
+
 static speedLimitControlStruct *param;
 static motorControlStruct *motorControl;
 static navigationStruct *navData;
@@ -99,28 +147,21 @@ static portTASK_FUNCTION( vSpeedLimitTask, pvParameters )
 {
     // Get the parameters
     param = (speedLimitControlStruct *) pvParameters;
-    // Get the other necessary tasks' task pointers like this:
     // Get the Motor Control task pointer
     motorControl = param->motorControl;
     // Get the Navigation task pointer
     navData = param->navData;
     // Get the Web Server task pointer
     webData = param->webData;
-    // Repeat as necessary
-    // ...
-
-    // Initialize variables you declared above this function if necessary
-    // ...
 
     // Like all good tasks, this should never exit
     for(;;)
     {
         // Wait for a message from whomever we decide will need to talk to this task
-        // More than likely, this will involve I2C (Encoder data) or the Navigation Task (motor command)
         if (xQueueReceive(param->inQ,(void *) &msgBuffer,portMAX_DELAY) != pdTRUE) {
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
-        switch(msgBuffer.msgType){
+        switch(getMsgType(&msgBuffer)){
             case colorSensorDataMsgType:
             {
                 break;
@@ -133,4 +174,3 @@ static portTASK_FUNCTION( vSpeedLimitTask, pvParameters )
         }
     }
 }
-#endif

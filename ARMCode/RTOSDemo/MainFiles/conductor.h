@@ -1,5 +1,5 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
+
 #ifndef CONDUCTOR_H
 #define CONDUCTOR_H
 
@@ -40,5 +40,4 @@ typedef struct __ConductorStruct {
 //   lcdData: pointer to the data structure for the LCD task
 void vStartConductorTask(vtConductorStruct *conductorData, unsigned portBASE_TYPE uxPriority, vtI2CStruct *i2c, myI2CStruct * myi2c, motorControlStruct *motorControl, irControlStruct *irData, speedLimitControlStruct *speedData, powerStruct *powerData, vtLCDStruct *lcdData);
 
-#endif
 #endif

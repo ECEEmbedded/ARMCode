@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 #ifndef MOTOR_CONTROL_H
 #define MOTOR_CONTROL_H
 #include "i2c_ARM.h"
@@ -7,7 +6,7 @@
 #include "myTypes.h"
 #include "LCDtask.h"
 
-#define maxMotorMsgLen 5
+#define maxMotorMsgLen 9
 
 // Public API
 //
@@ -79,5 +78,4 @@ portBASE_TYPE sendMotorStop(motorControlStruct *motorControlData);
 portBASE_TYPE conductorSendMotorEncoderDataMsg(motorControlStruct *motorControlData, uint8_t *data, uint8_t length);
 
 portBASE_TYPE sendMotorTimerMsg(motorControlStruct *motorData, portTickType ticksElapsed, portTickType ticksToBlock);
-#endif
 #endif

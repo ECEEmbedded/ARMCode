@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -73,33 +72,73 @@ portBASE_TYPE conductorSendPowerDataMsg(powerStruct *powerData, uint8_t *data, u
 // End of Public API
 /*-----------------------------------------------------------*/
 
-// Here is where the declaration of any custom helper functions occurs:
-// ...
+// Private routines used to unpack the message buffers.
+// I do not want to access the message buffer data structures outside of these routines.
+// These routines are specific to accessing our packet protocol from the task struct.
 
-// Here is where the declaration of any custom #define statements occurs:
-// ...
+// For accessing data sent between ARM local tasks:
 
-// Here is where the declaration of any necessary variables occurs:
-// ...
+/**     N/A     **/
+// This means no ARM tasks (excluding the conductor) are sending data to this task
+
+// For accessing data sent between Rover PIC(s) and the ARM:
+
+uint8_t getPcktProtoID(powerMsg *powerBuf){
+    return powerBuf->buf[0];
+}
+
+uint8_t getPcktProtoSensorNum(powerMsg *powerBuf){
+    return powerBuf->buf[1];
+}
+
+uint8_t getPcktProtoParity(powerMsg *powerBuf){
+    return powerBuf->buf[2];
+}
+
+uint8_t getPcktProtoCount(powerMsg *powerBuf){
+    return powerBuf->buf[3];
+}
+
+uint8_t getPcktProtoData1(powerMsg *powerBuf){
+    return powerBuf->buf[4];
+}
+
+uint8_t getPcktProtoData2(powerMsg *powerBuf){
+    return powerBuf->buf[5];
+}
+
+uint8_t getPcktProtoData3(powerMsg *powerBuf){
+    return powerBuf->buf[6];
+}
+
+uint8_t getPcktProtoData4(powerMsg *powerBuf){
+    return powerBuf->buf[7];
+}
+
+// End of private routines for message buffers
+/*-----------------------------------------------------------*/
+
+// Private routines used for data manipulation, etc.
+// There should be NO accessing of our packet protocol from the task struct in these routines.
+
+int getMsgType(powerMsg *powerBuf)
+{
+    return(powerBuf->msgType);
+}
+
+// End of private routines for data manipulation, etc.
+/*-----------------------------------------------------------*/
+
 static powerStruct *param;
+
 // Buffer for receiving messages
 static powerMsg msgBuffer;
-
-static unsigned int t;
-static int x;
-static int y;
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vPowerTask, pvParameters )
 {
     // Get the parameters
     param = (powerStruct *) pvParameters;
-    // Get any other necessary tasks' task pointers (but this task shouldn't need any more)
-
-    // Initialize variables you declared above this function
-    t = 0;
-    x = 0;
-    y = 0;
 
     // Like all good tasks, this should never exit
     for(;;)
@@ -108,7 +147,7 @@ static portTASK_FUNCTION( vPowerTask, pvParameters )
         if (xQueueReceive(param->inQ,(void *) &msgBuffer,portMAX_DELAY) != pdTRUE) {
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
-        switch(msgBuffer.msgType){
+        switch(getMsgType(&msgBuffer)){
             case powerDataMsgType:
             {
                 break;
@@ -121,5 +160,3 @@ static portTASK_FUNCTION( vPowerTask, pvParameters )
         }
     }
 }
-
-#endif

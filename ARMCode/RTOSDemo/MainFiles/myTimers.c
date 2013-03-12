@@ -1,8 +1,4 @@
-// File has been cleaned up for milestone 2 & beyond
-// 2.26.2013
-
 #include "myDefs.h"
-#if MILESTONE_2==1
 
 /* Scheduler include files. */
 #include "FreeRTOS.h"
@@ -149,4 +145,3 @@ void startTimerForNav(navigationStruct *navData){
 	}
 }
 
-#endif

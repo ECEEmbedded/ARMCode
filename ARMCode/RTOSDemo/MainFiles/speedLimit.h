@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 #ifndef SPEEDLIMIT_H
 #define SPEEDLIMIT_H
 #include "myTypes.h"
@@ -7,7 +6,7 @@
 #include "motorControl.h"
 #include "navigation.h"
 
-#define maxSpeedLimitMsgLen 5
+#define maxSpeedLimitMsgLen 9
 
 // Public API
 //
@@ -30,5 +29,4 @@ void vStartSpeedLimitTask(speedLimitControlStruct *speedData, unsigned portBASE_
 //   Result of the call to xQueueSend()
 portBASE_TYPE conductorSendColorSensorDataMsg(speedLimitControlStruct *speedData,uint8_t *data, uint8_t length);
 
-#endif
 #endif

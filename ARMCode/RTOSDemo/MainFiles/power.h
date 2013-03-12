@@ -1,10 +1,9 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 #ifndef POWER_H
 #define POWER_H
 #include "myTypes.h"
 
-#define maxPowerMsgLen 5
+#define maxPowerMsgLen 9
 
 // Public API
 //
@@ -24,5 +23,4 @@ void vStartPowerTask(powerStruct *powerData, unsigned portBASE_TYPE uxPriority);
 //   Result of the call to xQueueSend()
 portBASE_TYPE conductorSendPowerDataMsg(powerStruct *powerData, uint8_t *data, uint8_t length);
 
-#endif
 #endif

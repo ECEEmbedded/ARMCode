@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -57,7 +56,7 @@ void vStartNavigationTask(navigationStruct *params, unsigned portBASE_TYPE uxPri
     }
 }
 
-portBASE_TYPE AIUpdateDistences(navigationStruct *navData, uint8_t l1, uint8_t l2, uint8_t l3, uint8_t r1, uint8_t r2, uint8_t r3)
+portBASE_TYPE AIUpdateDistances(navigationStruct *navData, uint8_t l1, uint8_t l2, uint8_t l3, uint8_t r1, uint8_t r2, uint8_t r3)
 {
     if (navData == NULL) {
         VT_HANDLE_FATAL_ERROR(0);
@@ -142,36 +141,108 @@ portBASE_TYPE sendNavTimerMsg(navigationStruct *navData, portTickType ticksElaps
         VT_HANDLE_FATAL_ERROR(buffer.length);
     }
     memcpy(buffer.buf,(char *)&ticksElapsed,sizeof(ticksElapsed));
-    buffer.msgType = navTimerMsgType;
+    buffer.msgType = AITimerMsgType;
     return(xQueueSend(navData->inQ,(void *) (&buffer),ticksToBlock));
 }
 
 // End of Public API
 /*-----------------------------------------------------------*/
 
-// Here is where the declaration of any custom helper functions occurs:
-// ...
+// Private routines used to unpack the message buffers.
+// I do not want to access the message buffer data structures outside of these routines.
+// These routines are specific to accessing our packet protocol from the task struct.
 
-// Just some example functions that you could use to pull out your data
-// depending on what msg type it is and what not...
+// For accessing data sent between ARM local tasks:
 
-    // uint8_t getCentimeters(navigationMsg *buffer){
-    //     return buffer->buf[0];
-    // }
+// When AIUpdateDistancesMsgType type, l1 is in buf[0]
+uint8_t getUpdatedDistance_L1_Info(navigationMsg *navBuf){
+    return navBuf->buf[0];
+}
 
-    // uint8_t getDegrees(navigationMsg *buffer){
-    //     return buffer->buf[0];
-    // }
+// When AIUpdateDistancesMsgType type, l2 is in buf[1]
+uint8_t getUpdatedDistance_L2_Info(navigationMsg *navBuf){
+    return navBuf->buf[1];
+}
 
-// Here is where the declaration of any custom #define statements occurs:
-// ...
+// When AIUpdateDistancesMsgType type, l3 is in buf[2]
+uint8_t getUpdatedDistance_L3_Info(navigationMsg *navBuf){
+    return navBuf->buf[2];
+}
 
-// Here is where the declaration of any necessary variables occurs:
-// ...
+// When AIUpdateDistancesMsgType type, r1 is in buf[3]
+uint8_t getUpdatedDistance_R1_Info(navigationMsg *navBuf){
+    return navBuf->buf[3];
+}
+
+// When AIUpdateDistancesMsgType type, r2 is in buf[4]
+uint8_t getUpdatedDistance_R2_Info(navigationMsg *navBuf){
+    return navBuf->buf[4];
+}
+
+// When AIUpdateDistancesMsgType type, r3 is in buf[5]
+uint8_t getUpdatedDistance_R3_Info(navigationMsg *navBuf){
+    return navBuf->buf[5];
+}
+
+// When AIUpdateWallAnglesMsgType type, l is in buf[0]
+uint8_t getUpdatedWallAngle_L_Info(navigationMsg *navBuf){
+    return navBuf->buf[0];
+}
+
+// When AIUpdateWallAnglesMsgType type, r is in buf[1]
+uint8_t getUpdatedWallAngle_R_Info(navigationMsg *navBuf){
+    return navBuf->buf[1];
+}
+
+// When AIUpdateIsWallsMsgType type, wallFront is in buf[0]
+uint8_t getUpdateIsWall_F_Info(navigationMsg *navBuf){
+    return navBuf->buf[0];
+}
+
+// When AIUpdateIsWallsMsgType type, wallBack is in buf[1]
+uint8_t getUpdateIsWall_B_Info(navigationMsg *navBuf){
+    return navBuf->buf[1];
+}
+
+// When AIUpdateIsWallsMsgType type, wallLeft is in buf[2]
+uint8_t getUpdateIsWall_L_Info(navigationMsg *navBuf){
+    return navBuf->buf[2];
+}
+
+// When AIUpdateIsWallsMsgType type, wallRight is in buf[3]
+uint8_t getUpdateIsWall_R_Info(navigationMsg *navBuf){
+    return navBuf->buf[3];
+}
+
+// When AIUpdateFinishLineMsgType type, finishLine is in buf[0]
+uint8_t getUpdatedFinishLineInfo(navigationMsg *navBuf){
+    return navBuf->buf[0];
+}
+
+// For accessing data sent between Rover PIC(s) and the ARM:
+
+/**     N/A     **/
+// This means no data goes straight from Rover PIC(s) to the web server
+
+// End of private routines for message buffers
+/*-----------------------------------------------------------*/
+
+// Private routines used for data manipulation, etc.
+// There should be NO accessing of our packet protocol from the task struct in these routines.
+
+int getMsgType(navigationMsg *navBuf)
+{
+    return(navBuf->msgType);
+}
+
+// End of private routines for data manipulation, etc.
+/*-----------------------------------------------------------*/
 
 static navigationStruct *param;
 static motorControlStruct *motorControl;
 static vtLCDStruct *lcdData;
+
+// Buffer for receiving messages
 static navigationMsg msgBuffer;
 
 // This is the actual task that is run
@@ -179,14 +250,10 @@ static portTASK_FUNCTION( vNavigationTask, pvParameters )
 {
     // Get the parameters
     param = (navigationStruct *) pvParameters;
-    // Get the other necessary tasks' task pointers like this:
     // Get the Motor Control task pointer
     motorControl = param->motorControl;
     // Get the LCD task pointer
     lcdData = param->lcdData;
-
-    // Initialize variables you declared above this function if necessary
-    // ...
 
     // Like all good tasks, this should never exit
     for(;;)
@@ -195,8 +262,8 @@ static portTASK_FUNCTION( vNavigationTask, pvParameters )
         if (xQueueReceive(param->inQ,(void *) &msgBuffer,portMAX_DELAY) != pdTRUE) {
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
-        switch(msgBuffer.msgType){
-            case navTimerMsgType:
+        switch(getMsgType(&msgBuffer)){
+            case AITimerMsgType:
             {
                 break;
             }
@@ -224,4 +291,3 @@ static portTASK_FUNCTION( vNavigationTask, pvParameters )
         }
     }
 }
-#endif

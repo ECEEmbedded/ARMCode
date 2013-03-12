@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -74,25 +73,69 @@ portBASE_TYPE conductorSendIRSensorDataMsg(irControlStruct *irData, uint8_t *dat
 // End of Public API
 /*-----------------------------------------------------------*/
 
-// Here is where the declaration of any custom helper functions occurs:
-// ...
+// Private routines used to unpack the message buffers.
+// I do not want to access the message buffer data structures outside of these routines.
+// These routines are specific to accessing our packet protocol from the task struct.
 
-// Here is where the declaration of any custom #define statements occurs:
-// ...
+// For accessing data sent between ARM local tasks:
 
+/**     N/A     **/
+// This means no ARM tasks (excluding the conductor) are sending data to this task
+
+// For accessing data sent between Rover PIC(s) and the ARM:
+
+uint8_t getPcktProtoID(irMsg *irBuf){
+    return irBuf->buf[0];
+}
+
+uint8_t getPcktProtoSensorNum(irMsg *irBuf){
+    return irBuf->buf[1];
+}
+
+uint8_t getPcktProtoParity(irMsg *irBuf){
+    return irBuf->buf[2];
+}
+
+uint8_t getPcktProtoCount(irMsg *irBuf){
+    return irBuf->buf[3];
+}
+
+uint8_t getPcktProtoData1(irMsg *irBuf){
+    return irBuf->buf[4];
+}
+
+uint8_t getPcktProtoData2(irMsg *irBuf){
+    return irBuf->buf[5];
+}
+
+uint8_t getPcktProtoData3(irMsg *irBuf){
+    return irBuf->buf[6];
+}
+
+uint8_t getPcktProtoData4(irMsg *irBuf){
+    return irBuf->buf[7];
+}
+
+// End of private routines for message buffers
+/*-----------------------------------------------------------*/
+
+// Private routines used for data manipulation, etc.
+// There should be NO accessing of our packet protocol from the task struct in these routines.
+
+int getMsgType(irMsg *irBuf)
+{
+    return(irBuf->msgType);
+}
+
+// End of private routines for data manipulation, etc.
+/*-----------------------------------------------------------*/
 
 // Here is where the declaration of static task pointers occurs; they will be initialized below.
 static irControlStruct *param;
 static navigationStruct *navData;
 
-// Buffer for receiving messages - declaration
+// Buffer for receiving messages
 static irMsg msgBuffer;
-
-// Here is where the declaration of any necessary variables occurs:
-// ...
-static unsigned int t;
-static int x;
-static int y;
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vIRTask, pvParameters )
@@ -101,13 +144,6 @@ static portTASK_FUNCTION( vIRTask, pvParameters )
     param = (irControlStruct *) pvParameters;
     // Get the other necessary tasks' task pointers like this:
     navData = param->navData;
-    // Repeat as necessary
-    // ...
-
-    // Initialize variables you declared above this function
-    t = 0;
-    x = 0;
-    y = 0;
 
     // Like all good tasks, this should never exit
     for(;;)
@@ -116,7 +152,7 @@ static portTASK_FUNCTION( vIRTask, pvParameters )
         if (xQueueReceive(param->inQ,(void *) &msgBuffer,portMAX_DELAY) != pdTRUE) {
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
-        switch(msgBuffer.msgType){
+        switch(getMsgType(&msgBuffer)){
             case irDataMsgType:
             {
                 break;
@@ -129,4 +165,3 @@ static portTASK_FUNCTION( vIRTask, pvParameters )
         }
     }
 }
-#endif

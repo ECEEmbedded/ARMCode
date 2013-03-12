@@ -30,17 +30,12 @@
 // Length of the queue to this task
 #define vtLCDQLen 10
 
-static unsigned int picMsgDropCount = 0;
-// static unsigned int pic26J50MsgDropCount = 0;
-static unsigned int picErrorCount = 0;
-// static unsigned int pic26J50errorCount = 0;
-
 /* definition for the LCD task. */
 static portTASK_FUNCTION_PROTO( vLCDUpdateTask, pvParameters );
 
 /*-----------------------------------------------------------*/
 
-void StartLCDTask(vtLCDStruct *ptr, unsigned portBASE_TYPE uxPriority)
+void vStartLCDTask(vtLCDStruct *ptr, unsigned portBASE_TYPE uxPriority)
 {
 	if (ptr == NULL) {
 		VT_HANDLE_FATAL_ERROR(0);
@@ -57,110 +52,220 @@ void StartLCDTask(vtLCDStruct *ptr, unsigned portBASE_TYPE uxPriority)
 	}
 }
 
-portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData, int data, uint8_t type, uint8_t errCount, portTickType ticksToBlock)
+// Display the current speed, 0xFF is the maximum, on the LCD screen
+portBASE_TYPE sendLCDCurrentSpeed(vtLCDStruct *lcdData, uint8_t speed)
 {
-	if (lcdData == NULL) {
-		VT_HANDLE_FATAL_ERROR(0);
-	}
-	vtLCDMsg lcdBuffer;
-
-	lcdBuffer.length = sizeof(data);
-	lcdBuffer.msgType = type;
-	switch(type){
-		case ADC_MESSAGE:{
-			picMsgDropCount = picMsgDropCount + errCount;
-			break;
-		}
-		default:{
-		}
-	}
-	lcdBuffer.buf[0] = (uint8_t) data;
-	lcdBuffer.buf[1] = (uint8_t)(data>>8);
-	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
+    if (lcdData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    vtLCDMsg buffer;
+    buffer.length = 1;
+    if (buffer.length > vtLCDMaxLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_LCD_MSG_FORMAT);
+    }
+    buffer.buf[0] = speed;
+    buffer.msgType = sendLCDCurrentSpeedMsgType;
+    return(xQueueSend(lcdData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
-portBASE_TYPE SendLCDErrorMsg(vtLCDStruct *lcdData, uint8_t type, portTickType ticksToBlock)
+// Display the current speed limit zone on the LCD screen
+// uint8_t "zone" value corresponds to current speed limit zone
+portBASE_TYPE SendLCDSpeedLimitZone(vtLCDStruct *lcdData, uint8_t zone)
 {
-	if (lcdData == NULL) {
-		VT_HANDLE_FATAL_ERROR(0);
-	}
-	vtLCDMsg lcdBuffer;
-	lcdBuffer.msgType = type;
-	switch(type){
-		case ADC_MESSAGE:{
-			picErrorCount++;
-			break;
-		}
-		default:{
-		}
-	}
-	return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),ticksToBlock));
+    if (lcdData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    vtLCDMsg buffer;
+    buffer.length = 1;
+    if (buffer.length > vtLCDMaxLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_LCD_MSG_FORMAT);
+    }
+    buffer.buf[0] = zone;
+    buffer.msgType = sendLCDSpeedLimitZoneMsgType;
+    return(xQueueSend(lcdData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
-// Private routines used to unpack the message buffers
-
-//   I do not want to access the message buffer data structures outside of these routines
-// portTickType unpackTimerMsg(vtLCDMsg *lcdBuffer)
-// {
-// 	portTickType *ptr = (portTickType *) lcdBuffer->buf;
-// 	return(*ptr);
-// }
-
-int getMsgType(vtLCDMsg *lcdBuffer)
+// Display whether or not the finish line has been crossed yet on the LCD screen
+//***finish value is boolean!!!!
+portBASE_TYPE SendLCDFinishLine(vtLCDStruct *lcdData, uint8_t finish)
 {
-	return(lcdBuffer->msgType);
+    if (lcdData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    vtLCDMsg buffer;
+    buffer.length = 1;
+    if (buffer.length > vtLCDMaxLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_LCD_MSG_FORMAT);
+    }
+    buffer.buf[0] = finish;
+    buffer.msgType = sendLCDFinishLineMsgType;
+    return(xQueueSend(lcdData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
-int getMsgValue(vtLCDMsg *lcdBuffer)
+// Display the current power requirements on the LCD screen
+portBASE_TYPE SendLCDPower(vtLCDStruct *lcdData, uint8_t watts)
 {
-	return((int)(lcdBuffer->buf[1]<<8)) | ((int) lcdBuffer->buf[0]);
+    if (lcdData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    vtLCDMsg buffer;
+    buffer.length = 1;
+    if (buffer.length > vtLCDMaxLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_LCD_MSG_FORMAT);
+    }
+    buffer.buf[0] = watts;
+    buffer.msgType = sendLCDPowerMsgType;
+    return(xQueueSend(lcdData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
-void adcIntToString(int value, unsigned char *returnVal){
-	returnVal[0] = (value/0xCC) + 48;	//Ones Place
-	returnVal[1] = '.';
-	returnVal[2] = (((10*value)/0xCC)%10) + 48; //Tenths place
-	returnVal[3] = ((((100*value)/0xCC)%100)%10) + 48; //Hundredths place
-	returnVal[4] = 0;
+// Display the fastest time the rover could complete the course on the LCD screen
+//with the data gathered.
+portBASE_TYPE SendLCDFastestTime(vtLCDStruct *lcdData, uint8_t fastMin, uint8_t fastSec)
+{
+    if (lcdData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    vtLCDMsg buffer;
+    buffer.length = 2;
+    if (buffer.length > vtLCDMaxLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_LCD_MSG_FORMAT);
+    }
+    buffer.buf[0] = fastMin;
+    buffer.buf[1] = fastSec;
+    buffer.msgType = sendLCDFastestTimeMsgType;
+    return(xQueueSend(lcdData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
-void errorCountIntToString(int value, unsigned char *returnVal){
-	int index = 0;
-	int place;
-	int zeroSoFar = 0;
-	for(place = 1000000; place > 0; place = place/10){
-		returnVal[index] = ((value/place)%10) + 48;
-		if((returnVal[index] == 48) && (zeroSoFar == 0)){
-			returnVal[index] = ' ';
-		}else{
-			zeroSoFar = 1;
-		}
-		index++;
-	}
-	returnVal[8] = 0;
+// Display whether or not a speed limit violation is occurring on the LCD screen
+//***speedViolation value is boolean!!!!
+portBASE_TYPE SendLCDSpeedViolation(vtLCDStruct *lcdData, uint8_t speedViolation)
+{
+    if (lcdData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    vtLCDMsg buffer;
+    buffer.length = 1;
+    if (buffer.length > vtLCDMaxLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_LCD_MSG_FORMAT);
+    }
+    buffer.buf[0] = speedViolation;
+    buffer.msgType = sendLCDSpeedViolationMsgType;
+    return(xQueueSend(lcdData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
-// int getMsgLength(vtLCDMsg *lcdBuffer)
-// {
-// 	return(lcdBuffer->msgType);
-// }
+// End of Public API
+/*-----------------------------------------------------------*/
 
-// void copyMsgString(char *target,vtLCDMsg *lcdBuffer,int targetMaxLen)
-// {
-// 	strncpy(target,(char *)(lcdBuffer->buf),targetMaxLen);
-// }
+// Private routines used to unpack the message buffers.
+// I do not want to access the message buffer data structures outside of these routines.
+// These routines are specific to accessing our packet protocol from the task struct.
+
+// For accessing data sent between ARM local tasks:
+
+// When sendLCDCurrentSpeedMsgType type, speed is in buf[0]
+uint8_t getCurrentSpeedInfo(vtLCDMsg *lcdBuf){
+    return lcdBuf->buf[0];
+}
+
+// When sendLCDSpeedLimitZoneMsgType type, zone is in buf[0]
+uint8_t getSpeedLimitZoneInfo(vtLCDMsg *lcdBuf){
+    return lcdBuf->buf[0];
+}
+
+// When sendLCDFinishLineMsgType type, finish is in buf[0]
+uint8_t getFinishLineInfo(vtLCDMsg *lcdBuf){
+    return lcdBuf->buf[0];
+}
+
+// When sendLCDPowerMsgType type, watts is in buf[0]
+uint8_t getPowerInfo(vtLCDMsg *lcdBuf){
+    return lcdBuf->buf[0];
+}
+
+// When sendLCDFastestTimeMsgType type, fastMin is in buf[0]
+uint8_t getFastestTimeMinutesInfo(vtLCDMsg *lcdBuf){
+    return lcdBuf->buf[0];
+}
+
+// When sendLCDFastestTimeMsgType type, fastSec is in buf[1]
+uint8_t getFastestTimeSecondsInfo(vtLCDMsg *lcdBuf){
+    return lcdBuf->buf[1];
+}
+
+// When sendLCDSpeedViolationMsgType type, speedViolation is in buf[0]
+uint8_t getSpeedViolationInfo(vtLCDMsg *lcdBuf){
+    return lcdBuf->buf[0];
+}
+
+// For accessing data sent between Rover PIC(s) and the ARM:
+
+/**     N/A     **/
+// This means no data goes straight from Rover PIC(s) to the web server
 
 // End of private routines for message buffers
+/*-----------------------------------------------------------*/
+
+// Private routines used for data manipulation, etc.
+// There should be NO accessing of our packet protocol from the task struct in these routines.
+
+int getMsgType(vtLCDMsg *lcdBuf)
+{
+	return(lcdBuf->msgType);
+}
+
+/*
+
+	// Example of int to string data conversion; was useful for ADC task for milestone 1 and 2ish.
+		// Figured I would leave this in for now until later one when it may not be necessary as an example anymore.
+
+	void adcIntToString(int value, unsigned char *returnVal){
+		returnVal[0] = (value/0xCC) + 48;	//Ones Place
+		returnVal[1] = '.';
+		returnVal[2] = (((10*value)/0xCC)%10) + 48; //Tenths place
+		returnVal[3] = ((((100*value)/0xCC)%100)%10) + 48; //Hundredths place
+		returnVal[4] = 0;
+	}
+
+	// Another example of int to string data conversion; was useful for ADC task for milestone 1 and 2ish.
+		// Figured I would leave this in for now until later one when it may not be necessary as an example anymore.
+
+	void errorCountIntToString(int value, unsigned char *returnVal){
+		int index = 0;
+		int place;
+		int zeroSoFar = 0;
+		for(place = 1000000; place > 0; place = place/10){
+			returnVal[index] = ((value/place)%10) + 48;
+			if((returnVal[index] == 48) && (zeroSoFar == 0)){
+				returnVal[index] = ' ';
+			}else{
+				zeroSoFar = 1;
+			}
+			index++;
+		}
+		returnVal[8] = 0;
+	}
+
+*/
+
+// End of private routines for data manipulation, etc.
+/*-----------------------------------------------------------*/
 
 static vtLCDStruct *lcdPtr;
+
+// Buffer for receiving messages
 static vtLCDMsg msgBuffer;
+
+static unsigned short screenColor, tscr;
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 {
-	unsigned short screenColor = 0;
-	unsigned short tscr;
-
 	lcdPtr = (vtLCDStruct *) pvParameters;
 
 	/* Initialize the LCD and set the initial colors */
@@ -172,14 +277,7 @@ static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 	GLCD_Clear(screenColor);
 
 	//Set up constant text fields
-	GLCD_DisplayString(PIC_LINE,0,1, (unsigned char*) "IR ADC:");
-	GLCD_DisplayString(PIC_LINE,15,1,(unsigned char*) "V");
-	GLCD_DisplayString(PIC_LINE + 1,0,1, (unsigned char*) "Msgs Missed:      0");
-	GLCD_DisplayString(PIC_LINE + 2,0,1, (unsigned char*) "Rqsts Drop:       0");
-//	GLCD_DisplayString(PIC26J50_LINE,0,1, (unsigned char*) "26J50 ADC:");
-//	GLCD_DisplayString(PIC26J50_LINE,16,1,(unsigned char*) "V");
-//	GLCD_DisplayString(PIC26J50_LINE + 1,0,1, (unsigned char*) "Msgs Missed:      0");
-//	GLCD_DisplayString(PIC26J50_LINE + 2,0,1, (unsigned char*) "Rqsts Drop:       0");
+	GLCD_DisplayString(LINE,0,1, (unsigned char*) "LCD Line 0:");
 
 	// This task should never exit
 	for(;;)
@@ -189,35 +287,9 @@ static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 			VT_HANDLE_FATAL_ERROR(0);
 		}
 		switch(getMsgType(&msgBuffer)){
-			case ADC_MESSAGE:{
-				unsigned char displayVal[8];
-				adcIntToString(getMsgValue(&msgBuffer), displayVal);
-				GLCD_DisplayString(PIC_LINE,10,1,displayVal);
-				errorCountIntToString(picMsgDropCount, displayVal);
-				GLCD_DisplayString(PIC_LINE + 1,12,1,displayVal);
+			case 1: {
 				break;
 			}
-//			case PIC26J50_ADC_MESSAGE:{
-//				unsigned char displayVal[5];
-//				adcIntToString(getMsgValue(&msgBuffer), displayVal);
-//				GLCD_DisplayString(PIC26J50_LINE,11,1,displayVal);
-//				errorCountIntToString(pic26J50MsgDropCount, displayVal);
-//				GLCD_DisplayString(PIC26J50_LINE + 1,12,1,displayVal);
-//			}
-			case PIC_ERROR:{
-				picErrorCount++;
-				unsigned char displayVal[8];
-				errorCountIntToString(picErrorCount, displayVal);
-				GLCD_DisplayString(PIC_LINE + 2,12,1,displayVal);
-				break;
-			}
-//			case PIC26J50_ERROR:{
-//				pic26J50errorCount++;
-//				unsigned char displayVal[8];
-//				errorCountIntToString(pic26J50errorCount, displayVal);
-//				GLCD_DisplayString(PIC26J50_LINE + 2,12,1,displayVal);
-//				break;
-//			}
 			default:{
 				break;
 			}

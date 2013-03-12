@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -187,6 +186,81 @@ portBASE_TYPE sendMotorTimerMsg(motorControlStruct *motorData, portTickType tick
 // End of Public API
 /*-----------------------------------------------------------*/
 
+// Private routines used to unpack the message buffers.
+// I do not want to access the message buffer data structures outside of these routines.
+// These routines are specific to accessing our packet protocol from the task struct.
+
+// For accessing data sent between ARM local tasks:
+
+// When sendMotorSetSpeed type, speed is in buf[0]
+uint8_t getNewSpeed(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[0];
+}
+
+// When sendMotorTurnLeft type, magnitude is in buf[0]
+uint8_t getLeftTurnMag(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[0];
+}
+
+// When sendMotorTurnRight type, magnitude is in buf[0]
+uint8_t getLeftTurnMag(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[0];
+}
+
+// For accessing data sent between Rover PIC(s) and the ARM:
+
+// When conductor has to manage a task and send it to the
+// conductorSendMotorEncoderDataMsg task and the message has the
+// encoderDataMsgType type, then the next 8 functions should be used.
+uint8_t getPcktProtoID(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[0];
+}
+
+uint8_t getPcktProtoSensorNum(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[1];
+}
+
+uint8_t getPcktProtoParity(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[2];
+}
+
+uint8_t getPcktProtoCount(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[3];
+}
+
+uint8_t getPcktProtoData1(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[4];
+}
+
+uint8_t getPcktProtoData2(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[5];
+}
+
+uint8_t getPcktProtoData3(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[6];
+}
+
+uint8_t getPcktProtoData4(motorControlMsg *motorControlBuf){
+    return motorControlBuf->buf[7];
+}
+
+// End of private routines for message buffers
+/*-----------------------------------------------------------*/
+
+// Private routines used for data manipulation, etc.
+// There should be NO accessing of our packet protocol from the task struct in these routines.
+
+uint8_t getDegrees(unsigned int right,unsigned int left){
+    return ((right + left)/2)/COUNTS_PER_DEGREE;
+}
+
+uint8_t getCentimeters(unsigned int right,unsigned int left){
+    return ((right + left)/2)/COUNTS_PER_CENTIMETER;
+}
+
+// End of private routines for data manipulation, etc.
+/*-----------------------------------------------------------*/
+
 //Motor and Encoder constants
 #define COUNTS_PER_CENTIMETER 30
 #define COUNTS_PER_DEGREE 2    // 10
@@ -206,28 +280,7 @@ portBASE_TYPE sendMotorTimerMsg(motorControlStruct *motorData, portTickType tick
 
 //#define SEND_COUNTS_TO_LCD
 
-uint8_t getDegrees(unsigned int right,unsigned int left){
-    return ((right + left)/2)/COUNTS_PER_DEGREE;
-}
-
-uint8_t getCentimeters(unsigned int right,unsigned int left){
-    return ((right + left)/2)/COUNTS_PER_CENTIMETER;
-}
-
-uint8_t getRightCount(motorControlMsg *buffer){
-    return buffer->buf[0];
-}
-
-uint8_t getLeftCount(motorControlMsg *buffer){
-    return buffer->buf[1];
-}
-
-unsigned int getTargetVal(motorControlMsg *buffer){
-    return (unsigned int) buffer->buf[0];
-}
-
-static uint8_t currentOp;
-static uint8_t lastOp;
+static uint8_t currentOp, lastOp;
 static motorControlStruct *param;
 static myI2CStruct *i2cData;
 static webServerStruct *webData;
@@ -268,7 +321,7 @@ static portTASK_FUNCTION( vMotorControlTask, pvParameters )
         if (xQueueReceive(param->inQ,(void *) &msgBuffer,portMAX_DELAY) != pdTRUE) {
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
-        switch(msgBuffer.msgType){
+        switch(getMsgType(&msgBuffer)){
 			case motorTimerMsgType:
 			{
 				break;
@@ -319,4 +372,3 @@ static portTASK_FUNCTION( vMotorControlTask, pvParameters )
         }
     }
 }
-#endif

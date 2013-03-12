@@ -1,12 +1,11 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 #include "myTypes.h"
 #include "motorControl.h"
 #include "LCDtask.h"
 
-#define maxNavigationMsgLen 5
+#define maxNavigationMsgLen 9
 
 // Public API
 //
@@ -23,7 +22,7 @@ void vStartNavigationTask(navigationStruct *navData, unsigned portBASE_TYPE uxPr
 
 //Navigation communication API
 
-portBASE_TYPE AIUpdateDistences(navigationStruct *navData, uint8_t l1, uint8_t l2, uint8_t l3, uint8_t r1, uint8_t r2, uint8_t r3);
+portBASE_TYPE AIUpdateDistances(navigationStruct *navData, uint8_t l1, uint8_t l2, uint8_t l3, uint8_t r1, uint8_t r2, uint8_t r3);
 
 portBASE_TYPE AIUpdateWallAngles(navigationStruct *navData, uint8_t l, uint8_t r);
 
@@ -33,5 +32,4 @@ portBASE_TYPE AIUpdateFinishLine(navigationStruct *navData, uint8_t finishLine);
 
 portBASE_TYPE sendNavTimerMsg(navigationStruct *navData, portTickType ticksElapsed, portTickType ticksToBlock);
 
-#endif
 #endif

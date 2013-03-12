@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 #ifndef I2C_TASK_H
 #define I2C_TASK_H
 #include "vtI2C.h"
@@ -17,9 +16,6 @@ typedef struct __i2cStruct {
 #define I2C_MSG_SIZE 8      //was 4
 
 #define SLAVE_ADDR 0x4F
-
-#define PIC2680 0
-#define PIC26J50 1
 
 // Public API
 //
@@ -50,5 +46,4 @@ portBASE_TYPE sendi2cTimerMsg(myI2CStruct *i2cData, portTickType ticksElapsed, p
 portBASE_TYPE sendi2cMotorMsg(myI2CStruct *i2cData, uint8_t leftValue, uint8_t rightValue, portTickType ticksToBlock);
 
 portBASE_TYPE notifyRequestRecvd(myI2CStruct *i2cData, portTickType ticksToBlock);
-#endif
 #endif

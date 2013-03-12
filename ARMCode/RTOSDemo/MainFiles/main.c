@@ -64,7 +64,6 @@
 // Matthew Ibarra 2/10/2013
 
 #include "myDefs.h"
-#if MILESTONE_2==1
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
@@ -346,4 +345,3 @@ void vApplicationIdleHook( void )
 	// DO NOT DO THIS... It is not compatible with the debugger: __WFE(); // go into low power until some (not quite sure what...) event occurs
 	vtITMu8(vtITMPortIdle,SCB->SCR+0x10);
 }
-#endif

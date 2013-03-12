@@ -23,7 +23,7 @@ typedef struct __vtLCDStruct {
 #define HEIGHT 240;
 
 // These define the lines on the LCD where the 2680 & 26J50 ADC data gets displayed
-#define PIC_LINE 0
+#define LINE 0
 // #define PIC26J50_LINE 4
 
 // Structure used to define the messages that are sent to the LCD thread
@@ -47,14 +47,28 @@ typedef struct __vtLCDMsg {
 // Args:
 //   lcdData -- a pointer to a variable of type vtLCDStruct
 //   uxPriority -- the priority you want this task to be run at
-void StartLCDTask(vtLCDStruct *lcdData, unsigned portBASE_TYPE uxPriority);
+void vStartLCDTask(vtLCDStruct *lcdData, unsigned portBASE_TYPE uxPriority);
 
-portBASE_TYPE SendLCDADCMsg(vtLCDStruct *lcdData,int data, uint8_t type, uint8_t errCount, portTickType ticksToBlock);
+// Display the current speed, 0xFF is the maximum, on the LCD screen
+portBASE_TYPE sendLCDCurrentSpeed(vtLCDStruct *lcdData, uint8_t speed);
 
-portBASE_TYPE SendLCDErrorMsg(vtLCDStruct *lcdData, uint8_t type, portTickType ticksToBlock);
+// Display the current speed limit zone on the LCD screen
+// uint8_t "zone" value corresponds to current speed limit zone
+portBASE_TYPE sendLCDSpeedLimitZone(vtLCDStruct *lcdData, uint8_t zone);
 
-/* ********************************************************************* */
+// Display whether or not the finish line has been crossed yet on the LCD screen
+//***finish value is boolean!!!!
+portBASE_TYPE sendLCDFinishLine(vtLCDStruct *lcdData, uint8_t finish);
 
-void LCDTimerCallback(xTimerHandle);
+// Display the current power requirements on the LCD screen
+portBASE_TYPE sendLCDPower(vtLCDStruct *lcdData, uint8_t watts);
+
+// Display the fastest time the rover could complete the course on the LCD screen
+//with the data gathered.
+portBASE_TYPE sendLCDFastestTime(vtLCDStruct *lcdData, uint8_t fastMin, uint8_t fastSec);
+
+// Display whether or not a speed limit violation is occurring on the LCD screen
+//***speedViolation value is boolean!!!!
+portBASE_TYPE sendLCDSpeedViolation(vtLCDStruct *lcdData, uint8_t speedViolation);
 
 #endif

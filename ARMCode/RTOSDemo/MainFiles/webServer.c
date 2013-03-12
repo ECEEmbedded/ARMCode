@@ -1,5 +1,4 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -163,33 +162,76 @@ portBASE_TYPE webNotifySpeedViolation(webServerStruct *webServerData, uint8_t sp
 // End of Public API
 /*-----------------------------------------------------------*/
 
-// Here is where the declaration of any custom helper functions occurs:
-// ...
+// Private routines used to unpack the message buffers.
+// I do not want to access the message buffer data structures outside of these routines.
+// These routines are specific to accessing our packet protocol from the task struct.
 
-// Here is where the declaration of any custom #define statements occurs:
-// ...
+// For accessing data sent between ARM local tasks:
 
-// Here is where the declaration of any necessary variables occurs:
-// ...
+// When webNotifyCurrentSpeedMsgType type, speed is in buf[0]
+uint8_t getCurrentSpeedInfo(webServerMsg *webServerBuf){
+    return webServerBuf->buf[0];
+}
+
+// When webNotifySpeedLimitZoneMsgType type, zone is in buf[0]
+uint8_t getSpeedLimitZoneInfo(webServerMsg *webServerBuf){
+    return webServerBuf->buf[0];
+}
+
+// When webNotifyFinishLineMsgType type, finish is in buf[0]
+uint8_t getFinishLineInfo(webServerMsg *webServerBuf){
+    return webServerBuf->buf[0];
+}
+
+// When webNotifyPowerMsgType type, watts is in buf[0]
+uint8_t getPowerInfo(webServerMsg *webServerBuf){
+    return webServerBuf->buf[0];
+}
+
+// When webNotifyFastestTimeMsgType type, fastMin is in buf[0]
+uint8_t getFastestTimeMinutesInfo(webServerMsg *webServerBuf){
+    return webServerBuf->buf[0];
+}
+
+// When webNotifyFastestTimeMsgType type, fastSec is in buf[1]
+uint8_t getFastestTimeSecondsInfo(webServerMsg *webServerBuf){
+    return webServerBuf->buf[1];
+}
+
+// When webNotifySpeedViolationMsgType type, speedViolation is in buf[0]
+uint8_t getSpeedViolationInfo(webServerMsg *webServerBuf){
+    return webServerBuf->buf[0];
+}
+
+// For accessing data sent between Rover PIC(s) and the ARM:
+
+/**     N/A     **/
+// This means no data goes straight from Rover PIC(s) to the web server
+
+// End of private routines for message buffers
+/*-----------------------------------------------------------*/
+
+// Private routines used for data manipulation, etc.
+// There should be NO accessing of our packet protocol from the task struct in these routines.
+
+int getMsgType(webServerMsg *webServerBuf)
+{
+    return(webServerBuf->msgType);
+}
+
+// End of private routines for data manipulation, etc.
+/*-----------------------------------------------------------*/
+
 static webServerStruct *param;
+
 // Buffer for receiving messages
 webServerMsg msgBuffer;
-
-static unsigned int t;
-static int x;
-static int y;
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vWebServerTask, pvParameters )
 {
     // Get the parameters
     param = (webServerStruct *) pvParameters;
-    // Get any other necessary tasks' task pointers (but this task shouldn't need any more)
-
-    // Initialize variables you declared above this function
-    t = 0;
-    x = 0;
-    y = 0;
 
     // Like all good tasks, this should never exit
     for(;;)
@@ -198,7 +240,7 @@ static portTASK_FUNCTION( vWebServerTask, pvParameters )
         if (xQueueReceive(param->inQ,(void *) &msgBuffer,portMAX_DELAY) != pdTRUE) {
             VT_HANDLE_FATAL_ERROR(Q_RECV_ERROR);
         }
-        switch(msgBuffer.msgType){
+        switch(getMsgType(&msgBuffer)){
             case webNotifyCurrentSpeedMsgType:
             {
                 break;
@@ -231,5 +273,3 @@ static portTASK_FUNCTION( vWebServerTask, pvParameters )
         }
     }
 }
-
-#endif

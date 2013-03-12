@@ -1,11 +1,10 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
 #ifndef IR_CONTROL_H
 #define IR_CONTROL_H
 #include "myTypes.h"
 #include "navigation.h"
 
-#define maxIRMsgLen 5
+#define maxIRMsgLen 9
 
 // Public API
 //
@@ -25,5 +24,4 @@ void vStartIRTask(irControlStruct *irData, unsigned portBASE_TYPE uxPriority, na
 //   Result of the call to xQueueSend()
 portBASE_TYPE conductorSendIRSensorDataMsg(irControlStruct *irData, uint8_t *data, uint8_t length);
 
-#endif
 #endif

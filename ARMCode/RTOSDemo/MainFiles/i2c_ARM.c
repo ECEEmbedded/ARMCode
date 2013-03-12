@@ -1,5 +1,5 @@
 #include "myDefs.h"
-#if MILESTONE_2==1
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -116,6 +116,9 @@ portBASE_TYPE notifyRequestRecvd(myI2CStruct *i2cData,portTickType ticksToBlock)
 // End of Public API
 /*-----------------------------------------------------------*/
 
+// Private routines used for data manipulation, etc.
+// There should be NO accessing of our packet protocol from the task struct in these routines.
+
 void notifyRequestSent(){
     if(requestSent == 1){
         // Send I2C Error Message to Web Server
@@ -128,16 +131,14 @@ int getMsgType(myi2cMsg *buffer)
     return(buffer->msgType);
 }
 
+// End of private routines for data manipulation, etc.
+/*-----------------------------------------------------------*/
+
 static myI2CStruct *param;
 static vtI2CStruct *devPtr;
 
 // Buffer for receiving messages
 static myi2cMsg msgBuffer;
-
-// I2C commands for the ADC
-const uint8_t i2cCmdInit[]= {0xAC,0x00};
-const uint8_t i2cCmdStartConvert[]= {0xEE};
-const uint8_t i2cCmdReadVals[]= {0xAA};
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vi2cUpdateTask, pvParameters )
@@ -182,5 +183,4 @@ static portTASK_FUNCTION( vi2cUpdateTask, pvParameters )
         }
     }
 }
-#endif
 
