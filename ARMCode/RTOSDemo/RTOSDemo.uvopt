@@ -339,7 +339,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1722</TopLine>
+      <TopLine>1725</TopLine>
       <CurrentLine>1746</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>../FreeRTOS/Source/tasks.c</PathWithFileName>
@@ -353,7 +353,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>191</TopLine>
+      <TopLine>194</TopLine>
       <CurrentLine>215</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>../FreeRTOS/Source/portable/GCC/ARM_CM3/port.c</PathWithFileName>
@@ -386,10 +386,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>2</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>209</TopLine>
-      <CurrentLine>232</CurrentLine>
+      <TopLine>192</TopLine>
+      <CurrentLine>205</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles/main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -540,10 +540,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>3</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>20</TopLine>
-      <CurrentLine>20</CurrentLine>
+      <CurrentLine>27</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles\LCDtask.h</PathWithFileName>
       <FilenameWithoutPath>LCDtask.h</FilenameWithoutPath>
@@ -554,10 +554,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>3</ColumnNumber>
+      <ColumnNumber>26</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>230</TopLine>
-      <CurrentLine>245</CurrentLine>
+      <TopLine>257</TopLine>
+      <CurrentLine>275</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles/motorControl.c</PathWithFileName>
       <FilenameWithoutPath>motorControl.c</FilenameWithoutPath>
@@ -610,10 +610,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>14</ColumnNumber>
+      <ColumnNumber>36</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>37</TopLine>
-      <CurrentLine>49</CurrentLine>
+      <TopLine>77</TopLine>
+      <CurrentLine>77</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles\myTypes.h</PathWithFileName>
       <FilenameWithoutPath>myTypes.h</FilenameWithoutPath>
@@ -624,10 +624,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>29</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>169</TopLine>
-      <CurrentLine>177</CurrentLine>
+      <TopLine>211</TopLine>
+      <CurrentLine>233</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles/navigation.c</PathWithFileName>
       <FilenameWithoutPath>navigation.c</FilenameWithoutPath>
@@ -1200,8 +1200,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>200</TopLine>
+      <CurrentLine>213</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>../NXPDrivers/source/lpc17xx_i2c.c</PathWithFileName>
       <FilenameWithoutPath>lpc17xx_i2c.c</FilenameWithoutPath>
@@ -1277,7 +1277,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>133</TopLine>
+      <TopLine>146</TopLine>
       <CurrentLine>167</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>../vtCode/vtI2C/vtI2C.c</PathWithFileName>
@@ -1286,8 +1286,8 @@
   </Group>
 
   <AlienFiles>
-    <PathWithFilename>C:\ARMCode\FreeRTOS\Source\portable\MemMang\heap_3.c</PathWithFilename>
-    <TopLine>68</TopLine>
+    <PathWithFilename>C:\ARMCode\FREERTOS\SOURCE\PORTABLE\MEMMANG\HEAP_3.C</PathWithFilename>
+    <TopLine>80</TopLine>
     <CurrentLine>101</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
@@ -1313,11 +1313,35 @@
 
   <MDIGroups>
     <Orientation>3</Orientation>
-    <ActiveMDIGroup>1</ActiveMDIGroup>
+    <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>50</Size>
-      <ActiveTab>0</ActiveTab>
+      <ActiveTab>2</ActiveTab>
       <Documents>
+        <Doc>
+          <Name>../NXPDrivers/source/lpc17xx_i2c.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>200</TopLine>
+          <CurrentLine>213</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\MainFiles/navigation.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>211</TopLine>
+          <CurrentLine>233</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\MainFiles/motorControl.c</Name>
+          <ColumnNumber>26</ColumnNumber>
+          <TopLine>257</TopLine>
+          <CurrentLine>275</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>C:\ARMCode\RTOSDemo\MAINFILES\MYTIMERS.H</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
+        </Doc>
         <Doc>
           <Name>../FreeRTOS/Source/list.c</Name>
           <ColumnNumber>0</ColumnNumber>
@@ -1338,9 +1362,9 @@
         </Doc>
         <Doc>
           <Name>.\MainFiles/main.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>209</TopLine>
-          <CurrentLine>232</CurrentLine>
+          <ColumnNumber>2</ColumnNumber>
+          <TopLine>192</TopLine>
+          <CurrentLine>205</CurrentLine>
         </Doc>
         <Doc>
           <Name>../FreeRTOS/Source/queue.c</Name>
@@ -1351,19 +1375,19 @@
         <Doc>
           <Name>../FreeRTOS/Source/tasks.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>1722</TopLine>
+          <TopLine>1725</TopLine>
           <CurrentLine>1746</CurrentLine>
         </Doc>
         <Doc>
           <Name>../FreeRTOS/Source/portable/GCC/ARM_CM3/port.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>191</TopLine>
+          <TopLine>194</TopLine>
           <CurrentLine>215</CurrentLine>
         </Doc>
         <Doc>
           <Name>../vtCode/vtI2C/vtI2C.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>133</TopLine>
+          <TopLine>146</TopLine>
           <CurrentLine>167</CurrentLine>
         </Doc>
         <Doc>
@@ -1381,7 +1405,7 @@
         <Doc>
           <Name>C:\ARMCode\FREERTOS\SOURCE\PORTABLE\MEMMANG\HEAP_3.C</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>68</TopLine>
+          <TopLine>80</TopLine>
           <CurrentLine>101</CurrentLine>
         </Doc>
         <Doc>
@@ -1419,18 +1443,6 @@
           <ColumnNumber>42</ColumnNumber>
           <TopLine>1</TopLine>
           <CurrentLine>26</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/navigation.c</Name>
-          <ColumnNumber>29</ColumnNumber>
-          <TopLine>169</TopLine>
-          <CurrentLine>177</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/motorControl.c</Name>
-          <ColumnNumber>3</ColumnNumber>
-          <TopLine>230</TopLine>
-          <CurrentLine>245</CurrentLine>
         </Doc>
         <Doc>
           <Name>C:\ARMCODE\RTOSDEMO\MAINFILES\MOTORCONTROL.H</Name>
@@ -1486,12 +1498,6 @@
           <TopLine>1</TopLine>
           <CurrentLine>34</CurrentLine>
         </Doc>
-        <Doc>
-          <Name>C:\ARMCode\RTOSDemo\MAINFILES\MYTIMERS.H</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
       </Documents>
     </MDIGroup>
     <MDIGroup>
@@ -1500,9 +1506,9 @@
       <Documents>
         <Doc>
           <Name>C:\ARMCODE\RTOSDEMO\MAINFILES\MYTYPES.H</Name>
-          <ColumnNumber>43</ColumnNumber>
-          <TopLine>26</TopLine>
-          <CurrentLine>39</CurrentLine>
+          <ColumnNumber>36</ColumnNumber>
+          <TopLine>77</TopLine>
+          <CurrentLine>77</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

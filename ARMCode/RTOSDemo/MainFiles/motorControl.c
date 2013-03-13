@@ -186,6 +186,27 @@ portBASE_TYPE sendMotorTimerMsg(motorControlStruct *motorData, portTickType tick
 // End of Public API
 /*-----------------------------------------------------------*/
 
+// #define constants
+
+// Motor and Encoder constants
+#define COUNTS_PER_CENTIMETER 30
+#define COUNTS_PER_DEGREE 2    // 10
+#define TIMER_COUNTS_PER_CENTIMETER 1
+#define DEGREES_PER_TIMER_COUNT 1.0     // 1.9
+#define MOTOR_FORWARD_SPEED 34
+#define MOTOR_BACKWARD_SPEED 94
+#define MOTOR_STOP_SPEED 64
+#define RIGHT_MOTOR_OFFSET 128
+
+// Operation constants
+#define NONE 0
+#define FORWARD 1
+#define RIGHT 2
+#define LEFT 3
+#define REVERSE 4
+
+// #define SEND_COUNTS_TO_LCD
+
 // Private routines used to unpack the message buffers.
 // I do not want to access the message buffer data structures outside of these routines.
 // These routines are specific to accessing our packet protocol from the task struct.
@@ -203,7 +224,7 @@ uint8_t getLeftTurnMag(motorControlMsg *motorControlBuf){
 }
 
 // When sendMotorTurnRight type, magnitude is in buf[0]
-uint8_t getLeftTurnMag(motorControlMsg *motorControlBuf){
+uint8_t getRightTurnMag(motorControlMsg *motorControlBuf){
     return motorControlBuf->buf[0];
 }
 
@@ -250,6 +271,21 @@ uint8_t getPcktProtoData4(motorControlMsg *motorControlBuf){
 // Private routines used for data manipulation, etc.
 // There should be NO accessing of our packet protocol from the task struct in these routines.
 
+// This makes the code a little more readable
+uint8_t getLeftCount(motorControlMsg *buffer){
+    return getPcktProtoData1(buffer);
+}
+
+// This makes the code a little more readable as well
+uint8_t getRightCount(motorControlMsg *buffer){
+    return getPcktProtoData2(buffer);
+}
+
+int getMsgType(motorControlMsg *motorControlBuf)
+{
+    return(motorControlBuf->msgType);
+}
+
 uint8_t getDegrees(unsigned int right,unsigned int left){
     return ((right + left)/2)/COUNTS_PER_DEGREE;
 }
@@ -260,25 +296,6 @@ uint8_t getCentimeters(unsigned int right,unsigned int left){
 
 // End of private routines for data manipulation, etc.
 /*-----------------------------------------------------------*/
-
-//Motor and Encoder constants
-#define COUNTS_PER_CENTIMETER 30
-#define COUNTS_PER_DEGREE 2    // 10
-#define TIMER_COUNTS_PER_CENTIMETER 1
-#define DEGREES_PER_TIMER_COUNT 1.0     // 1.9
-#define MOTOR_FORWARD_SPEED 34
-#define MOTOR_BACKWARD_SPEED 94
-#define MOTOR_STOP_SPEED 64
-#define RIGHT_MOTOR_OFFSET 128
-
-//Operations
-#define NONE 0
-#define FORWARD 1
-#define RIGHT 2
-#define LEFT 3
-#define REVERSE 4
-
-//#define SEND_COUNTS_TO_LCD
 
 static uint8_t currentOp, lastOp;
 static motorControlStruct *param;

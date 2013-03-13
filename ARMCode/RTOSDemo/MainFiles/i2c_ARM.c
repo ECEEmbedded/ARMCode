@@ -41,8 +41,6 @@ typedef struct __myi2cMsg {
 /* The i2c_ARM task. */
 static portTASK_FUNCTION_PROTO( vi2cUpdateTask, pvParameters );
 
-uint8_t requestSent = 0;
-
 /*-----------------------------------------------------------*/
 // Public API
 void starti2cTask(myI2CStruct *params, unsigned portBASE_TYPE uxPriority, vtI2CStruct *i2c)
@@ -115,6 +113,8 @@ portBASE_TYPE notifyRequestRecvd(myI2CStruct *i2cData,portTickType ticksToBlock)
 
 // End of Public API
 /*-----------------------------------------------------------*/
+
+uint8_t requestSent = 0;
 
 // Private routines used for data manipulation, etc.
 // There should be NO accessing of our packet protocol from the task struct in these routines.

@@ -202,7 +202,7 @@ int main( void )
     xTaskCreate( vuIP_Task, ( signed char * ) "uIP", mainBASIC_WEB_STACK_SIZE, ( void * ) NULL, mainUIP_TASK_PRIORITY, NULL );
 	#endif
 
-	StartLCDTask(&vtLCDdata,mainLCD_TASK_PRIORITY);
+	vStartLCDTask(&vtLCDdata,mainLCD_TASK_PRIORITY);
 	// LCD Task creates a queue to receive messages -- what it does with those messages will depend on how the task is configured (see LCDtask.c)
 	// Here we set up a timer that will send messages to the LCD task.  You don't have to have this timer for the LCD task, it is just showing
 	//  how to use a timer and how to send messages from that timer.
