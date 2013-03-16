@@ -73,6 +73,27 @@ portBASE_TYPE conductorSendIRSensorDataMsg(irControlStruct *irData, uint8_t *dat
 // End of Public API
 /*-----------------------------------------------------------*/
 
+// Compile time constants for physical sensor positions
+#define SIDE_SEN_SEPARATION	250		// mm, vertical distance between side sensors "0"
+#define COS_SEN_ANGLE_FS	0.707f	// cos(sensor angle front side)
+#define SEN_OFFSET_FS		10.0f	// mm, distance from edge to sensor's "0"
+#define COS_SEN_ANGLE_BS	0.985f	// cos(sensor angle back side)
+#define SEN_OFFSET_BS		5.0f	// mm, distance from edge to sensor's "0"
+#difine COS_SEN_ANGLE_F		0.966f	// cos(sensor angle front)
+#define SEN_OFFSET_F		0.0f	// mm, distance from edge to sensor's "0"
+
+// Maximum errors before shutting off.
+#defint MAX_IR_ERRORS		10
+
+typedef struct __cur_ir_data {
+	unsigned short BLS,		// Back Left Side
+	unsigned short FLS,		// Front Left Side
+	unsigned short LF,		// Left Front
+	unsigned short RF,		// Right Front
+	unsigned short FRS,		// Front Right Side
+	unsigned short BRS		// Back Right Side
+} cur_ir_data;
+
 // Private routines used to unpack the message buffers.
 // I do not want to access the message buffer data structures outside of these routines.
 // These routines are specific to accessing our packet protocol from the task struct.
@@ -116,6 +137,12 @@ uint8_t getPcktProtoData4(irMsg *irBuf){
     return irBuf->buf[7];
 }
 
+unsigned short getPcktProtoIRDistance(irMsg *irBuf) {
+	unsigned short dist = irBuf->buf[4];
+	dist = (dist << 8) | irBuf->buf[5];
+	return dist;
+}
+
 // End of private routines for message buffers
 /*-----------------------------------------------------------*/
 
@@ -137,6 +164,26 @@ static navigationStruct *navData;
 // Buffer for receiving messages
 static irMsg msgBuffer;
 
+// --- Private helper functions ----------------------------------------------
+void updateAndSendSideWall() {
+	// Calculate distance to wall from front of rover
+	float distance = (float)ir_data.FLS * COS_SEN_FS - SEN_OFFSET_FS;
+	// Calculate the angle the wall is relative to the rover. 
+	// -positive is clockwise, negative is counterclockwise
+	float angle = atan2(((float)ir_data.BLS * COS_SEN_BS - SEN_OFFSET_BS) - distance, SIDE_SEN_SEPARATION);	
+}
+void updateAndSendRightWall() {
+	// Calculate distance to wall from front of rover
+	float distance = (float)ir_data.FRS * COS_SEN_FS - SEN_OFFSET_FS;
+	// Calculate the angle the wall is relative to the rover. 
+	// -positive is clockwise, negative is counterclockwise
+	float angle = atan2(((float)ir_data.BRS * COS_SEN_BS - SEN_OFFSET_BS) - distance, SIDE_SEN_SEPARATION);
+}
+void updateAndSendFrontWall() {
+	// Implemented in MS 4. Not needed for midterm demonstration
+}
+// --- End Private helper functions ------------------------------------------
+
 // This is the actual task that is run
 static portTASK_FUNCTION( vIRTask, pvParameters )
 {
@@ -144,6 +191,21 @@ static portTASK_FUNCTION( vIRTask, pvParameters )
     param = (irControlStruct *) pvParameters;
     // Get the other necessary tasks' task pointers like this:
     navData = param->navData;
+	
+	// Private storage
+	cur_ir_data ir_data;
+	unsigned char count;
+	unsigned char errorCount;
+	
+	// Private storage init
+	ir_data.BLS = 0;
+	ir_data.FLS = 0;
+	ir_data.LF  = 0;
+	ir_data.RF  = 0;
+	ir_data.FRS = 0;
+	ir_data.BRS = 0;
+	count = 0;
+	errorCount = 0;
 
     // Like all good tasks, this should never exit
     for(;;)
@@ -155,6 +217,60 @@ static portTASK_FUNCTION( vIRTask, pvParameters )
         switch(getMsgType(&msgBuffer)){
             case irDataMsgType:
             {
+				// Error check message
+				if (getPcktProtoCount(&msgBuffer) != count) {
+					count = getPcktProtoCount(&msgBuffer);
+					++errorCount;
+					if (errorCount > MAX_IR_ERRORS) {
+						//VT_HANDLE_FATAL_ERROR(); // Get Matt to add new error type
+					}
+				}
+				if (getPcktProtoParity(&msgBuffer) != getPcktProtoData1(&msgBuffer) ^ getPcktProtoData2(&msgBuffer)) {
+					++errorCount;
+					if (errorCount > MAX_IR_ERRORS) {
+						//VT_HANDLE_FATAL_ERROR(); // Get Matt to add new error type
+					}
+				}
+				
+				// Save reading and update coresponding wall
+				switch (getPcktProtoSensorNum(&msgBuffer)) {
+					case 1: // Back Left Side
+					{
+						ir_data.BLS = getPcktProtoDistance(&msgBuffer);
+						updateAndSendLeftWall();
+						break;
+					}
+					case 2: // Front Left Side
+					{
+						ir_data.FLS = getPcktProtoDistance(&msgBuffer);
+						updateAndSendLeftWall();
+						break;
+					}
+					case 3: // Left Front
+					{
+						ir_data.LF = getPcktProtoDistance(&msgBuffer);
+						updateAndSendFrontWall();
+						break;
+					}
+					case 4: // Right Front
+					{
+						ir_data.RF = getPcktProtoDistance(&msgBuffer);
+						updateAndSendFrontWall();
+						break;
+					}
+					case 5: // Front Right Side
+					{
+						ir_data.FRS = getPcktProtoDistance(&msgBuffer);
+						updateAndSendRightWall();
+						break;
+					}
+					case 6: // Back Right Side
+					{
+						ir_data.BRS = getPcktProtoDistance(&msgBuffer);
+						updateAndSendRightWall();
+						break;
+					}
+				}
                 break;
             }
             default:
