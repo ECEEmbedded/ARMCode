@@ -199,7 +199,7 @@ static portTASK_FUNCTION( vConductorUpdateTask, pvParameters )
 					}
 					case IR_MESSAGE: {
 						notifyRequestRecvd(i2cData,portMAX_DELAY);
-						conductorSendIRSensorDataMsg(irData, (Buffer + 2), 8);		// Still figuring out if this should be 2, 4, or 8 but I'm pretty sure this should be 8
+						conductorSendIRSensorDataMsg(irData, (Buffer), 8);		// Still figuring out if this should be 2, 4, or 8 but I'm pretty sure this should be 8
 						IRMsgCount++;
 						if(IRMsgCount != vtGetI2CMsgCount(Buffer)){
 							//Send Web Server an error with vtGetI2CMsgCount(Buffer) - IRMsgCount

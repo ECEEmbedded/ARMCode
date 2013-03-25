@@ -18,8 +18,8 @@
 //   lcdData: pointer to the data structure for the LCD task
 // Return:
 //   void
-void vStartNavigationTask(navigationStruct *navData, unsigned portBASE_TYPE uxPriority, motorControlStruct *motorControl, vtLCDStruct *lcdData);
 
+void vStartNavigationTask(navigationStruct *params, unsigned portBASE_TYPE uxPriority, motorControlStruct *motorControl, vtLCDStruct *lcdData, myI2CStruct *i2cData);
 //Navigation communication API
 
 portBASE_TYPE AIUpdateDistances(navigationStruct *navData, uint8_t l1, uint8_t l2, uint8_t l3, uint8_t r1, uint8_t r2, uint8_t r3);

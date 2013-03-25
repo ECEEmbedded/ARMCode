@@ -332,11 +332,6 @@
               <FilePath>.\MainFiles/main.c</FilePath>
             </File>
             <File>
-              <FileName>i2cTemp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\MainFiles/i2cTemp.c</FilePath>
-            </File>
-            <File>
               <FileName>vtUtilities.c</FileName>
               <FileType>1</FileType>
               <FilePath>../vtCode/vtUtilities.c</FilePath>
@@ -360,6 +355,101 @@
               <FileName>conductor.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\MainFiles/conductor.c</FilePath>
+            </File>
+            <File>
+              <FileName>conductor.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\conductor.h</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_ARM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MainFiles/i2c_ARM.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_ARM.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\i2c_ARM.h</FilePath>
+            </File>
+            <File>
+              <FileName>irControl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MainFiles/irControl.c</FilePath>
+            </File>
+            <File>
+              <FileName>irControl.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\irControl.h</FilePath>
+            </File>
+            <File>
+              <FileName>LCDtask.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\LCDtask.h</FilePath>
+            </File>
+            <File>
+              <FileName>motorControl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MainFiles/motorControl.c</FilePath>
+            </File>
+            <File>
+              <FileName>motorControl.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\motorControl.h</FilePath>
+            </File>
+            <File>
+              <FileName>myDefs.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\myDefs.h</FilePath>
+            </File>
+            <File>
+              <FileName>myTimers.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\myTimers.h</FilePath>
+            </File>
+            <File>
+              <FileName>myTypes.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\myTypes.h</FilePath>
+            </File>
+            <File>
+              <FileName>navigation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MainFiles/navigation.c</FilePath>
+            </File>
+            <File>
+              <FileName>navigation.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\navigation.h</FilePath>
+            </File>
+            <File>
+              <FileName>power.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MainFiles/power.c</FilePath>
+            </File>
+            <File>
+              <FileName>power.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\power.h</FilePath>
+            </File>
+            <File>
+              <FileName>speedLimit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MainFiles/speedLimit.c</FilePath>
+            </File>
+            <File>
+              <FileName>speedLimit.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\speedLimit.h</FilePath>
+            </File>
+            <File>
+              <FileName>webServer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MainFiles/webServer.c</FilePath>
+            </File>
+            <File>
+              <FileName>webServer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MainFiles\webServer.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -604,36 +694,6 @@
               <FileName>vtI2C.c</FileName>
               <FileType>1</FileType>
               <FilePath>../vtCode/vtI2C/vtI2C.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>milestone1</GroupName>
-          <Files>
-            <File>
-              <FileName>myDefs.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\MainFiles\myDefs.h</FilePath>
-            </File>
-            <File>
-              <FileName>I2CTaskMsgTypes.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\MainFiles\I2CTaskMsgTypes.h</FilePath>
-            </File>
-            <File>
-              <FileName>i2cTemp_milestone1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\MainFiles/i2cTemp_milestone1.c</FilePath>
-            </File>
-            <File>
-              <FileName>myADC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\MainFiles/myADC.c</FilePath>
-            </File>
-            <File>
-              <FileName>myTimers_milestone1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\MainFiles/myTimers_milestone1.c</FilePath>
             </File>
           </Files>
         </Group>

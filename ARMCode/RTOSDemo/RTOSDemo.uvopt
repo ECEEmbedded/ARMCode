@@ -144,7 +144,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>(105=611,204,1280,551,0)(106=524,541,1280,848,0)(107=950,563,1280,741,0)</Name>
+          <Name>(105=611,204,1280,551,0)(106=524,493,1280,800,0)(107=950,563,1280,741,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -159,76 +159,16 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>UL2CM3</Key>
-          <Name>-UM0237MBE -O974 -S8 -C0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO3 -TC100000000 -TP21 -TDS804F -TDT0 -TDC10 -TIE1 -TIP0 -FO23 -FD10000000 -FC800 -FN1 -FF0LPC_IAP_512 -FS00 -FL080000</Name>
+          <Name>-UM0521MBE -O974 -S8 -C0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO3 -TC100000000 -TP21 -TDS804F -TDT0 -TDC10 -TIE1 -TIP0 -FO23 -FD10000000 -FC800 -FN1 -FF0LPC_IAP_512 -FS00 -FL080000</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint>
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>222</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>7138</Address>
-          <ByteObject>0</ByteObject>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename></Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\RTOSDemo\MainFiles/main.c\222</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>232</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>7218</Address>
-          <ByteObject>0</ByteObject>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename></Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\RTOSDemo\MainFiles/main.c\232</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>161</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>11828</Address>
-          <ByteObject>0</ByteObject>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename></Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\RTOSDemo\MainFiles/i2c_ARM.c\161</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>117</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>10806</Address>
-          <ByteObject>0</ByteObject>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename></Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\RTOSDemo\MainFiles/conductor.c\117</Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
           <LineNumber>69</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>9432</Address>
+          <EnabledFlag>0</EnabledFlag>
+          <Address>9546</Address>
           <ByteObject>0</ByteObject>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
@@ -237,6 +177,21 @@
           <Filename></Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\RTOSDemo\MainFiles/LCDtask.c\69</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>140</LineNumber>
+          <EnabledFlag>0</EnabledFlag>
+          <Address>28666</Address>
+          <ByteObject>0</ByteObject>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename></Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\RTOSDemo\../FreeRTOS/Demo/CORTEX_LPC1768_GCC_Rowley/webserver/uIP_Task.c\140</Expression>
         </Bp>
       </Breakpoint>
       <MemoryWindow1>
@@ -339,8 +294,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1725</TopLine>
-      <CurrentLine>1746</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>../FreeRTOS/Source/tasks.c</PathWithFileName>
       <FilenameWithoutPath>tasks.c</FilenameWithoutPath>
@@ -386,10 +341,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>2</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>192</TopLine>
-      <CurrentLine>205</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles/main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -486,8 +441,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>149</TopLine>
-      <CurrentLine>167</CurrentLine>
+      <TopLine>154</TopLine>
+      <CurrentLine>161</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles/i2c_ARM.c</PathWithFileName>
       <FilenameWithoutPath>i2c_ARM.c</FilenameWithoutPath>
@@ -514,8 +469,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>99</TopLine>
-      <CurrentLine>120</CurrentLine>
+      <TopLine>96</TopLine>
+      <CurrentLine>104</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles/irControl.c</PathWithFileName>
       <FilenameWithoutPath>irControl.c</FilenameWithoutPath>
@@ -554,10 +509,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>26</ColumnNumber>
+      <ColumnNumber>15</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>257</TopLine>
-      <CurrentLine>275</CurrentLine>
+      <TopLine>259</TopLine>
+      <CurrentLine>272</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles/motorControl.c</PathWithFileName>
       <FilenameWithoutPath>motorControl.c</FilenameWithoutPath>
@@ -860,7 +815,7 @@
 
   <Group>
     <GroupName>Common Demo Tasks</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -993,7 +948,7 @@
 
   <Group>
     <GroupName>webserver</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -1072,10 +1027,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>9</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>109</TopLine>
+      <CurrentLine>123</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>../FreeRTOS/Demo/CORTEX_LPC1768_GCC_Rowley/webserver/uIP_Task.c</PathWithFileName>
       <FilenameWithoutPath>uIP_Task.c</FilenameWithoutPath>
@@ -1130,8 +1085,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>../FreeRTOS/Demo/Common/ethernet/uIP/uip-1.0/uip/uip.c</PathWithFileName>
       <FilenameWithoutPath>uip.c</FilenameWithoutPath>
@@ -1284,234 +1239,5 @@
       <FilenameWithoutPath>vtI2C.c</FilenameWithoutPath>
     </File>
   </Group>
-
-  <AlienFiles>
-    <PathWithFilename>C:\ARMCode\FREERTOS\SOURCE\PORTABLE\MEMMANG\HEAP_3.C</PathWithFilename>
-    <TopLine>80</TopLine>
-    <CurrentLine>101</CurrentLine>
-    <Constant>0</Constant>
-    <WindowPosition>
-      <length>0</length>
-      <flags>0</flags>
-      <showCmd>0</showCmd>
-      <MinPosition>
-        <xPos>0</xPos>
-        <yPos>0</yPos>
-      </MinPosition>
-      <MaxPosition>
-        <xPos>0</xPos>
-        <yPos>0</yPos>
-      </MaxPosition>
-      <NormalPosition>
-        <Top>0</Top>
-        <Left>0</Left>
-        <Right>0</Right>
-        <Bottom>0</Bottom>
-      </NormalPosition>
-    </WindowPosition>
-  </AlienFiles>
-
-  <MDIGroups>
-    <Orientation>3</Orientation>
-    <ActiveMDIGroup>0</ActiveMDIGroup>
-    <MDIGroup>
-      <Size>50</Size>
-      <ActiveTab>2</ActiveTab>
-      <Documents>
-        <Doc>
-          <Name>../NXPDrivers/source/lpc17xx_i2c.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>200</TopLine>
-          <CurrentLine>213</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/navigation.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>211</TopLine>
-          <CurrentLine>233</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/motorControl.c</Name>
-          <ColumnNumber>26</ColumnNumber>
-          <TopLine>257</TopLine>
-          <CurrentLine>275</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCode\RTOSDemo\MAINFILES\MYTIMERS.H</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>../FreeRTOS/Source/list.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>143</TopLine>
-          <CurrentLine>156</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/i2c_ARM.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>149</TopLine>
-          <CurrentLine>167</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>../vtCode/vtUtilities.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>113</TopLine>
-          <CurrentLine>129</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/main.c</Name>
-          <ColumnNumber>2</ColumnNumber>
-          <TopLine>192</TopLine>
-          <CurrentLine>205</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>../FreeRTOS/Source/queue.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>529</TopLine>
-          <CurrentLine>545</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>../FreeRTOS/Source/tasks.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1725</TopLine>
-          <CurrentLine>1746</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>../FreeRTOS/Source/portable/GCC/ARM_CM3/port.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>194</TopLine>
-          <CurrentLine>215</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>../vtCode/vtI2C/vtI2C.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>146</TopLine>
-          <CurrentLine>167</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/conductor.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>97</TopLine>
-          <CurrentLine>111</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/LCDtask.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>176</TopLine>
-          <CurrentLine>191</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCode\FREERTOS\SOURCE\PORTABLE\MEMMANG\HEAP_3.C</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>80</TopLine>
-          <CurrentLine>101</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/power.c</Name>
-          <ColumnNumber>37</ColumnNumber>
-          <TopLine>24</TopLine>
-          <CurrentLine>24</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCode\RTOSDemo\MAINFILES\MYDEFS.H</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCode\RTOSDemo\MAINFILES\LCDTASK.H</Name>
-          <ColumnNumber>3</ColumnNumber>
-          <TopLine>20</TopLine>
-          <CurrentLine>27</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/speedLimit.c</Name>
-          <ColumnNumber>39</ColumnNumber>
-          <TopLine>103</TopLine>
-          <CurrentLine>124</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/irControl.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>99</TopLine>
-          <CurrentLine>120</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCODE\RTOSDEMO\MAINFILES\IRCONTROL.H</Name>
-          <ColumnNumber>42</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>26</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCODE\RTOSDEMO\MAINFILES\MOTORCONTROL.H</Name>
-          <ColumnNumber>46</ColumnNumber>
-          <TopLine>58</TopLine>
-          <CurrentLine>79</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/myTimers.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>118</TopLine>
-          <CurrentLine>131</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCode\RTOSDemo\MAINFILES\CONDUCTOR.H</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCode\RTOSDemo\MAINFILES\I2C_ARM.H</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCODE\RTOSDEMO\MAINFILES\WEBSERVER.H</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\MainFiles/webServer.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCODE\RTOSDEMO\MAINFILES\SPEEDLIMIT.H</Name>
-          <ColumnNumber>45</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>31</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCODE\RTOSDEMO\MAINFILES\POWER.H</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\ARMCODE\RTOSDEMO\MAINFILES\NAVIGATION.H</Name>
-          <ColumnNumber>111</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>34</CurrentLine>
-        </Doc>
-      </Documents>
-    </MDIGroup>
-    <MDIGroup>
-      <Size>50</Size>
-      <ActiveTab>0</ActiveTab>
-      <Documents>
-        <Doc>
-          <Name>C:\ARMCODE\RTOSDEMO\MAINFILES\MYTYPES.H</Name>
-          <ColumnNumber>36</ColumnNumber>
-          <TopLine>77</TopLine>
-          <CurrentLine>77</CurrentLine>
-        </Doc>
-      </Documents>
-    </MDIGroup>
-  </MDIGroups>
 
 </ProjectOpt>

@@ -12,6 +12,7 @@
 #include "semphr.h"
 
 /* include files. */
+#include "LCDtask.h"
 #include "vtUtilities.h"
 #include "irControl.h"
 #include "myTypes.h"
@@ -40,7 +41,7 @@ static portTASK_FUNCTION_PROTO( vIRTask, pvParameters );
 
 /*-----------------------------------------------------------*/
 // Public API
-void vStartIRTask(irControlStruct *params, unsigned portBASE_TYPE uxPriority, navigationStruct *navData)
+void vStartIRTask(irControlStruct *params, unsigned portBASE_TYPE uxPriority, navigationStruct *navData,  vtLCDStruct *lcdData)
 {
     // Create the queue that will be used to talk to this task
     if ((params->inQ = xQueueCreate(irQLen,sizeof(irMsg))) == NULL) {
@@ -49,6 +50,7 @@ void vStartIRTask(irControlStruct *params, unsigned portBASE_TYPE uxPriority, na
     /* Start the task */
     portBASE_TYPE retval;
     params->navData = navData;
+    params->lcdData = lcdData;
     if ((retval = xTaskCreate( vIRTask, ( signed char * ) "IR", conSTACK_SIZE, (void *) params, uxPriority, ( xTaskHandle * ) NULL )) != pdPASS) {
         VT_HANDLE_FATAL_ERROR(TASK_CREATION_ERROR);
     }
@@ -74,24 +76,25 @@ portBASE_TYPE conductorSendIRSensorDataMsg(irControlStruct *irData, uint8_t *dat
 /*-----------------------------------------------------------*/
 
 // Compile time constants for physical sensor positions
-#define SIDE_SEN_SEPARATION	250		// mm, vertical distance between side sensors "0"
-#define COS_SEN_ANGLE_FS	0.707f	// cos(sensor angle front side)
+#define SIDE_SEN_SEPARATION	81		// mm, vertical distance between side sensors "0"
+#define COS_SEN_ANGLE_FS	1.0f	// cos(sensor angle front side)
 #define SEN_OFFSET_FS		10.0f	// mm, distance from edge to sensor's "0"
-#define COS_SEN_ANGLE_BS	0.985f	// cos(sensor angle back side)
-#define SEN_OFFSET_BS		5.0f	// mm, distance from edge to sensor's "0"
-#difine COS_SEN_ANGLE_F		0.966f	// cos(sensor angle front)
+#define COS_SEN_ANGLE_BS	1.0f	// cos(sensor angle back side)
+#define SEN_OFFSET_BS		10.0f	// mm, distance from edge to sensor's "0"
+#define COS_SEN_ANGLE_F		0.966f	// cos(sensor angle front)
 #define SEN_OFFSET_F		0.0f	// mm, distance from edge to sensor's "0"
+#define RAD_TO_DEG			180.0f/3.1416	// Radians to degrees conversion factor
 
 // Maximum errors before shutting off.
-#defint MAX_IR_ERRORS		10
+#define MAX_IR_ERRORS		10
 
 typedef struct __cur_ir_data {
-	unsigned short BLS,		// Back Left Side
-	unsigned short FLS,		// Front Left Side
-	unsigned short LF,		// Left Front
-	unsigned short RF,		// Right Front
-	unsigned short FRS,		// Front Right Side
-	unsigned short BRS		// Back Right Side
+	unsigned short BLS;		// Back Left Side
+	unsigned short FLS;		// Front Left Side
+	unsigned short LF;		// Left Front
+	unsigned short RF;		// Right Front
+	unsigned short FRS;		// Front Right Side
+	unsigned short BRS;		// Back Right Side
 } cur_ir_data;
 
 // Private routines used to unpack the message buffers.
@@ -157,32 +160,92 @@ int getMsgType(irMsg *irBuf)
 // End of private routines for data manipulation, etc.
 /*-----------------------------------------------------------*/
 
-// Here is where the declaration of static task pointers occurs; they will be initialized below.
-static irControlStruct *param;
-static navigationStruct *navData;
-
-// Buffer for receiving messages
-static irMsg msgBuffer;
-
 // --- Private helper functions ----------------------------------------------
-void updateAndSendSideWall() {
-	// Calculate distance to wall from front of rover
-	float distance = (float)ir_data.FLS * COS_SEN_FS - SEN_OFFSET_FS;
-	// Calculate the angle the wall is relative to the rover. 
-	// -positive is clockwise, negative is counterclockwise
-	float angle = atan2(((float)ir_data.BLS * COS_SEN_BS - SEN_OFFSET_BS) - distance, SIDE_SEN_SEPARATION);	
+// Temp for MS3 output to LEDs
+void updateTestCaseLED(short distance, short angle) {
+	vtLEDOff(0xFF);
+	
+	// 150mm
+	if (140 < distance && distance < 160) {
+		vtLEDOn(0x10);
+	}
+	
+	// 200mm
+	else if (190 < distance && distance < 210) {
+		vtLEDOn(0x20);
+	}
+	
+	// 300mm
+	else if (290 < distance && distance < 310) {
+		vtLEDOn(0x40);
+	}
+	
+	// 400mm
+	else if (390 < distance && distance < 410) {
+		vtLEDOn(0x80);
+	}
+	
+	// -18 deg
+	if (-25 < angle && angle < -10) {
+		vtLEDOn(0x01);
+	}
+	
+	// -2 deg
+	else if (-10 < angle && angle < 5) {
+		vtLEDOn(0x02);
+	}
+	
+	// 12 deg
+	else if (5 < angle && angle < 20) {
+		vtLEDOn(0x04);
+	}
+	
+	// 30 deg
+	else if (20 < angle && angle < 40) {
+		vtLEDOn(0x08);
+	}
 }
-void updateAndSendRightWall() {
+
+#define LEFT_SIDE	0
+#define RIGHT_SIDE	1
+// Updateds the wall positions and sends to navigation task
+// FS is distance from front sensor
+// BS is distance from back sensor
+// side is the side (left = 0, right = 1)
+void updateAndSendSideWall(navigationStruct* nav, unsigned short FS, unsigned short BS, char side) {
 	// Calculate distance to wall from front of rover
-	float distance = (float)ir_data.FRS * COS_SEN_FS - SEN_OFFSET_FS;
-	// Calculate the angle the wall is relative to the rover. 
+	short distance = (short)(((float)FS * COS_SEN_ANGLE_FS - SEN_OFFSET_FS));
+	// Calculate the angle the wall is relative to the rover.
 	// -positive is clockwise, negative is counterclockwise
-	float angle = atan2(((float)ir_data.BRS * COS_SEN_BS - SEN_OFFSET_BS) - distance, SIDE_SEN_SEPARATION);
+	short angle = (short)(atan2(((float)BS * COS_SEN_ANGLE_BS - SEN_OFFSET_BS) - distance, SIDE_SEN_SEPARATION)*RAD_TO_DEG);
+
+	if (side == LEFT_SIDE) {	
+		updateTestCaseLED(distance, angle);
+//		char dbgmsg[10];
+//		dbgmsg[0]='x';
+//		dbgmsg[1]='=';
+//		dbgmsg[2]=distance/100;
+//		dbgmsg[3]=(distance/10)%10;
+//		dbgmsg[4]=distance%10;
+//		dbgmsg[5]=',';
+//		dbgmsg[6]=angle/10;
+//		dbgmsg[7]=angle%10; 
+		printf("FS = %d    BS = %d    dist = %d    angle = %d\n", FS,BS, distance, angle);
+	}
 }
+
 void updateAndSendFrontWall() {
 	// Implemented in MS 4. Not needed for midterm demonstration
 }
 // --- End Private helper functions ------------------------------------------
+
+// Here is where the declaration of static task pointers occurs; they will be initialized below.
+static irControlStruct *param;
+static navigationStruct *navData;
+static  vtLCDStruct *lcdData;
+
+// Buffer for receiving messages
+static irMsg msgBuffer;
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vIRTask, pvParameters )
@@ -191,7 +254,7 @@ static portTASK_FUNCTION( vIRTask, pvParameters )
     param = (irControlStruct *) pvParameters;
     // Get the other necessary tasks' task pointers like this:
     navData = param->navData;
-	
+	  lcdData = param->lcdData;
 	// Private storage
 	cur_ir_data ir_data;
 	unsigned char count;
@@ -225,49 +288,69 @@ static portTASK_FUNCTION( vIRTask, pvParameters )
 						//VT_HANDLE_FATAL_ERROR(); // Get Matt to add new error type
 					}
 				}
-				if (getPcktProtoParity(&msgBuffer) != getPcktProtoData1(&msgBuffer) ^ getPcktProtoData2(&msgBuffer)) {
+				if (getPcktProtoParity(&msgBuffer) != (getPcktProtoData1(&msgBuffer) ^ getPcktProtoData2(&msgBuffer))) {
 					++errorCount;
 					if (errorCount > MAX_IR_ERRORS) {
 						//VT_HANDLE_FATAL_ERROR(); // Get Matt to add new error type
 					}
 				}
-				
+      
 				// Save reading and update coresponding wall
 				switch (getPcktProtoSensorNum(&msgBuffer)) {
 					case 1: // Back Left Side
 					{
-						ir_data.BLS = getPcktProtoDistance(&msgBuffer);
-						updateAndSendLeftWall();
+            vtLEDOff(0xFF);
+             vtLEDOn(1);
+						ir_data.BLS = getPcktProtoIRDistance(&msgBuffer);
+						updateAndSendSideWall(navData, ir_data.FLS, ir_data.BLS,LEFT_SIDE);
 						break;
 					}
 					case 2: // Front Left Side
 					{
-						ir_data.FLS = getPcktProtoDistance(&msgBuffer);
-						updateAndSendLeftWall();
+            vtLEDOff(0xFF);
+             vtLEDOn(2);
+						ir_data.FLS = getPcktProtoIRDistance(&msgBuffer);
+						updateAndSendSideWall(navData, ir_data.FLS,ir_data.BLS,LEFT_SIDE);
 						break;
 					}
 					case 3: // Left Front
 					{
-						ir_data.LF = getPcktProtoDistance(&msgBuffer);
+            vtLEDOff(0xFF);
+             vtLEDOn(3);
+						ir_data.LF = getPcktProtoIRDistance(&msgBuffer);
 						updateAndSendFrontWall();
 						break;
 					}
 					case 4: // Right Front
 					{
-						ir_data.RF = getPcktProtoDistance(&msgBuffer);
+            vtLEDOff(0xFF);
+             vtLEDOn(4);
+						ir_data.RF = getPcktProtoIRDistance(&msgBuffer);
 						updateAndSendFrontWall();
 						break;
 					}
 					case 5: // Front Right Side
 					{
-						ir_data.FRS = getPcktProtoDistance(&msgBuffer);
-						updateAndSendRightWall();
+            vtLEDOff(0xFF);
+             vtLEDOn(5);
+						ir_data.FRS = getPcktProtoIRDistance(&msgBuffer);
+						updateAndSendSideWall(navData, ir_data.FRS,ir_data.BRS, RIGHT_SIDE);
 						break;
 					}
 					case 6: // Back Right Side
 					{
-						ir_data.BRS = getPcktProtoDistance(&msgBuffer);
-						updateAndSendRightWall();
+            vtLEDOff(0xFF);
+             vtLEDOn(6);
+						ir_data.BRS = getPcktProtoIRDistance(&msgBuffer);
+						updateAndSendSideWall(navData, ir_data.FRS,ir_data.BRS, RIGHT_SIDE);
+            AIUpdateDistances(navData, ir_data.BLS, ir_data.FLS, ir_data.LF, ir_data.BRS, ir_data.FRS, ir_data.RF);
+
+						break;
+					}
+					default:
+					{
+            vtLEDOff(0xFF);
+             vtLEDOn(0xFF);
 						break;
 					}
 				}

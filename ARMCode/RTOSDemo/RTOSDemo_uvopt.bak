@@ -540,10 +540,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>3</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>20</TopLine>
-      <CurrentLine>20</CurrentLine>
+      <CurrentLine>27</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles\LCDtask.h</PathWithFileName>
       <FilenameWithoutPath>LCDtask.h</FilenameWithoutPath>
@@ -554,10 +554,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>16</ColumnNumber>
+      <ColumnNumber>26</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>193</TopLine>
-      <CurrentLine>206</CurrentLine>
+      <TopLine>257</TopLine>
+      <CurrentLine>275</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles/motorControl.c</PathWithFileName>
       <FilenameWithoutPath>motorControl.c</FilenameWithoutPath>
@@ -610,10 +610,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>14</ColumnNumber>
+      <ColumnNumber>36</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>37</TopLine>
-      <CurrentLine>49</CurrentLine>
+      <TopLine>77</TopLine>
+      <CurrentLine>77</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles\myTypes.h</PathWithFileName>
       <FilenameWithoutPath>myTypes.h</FilenameWithoutPath>
@@ -624,10 +624,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>29</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>169</TopLine>
-      <CurrentLine>177</CurrentLine>
+      <TopLine>211</TopLine>
+      <CurrentLine>233</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\MainFiles/navigation.c</PathWithFileName>
       <FilenameWithoutPath>navigation.c</FilenameWithoutPath>
@@ -1200,8 +1200,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>200</TopLine>
+      <CurrentLine>213</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>../NXPDrivers/source/lpc17xx_i2c.c</PathWithFileName>
       <FilenameWithoutPath>lpc17xx_i2c.c</FilenameWithoutPath>
@@ -1316,8 +1316,14 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>50</Size>
-      <ActiveTab>1</ActiveTab>
+      <ActiveTab>2</ActiveTab>
       <Documents>
+        <Doc>
+          <Name>../NXPDrivers/source/lpc17xx_i2c.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>200</TopLine>
+          <CurrentLine>213</CurrentLine>
+        </Doc>
         <Doc>
           <Name>.\MainFiles/navigation.c</Name>
           <ColumnNumber>0</ColumnNumber>
@@ -1327,8 +1333,8 @@
         <Doc>
           <Name>.\MainFiles/motorControl.c</Name>
           <ColumnNumber>26</ColumnNumber>
-          <TopLine>259</TopLine>
-          <CurrentLine>276</CurrentLine>
+          <TopLine>257</TopLine>
+          <CurrentLine>275</CurrentLine>
         </Doc>
         <Doc>
           <Name>C:\ARMCode\RTOSDemo\MAINFILES\MYTIMERS.H</Name>

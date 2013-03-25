@@ -566,6 +566,8 @@ send_slar:
 		case I2C_I2STAT_M_RX_SLAR_NACK:
 			// update status
 			txrx_setup->status |= I2C_SETUP_STATUS_NOACKF;
+			int i = 0;
+			for (i = 0; i < 1000; ++i);
 			goto retry;
 
 		/* Arbitration lost ----------------------------------------------------*/

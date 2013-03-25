@@ -238,12 +238,17 @@ PT_THREAD(rtos_stats(struct httpd_state *s, char *ptr))
 char *pcStatus;
 unsigned long ulString;
 
+#include "uIP_Task.c"
+
+unsigned char x = 0;
+
 static unsigned short generate_io_state( void *arg )
 {
 extern long lParTestGetLEDState( void );
 
 	( void ) arg;
 
+  sendLCDCurrentSpeed(vtLCDData, x++);
 	/* Get the state of the LEDs that are on the FIO1 port. */
 	if( lParTestGetLEDState() )
 	{
@@ -255,7 +260,7 @@ extern long lParTestGetLEDState( void );
 	}
 
 	sprintf( uip_appdata,
-		"<input type=\"checkbox\" name=\"LED0\" value=\"1\" %s>LED<p><p>", pcStatus );
+		"<div id='debug' data-debug='%d'></div>", x );
 
 	return strlen( uip_appdata );
 }

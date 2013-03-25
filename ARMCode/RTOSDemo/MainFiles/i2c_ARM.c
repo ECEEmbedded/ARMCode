@@ -165,9 +165,11 @@ static portTASK_FUNCTION( vi2cUpdateTask, pvParameters )
             }
             case vtI2CMotorMsgType: {
                 // Send motor command to local 2680
-                if (vtI2CEnQ(devPtr,vtI2CMotorMsgType,SLAVE_ADDR,msgBuffer.length,msgBuffer.buf,0) != pdTRUE){
-                    VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
-                }
+               if (msgBuffer.buf[0] == 0xBB)
+                 if (vtI2CEnQ(devPtr,vtI2CMotorMsgType,SLAVE_ADDR,msgBuffer.length,msgBuffer.buf,0) != pdTRUE){
+                     VT_HANDLE_FATAL_ERROR(VT_I2C_Q_FULL);
+                  }
+				break;
             }
             case notifyRqstRecvdMsgType: {
                 if(requestSent == 0){

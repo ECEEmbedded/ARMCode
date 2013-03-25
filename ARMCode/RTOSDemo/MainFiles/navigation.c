@@ -41,7 +41,7 @@ static portTASK_FUNCTION_PROTO( vNavigationTask, pvParameters );
 
 /*-----------------------------------------------------------*/
 // Public API
-void vStartNavigationTask(navigationStruct *params, unsigned portBASE_TYPE uxPriority, motorControlStruct *motorControl, vtLCDStruct *lcdData)
+void vStartNavigationTask(navigationStruct *params, unsigned portBASE_TYPE uxPriority, motorControlStruct *motorControl, vtLCDStruct *lcdData, myI2CStruct *i2cData)
 {
     // Create the queue that will be used to talk to this task
     if ((params->inQ = xQueueCreate(navigationQLen,sizeof(navigationMsg))) == NULL) {
@@ -51,6 +51,8 @@ void vStartNavigationTask(navigationStruct *params, unsigned portBASE_TYPE uxPri
     portBASE_TYPE retval;
     params->motorControl = motorControl;
     params->lcdData = lcdData;
+    params->i2cData = i2cData;
+    sendLCDCurrentSpeed(lcdData, 22);
     if ((retval = xTaskCreate( vNavigationTask, ( signed char * ) "Navigation", conSTACK_SIZE, (void *) params, uxPriority, ( xTaskHandle * ) NULL )) != pdPASS) {
         VT_HANDLE_FATAL_ERROR(TASK_CREATION_ERROR);
     }
@@ -241,9 +243,18 @@ int getMsgType(navigationMsg *navBuf)
 static navigationStruct *param;
 static motorControlStruct *motorControl;
 static vtLCDStruct *lcdData;
+static myI2CStruct *i2cData;
 
 // Buffer for receiving messages
 static navigationMsg msgBuffer;
+
+typedef struct WORLD_T {
+  unsigned char irSensors[6];
+} World_t;
+
+static World_t world;
+
+static int count = 12;
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vNavigationTask, pvParameters )
@@ -254,8 +265,12 @@ static portTASK_FUNCTION( vNavigationTask, pvParameters )
     motorControl = param->motorControl;
     // Get the LCD task pointer
     lcdData = param->lcdData;
+    
+    i2cData = param->i2cData;
 
+    static int x = 0;
     // Like all good tasks, this should never exit
+    
     for(;;)
     {
         // Wait for a message from whomever we decide will need to talk to this task
@@ -269,6 +284,16 @@ static portTASK_FUNCTION( vNavigationTask, pvParameters )
             }
             case AIUpdateDistancesMsgType:
             {
+              int i = 0;
+              for (i = 0; i < 6; ++i) {
+                if (msgBuffer.buf[i] != 0)
+                  world.irSensors[i] = msgBuffer.buf[i];
+              }
+
+                int turn = 0;
+
+                sendLCDCurrentSpeed(lcdData,  ++count);
+                sendi2cMotorMsg(i2cData, 0xFF, 0xFF, 100);
                 break;
             }
             case AIUpdateWallAnglesMsgType:

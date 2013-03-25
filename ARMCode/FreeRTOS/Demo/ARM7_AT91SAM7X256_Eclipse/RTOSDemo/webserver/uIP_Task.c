@@ -64,11 +64,15 @@ static xSemaphoreHandle xEMACSemaphore;
 
 /*-----------------------------------------------------------*/
 
+static void *vtLCDData;
+void vuIP_SetLCD(void *lcdInfo) {
+  vtLCDData = lcdInfo;
+}
+
 void vuIP_Task( void *pvParameters )
 {
 portBASE_TYPE i;
-uip_ipaddr_t xIPAddr;
-struct timer periodic_timer, arp_timer;
+uip_ipaddriodic_timer, arp_timer;
 
 	/* Initialise the uIP stack. */
 	timer_set( &periodic_timer, configTICK_RATE_HZ / 2 );

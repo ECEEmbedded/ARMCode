@@ -114,6 +114,13 @@ clock_time_t clock_time( void )
 }
 /*-----------------------------------------------------------*/
 
+static void *vtLCDData;
+void vuIP_SetLCD(void *lcdInfo) {
+  vtLCDData = lcdInfo;
+}
+
+#include "LCDtask.h"
+
 void vuIP_Task( void *pvParameters )
 {
 portBASE_TYPE i;
@@ -128,6 +135,7 @@ extern void ( vEMAC_ISR_Wrapper )( void );
 	timer_set( &arp_timer, configTICK_RATE_HZ * 10 );
 	uip_init();
 	uip_ipaddr( xIPAddr, configIP_ADDR0, configIP_ADDR1, configIP_ADDR2, configIP_ADDR3 );
+  // sendLCDCurrentSpeed(vtLCDData, configIP_ADDR3);
 	uip_sethostaddr( xIPAddr );
 	uip_ipaddr( xIPAddr, configNET_MASK0, configNET_MASK1, configNET_MASK2, configNET_MASK3 );
 	uip_setnetmask( xIPAddr );

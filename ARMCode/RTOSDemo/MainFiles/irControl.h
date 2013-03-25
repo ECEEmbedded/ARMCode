@@ -3,6 +3,7 @@
 #define IR_CONTROL_H
 #include "myTypes.h"
 #include "navigation.h"
+#include "LCDtask.h"
 
 #define maxIRMsgLen 9
 
@@ -14,7 +15,7 @@
 //   mapData: Data structure used by the task
 //   uxPriority -- the priority you want this task to be run at
 //   navData: pointer to the data structure for the navigation task
-void vStartIRTask(irControlStruct *irData, unsigned portBASE_TYPE uxPriority, navigationStruct *navData);
+void vStartIRTask(irControlStruct *irData, unsigned portBASE_TYPE uxPriority, navigationStruct *navData,  vtLCDStruct *lcdData);
 
 // Request the orientation information of the rover from the Navigation thread
 // Args:

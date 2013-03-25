@@ -33,4 +33,26 @@ ObjectFiles/httpd-cgi.o: \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/machine/types.h \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/sys/stdio.h \
  c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/string.h \
- c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/sys/string.h
+ c:\program\ files\codesourcery\sourcery\ g++\ lite\bin\../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/sys/string.h \
+ ../FreeRTOS/Demo/CORTEX_LPC1768_GCC_Rowley/webserver/uIP_Task.c \
+ ../FreeRTOS/Source/include/FreeRTOS.h \
+ ../FreeRTOS/Source/include/projdefs.h ../SystemFiles/FreeRTOSConfig.h \
+ ../SystemFiles/adapter.h C:/Keil/ARM/INC/NXP/LPC17xx/LPC17xx.h \
+ ../SystemFiles/core_cm3.h ../SystemFiles/core_cmInstr.h \
+ ../SystemFiles/core_cmFunc.h ../SystemFiles/system_LPC17xx.h \
+ ../FreeRTOS/Source/include/portable.h \
+ ../FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h \
+ ../FreeRTOS/Source/include/mpu_wrappers.h \
+ ../FreeRTOS/Source/include/task.h ../FreeRTOS/Source/include/list.h \
+ ../FreeRTOS/Source/include/semphr.h ../FreeRTOS/Source/include/queue.h \
+ ../FreeRTOS/Demo/Common/ethernet/uIP/uip-1.0/uip/uip_arp.h \
+ ../FreeRTOS/Demo/Common/ethernet/uIP/uip-1.0/uip/uip.h \
+ ../FreeRTOS/Demo/Common/ethernet/uIP/uip-1.0/uip/timer.h \
+ ../FreeRTOS/Demo/Common/ethernet/uIP/uip-1.0/uip/clock.h \
+ ../FreeRTOS/Demo/CORTEX_LPC1768_GCC_Rowley/webserver/clock-arch.h \
+ ../FreeRTOS/Demo/CORTEX_LPC1768_GCC_Rowley/webserver/clock-arch.h \
+ ../FreeRTOS/Demo/CORTEX_LPC1768_GCC_Rowley/webserver/EthDev_LPC17xx.h \
+ ../FreeRTOS/Demo/CORTEX_LPC1768_GCC_Rowley/webserver/EthDev.h \
+ ../FreeRTOS/Demo/Common/include/ParTest.h MainFiles/LCDtask.h \
+ MainFiles/myDefs.h ../FreeRTOS/Source/include/queue.h \
+ ../FreeRTOS/Source/include/timers.h
