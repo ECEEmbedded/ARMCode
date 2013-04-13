@@ -144,7 +144,6 @@ static void prvSetupHardware( void );
  * this task.
  */
 extern void vuIP_Task( void *pvParameters );
-extern void vuIP_SetLCD( void *lcdParams );
 
 /*
  * The task that handles the USB stack.
@@ -196,14 +195,14 @@ int main( void )
 
 	/* Configure the hardware for use by this demo. */
 	prvSetupHardware();
-  
-  vStartLCDTask(&vtLCDdata,mainLCD_TASK_PRIORITY);
 
+	#if USE_WEB_SERVER == 1
 	// Not a standard demo -- but also not one of mine (MTJ)
 	/* Create the uIP task.  The WEB server runs in this task. */
-  xTaskCreate( vuIP_Task, ( signed char * ) "uIP", mainBASIC_WEB_STACK_SIZE, ( void * ) NULL, mainUIP_TASK_PRIORITY, NULL );
-  vuIP_SetLCD(&vtLCDdata);
-  
+    xTaskCreate( vuIP_Task, ( signed char * ) "uIP", mainBASIC_WEB_STACK_SIZE, ( void * ) NULL, mainUIP_TASK_PRIORITY, NULL );
+	#endif
+
+	vStartLCDTask(&vtLCDdata,mainLCD_TASK_PRIORITY);
 	// LCD Task creates a queue to receive messages -- what it does with those messages will depend on how the task is configured (see LCDtask.c)
 	// Here we set up a timer that will send messages to the LCD task.  You don't have to have this timer for the LCD task, it is just showing
 	//  how to use a timer and how to send messages from that timer.
@@ -223,14 +222,13 @@ int main( void )
     // Start the Motor Control task
     vStartMotorControlTask(&motorControl,mainMOTOR_CONTROL_TASK_PRIORITY,&i2cData,&webData,&vtLCDdata);
     // Start the Navigation task
-    vStartNavigationTask(&navData,mainNAVIGATION_TASK_PRIORITY,&motorControl,&vtLCDdata,&i2cData);
+    vStartNavigationTask(&navData,mainNAVIGATION_TASK_PRIORITY,&motorControl,&vtLCDdata);
     // Start the IR Control task
-    vStartIRTask(&irData,mainIR_CONTROL_TASK_PRIORITY,&navData,&vtLCDdata);
+    vStartIRTask(&irData,mainIR_CONTROL_TASK_PRIORITY,&navData);
     // Start the Speed Limit task
     vStartSpeedLimitTask(&speedData,mainSPEED_LIMIT_TASK_PRIORITY,&motorControl,&navData,&webData);
 
     startTimerFori2c(&i2cData);
-  
     //startTimerForMotor(&motorControl);
 
     /* Create the USB task. MTJ: This routine has been modified from the original example (which is not a FreeRTOS standard demo) */

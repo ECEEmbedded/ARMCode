@@ -159,6 +159,23 @@ portBASE_TYPE SendLCDSpeedViolation(vtLCDStruct *lcdData, uint8_t speedViolation
     return(xQueueSend(lcdData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
+portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData,int length,char *msg)
+{
+    if (lcdData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    vtLCDMsg lcdBuffer;
+
+    if (length > vtLCDMaxLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(lcdBuffer.length);
+    }
+    lcdBuffer.length = strnlen(msg,vtLCDMaxLen);
+    lcdBuffer.msgType = sendLCDPrintMsgType;
+    strncpy((char *)lcdBuffer.buf,msg,vtLCDMaxLen);
+    return(xQueueSend(lcdData->inQ,(void *) (&lcdBuffer),portMAX_DELAY));
+}
+
 // End of Public API
 /*-----------------------------------------------------------*/
 
@@ -266,6 +283,8 @@ static unsigned short screenColor, tscr;
 // This is the actual task that is run
 static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 {
+    screenColor = 0;
+
 	lcdPtr = (vtLCDStruct *) pvParameters;
 
 	/* Initialize the LCD and set the initial colors */
@@ -276,9 +295,6 @@ static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 	GLCD_SetBackColor(screenColor);
 	GLCD_Clear(screenColor);
 
-	//Set up constant text fields
-	GLCD_DisplayString(LINE,0,1, (unsigned char*) "^_^");
-
 	// This task should never exit
 	for(;;)
 	{
@@ -287,10 +303,8 @@ static portTASK_FUNCTION( vLCDUpdateTask, pvParameters )
 			VT_HANDLE_FATAL_ERROR(0);
 		}
 		switch(getMsgType(&msgBuffer)){
-			case sendLCDCurrentSpeedMsgType: {
-        char string[4];
-        sprintf(string, "%3d", msgBuffer.buf[0]);
-        GLCD_DisplayString(LINE,0,1, (unsigned char*) string);
+			case sendLCDPrintMsgType: {
+                GLCD_DisplayString(0,0,1,(unsigned char *)msgBuffer.buf);
 				break;
 			}
 			default:{

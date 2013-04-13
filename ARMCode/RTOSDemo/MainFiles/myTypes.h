@@ -19,7 +19,6 @@ typedef struct __motorControlStruct {
 typedef struct __navigationStruct{
     motorControlStruct *motorControl;
     vtLCDStruct *lcdData;
-    myI2CStruct *i2cData;
     xQueueHandle inQ;
 } navigationStruct;
 
@@ -33,7 +32,6 @@ typedef struct __speedLimitControlStruct{
 typedef struct __irControlStruct{
     navigationStruct *navData;
     xQueueHandle inQ;
-    vtLCDStruct *lcdData;
 } irControlStruct;
 
 typedef struct __powerStruct{
@@ -87,6 +85,7 @@ typedef struct __powerStruct{
 #define sendLCDPowerMsgType 4
 #define sendLCDFastestTimeMsgType 5
 #define sendLCDSpeedViolationMsgType 6
+#define sendLCDPrintMsgType 7
 
 //I2C message types
 //Empty Messages

@@ -22,10 +22,6 @@ typedef struct __vtLCDStruct {
 #define WIDTH 320;
 #define HEIGHT 240;
 
-// These define the lines on the LCD where the 2680 & 26J50 ADC data gets displayed
-#define LINE 0
-// #define PIC26J50_LINE 4
-
 // Structure used to define the messages that are sent to the LCD thread
 //   the maximum length of a message to be printed is the size of the "buf" field below
 #define vtLCDMaxLen 20
@@ -70,5 +66,7 @@ portBASE_TYPE sendLCDFastestTime(vtLCDStruct *lcdData, uint8_t fastMin, uint8_t 
 // Display whether or not a speed limit violation is occurring on the LCD screen
 //***speedViolation value is boolean!!!!
 portBASE_TYPE sendLCDSpeedViolation(vtLCDStruct *lcdData, uint8_t speedViolation);
+
+portBASE_TYPE SendLCDPrintMsg(vtLCDStruct *lcdData, int length, char* msg);
 
 #endif

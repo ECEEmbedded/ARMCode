@@ -104,22 +104,6 @@ portBASE_TYPE sendMotorSetSpeed(motorControlStruct *motorControlData, uint8_t sp
     return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
-portBASE_TYPE sendMotorTurnLeft(motorControlStruct *motorControlData, uint8_t mag)
-{
-    if (motorControlData == NULL) {
-        VT_HANDLE_FATAL_ERROR(0);
-    }
-    motorControlMsg buffer;
-    buffer.length = 1;
-    if (buffer.length > maxMotorMsgLen) {
-        // no room for this message
-        VT_HANDLE_FATAL_ERROR(INCORRECT_MOTOR_CONTROL_MSG_FORMAT);
-    }
-    buffer.buf[0] = mag;
-    buffer.msgType = turnLeftMsgType;
-    return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
-}
-
 portBASE_TYPE sendMotorTurnRight(motorControlStruct *motorControlData, uint8_t mag)
 {
     if (motorControlData == NULL) {
@@ -133,6 +117,22 @@ portBASE_TYPE sendMotorTurnRight(motorControlStruct *motorControlData, uint8_t m
     }
     buffer.buf[0] = mag;
     buffer.msgType = turnRightMsgType;
+    return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
+}
+
+portBASE_TYPE sendMotorTurnLeft(motorControlStruct *motorControlData, uint8_t mag)
+{
+    if (motorControlData == NULL) {
+        VT_HANDLE_FATAL_ERROR(0);
+    }
+    motorControlMsg buffer;
+    buffer.length = 1;
+    if (buffer.length > maxMotorMsgLen) {
+        // no room for this message
+        VT_HANDLE_FATAL_ERROR(INCORRECT_MOTOR_CONTROL_MSG_FORMAT);
+    }
+    buffer.buf[0] = mag;
+    buffer.msgType = turnLeftMsgType;
     return(xQueueSend(motorControlData->inQ,(void *) (&buffer),portMAX_DELAY));
 }
 
@@ -189,10 +189,10 @@ portBASE_TYPE sendMotorTimerMsg(motorControlStruct *motorData, portTickType tick
 // #define constants
 
 // Motor and Encoder constants
-#define COUNTS_PER_CENTIMETER 30
-#define COUNTS_PER_DEGREE 2    // 10
+#define COUNTS_PER_CENTIMETER 19
+#define COUNTS_PER_DEGREE 7    // 10
 #define TIMER_COUNTS_PER_CENTIMETER 1
-#define DEGREES_PER_TIMER_COUNT 1.0     // 1.9
+#define DEGREES_PER_TIMER_COUNT 1.9
 #define MOTOR_FORWARD_SPEED 34
 #define MOTOR_BACKWARD_SPEED 94
 #define MOTOR_STOP_SPEED 64
@@ -201,11 +201,9 @@ portBASE_TYPE sendMotorTimerMsg(motorControlStruct *motorData, portTickType tick
 // Operation constants
 #define NONE 0
 #define FORWARD 1
-#define RIGHT 2
-#define LEFT 3
-#define REVERSE 4
-
-// #define SEND_COUNTS_TO_LCD
+#define REVERSE 2
+#define RIGHT 3
+#define LEFT 4
 
 // Private routines used to unpack the message buffers.
 // I do not want to access the message buffer data structures outside of these routines.
@@ -287,11 +285,11 @@ int getMsgType(motorControlMsg *motorControlBuf)
 }
 
 uint8_t getDegrees(unsigned int right,unsigned int left){
-    return ((right + left)/2)/COUNTS_PER_DEGREE;
+    return ((right + left) / 2) / COUNTS_PER_DEGREE;
 }
 
 uint8_t getCentimeters(unsigned int right,unsigned int left){
-    return ((right + left)/2)/COUNTS_PER_CENTIMETER;
+    return ((right + left) / 2) / COUNTS_PER_CENTIMETER;
 }
 
 // End of private routines for data manipulation, etc.
@@ -306,13 +304,17 @@ static vtLCDStruct *lcdData;
 // Buffer for receiving messages
 static motorControlMsg msgBuffer;
 static unsigned int leftEncoderCount, rightEncoderCount;
-// static unsigned int targetVal;
 
-// static unsigned int forward, backward, right, left;
+static unsigned int targetVal;
+static unsigned int currentTime;
+
+static unsigned int forward, reverse, right, left;
 
 // static uint8_t delay;
+static uint8_t prevSpeedVal, curSpeedVal;
+static int speedDiff;
 
-// static char msg[12];
+static char msg[20];
 
 // This is the actual task that is run
 static portTASK_FUNCTION( vMotorControlTask, pvParameters )
@@ -326,10 +328,30 @@ static portTASK_FUNCTION( vMotorControlTask, pvParameters )
     // Get the LCD task pointer
     lcdData = param->lcdData;
 
+    prevSpeedVal = MOTOR_FORWARD_SPEED;
+    curSpeedVal = MOTOR_FORWARD_SPEED;
+
     currentOp = NONE;
     lastOp = NONE;
-    leftEncoderCount = 0;
     rightEncoderCount = 0;
+    leftEncoderCount = 0;
+    currentTime = 0;
+    speedDiff = 0;
+    forward = 0;
+    reverse = 0;
+    right = 0;
+    left = 0;
+
+    msg[0] = 'f';
+    msg[1] = ' ';
+    msg[4] = 'b';
+    msg[5] = ' ';
+    msg[8] = 'r';
+    msg[9] = ' ';
+    msg[13] = 'l';
+    msg[14] = ' ';
+    msg[18] = ' ';
+    msg[19] = 0;
 
     // Like all good tasks, this should never exit
     for(;;)
@@ -341,44 +363,144 @@ static portTASK_FUNCTION( vMotorControlTask, pvParameters )
         switch(getMsgType(&msgBuffer)){
 			case motorTimerMsgType:
 			{
+                currentTime++;
+                if(currentOp != NONE)
+                {
+                    if(currentTime >= targetVal)
+                    {
+                        sendi2cMotorMsg(i2cData,MOTOR_STOP_SPEED + RIGHT_MOTOR_OFFSET,MOTOR_STOP_SPEED, portMAX_DELAY);
+                        currentOp = NONE;
+                        currentTime = 0;
+                    }
+                }
+                if(currentTime%10 == 0){
+                    switch(lastOp){
+                        case FORWARD:
+                        {
+                            forward = forward + getCentimeters(rightEncoderCount, leftEncoderCount);
+                            //updateMoveForwardMsg(navData,getCentimeters(rightEncoderCount, leftEncoderCount));
+                            break;
+                        }
+                        case REVERSE:
+                        {
+                            reverse = reverse + getCentimeters(rightEncoderCount, leftEncoderCount);
+                            //updateMoveBackwardMsg(navData,getCentimeters(rightEncoderCount, leftEncoderCount));
+                            break;
+                        }
+                        case RIGHT:
+                        {
+                            right = right + getDegrees(rightEncoderCount, leftEncoderCount);
+                            //updateRotateClockwiseMsg(navData,getDegrees(rightEncoderCount, leftEncoderCount));
+                            break;
+                        }
+                        case LEFT:
+                        {
+                            left = left + getDegrees(rightEncoderCount, leftEncoderCount);  //This is exactly right... Because difference will be negative... Think this out later.
+                            //updateRotateCounterclockwiseMsg(navData,getDegrees(rightEncoderCount, leftEncoderCount));
+                            break;
+                        }
+                        default:
+                        {
+                            break;
+                        }
+                    }
+                    rightEncoderCount = 0;
+                    leftEncoderCount = 0;
+                    #ifdef SEND_COUNTS_TO_LCD
+                    msg[2] = (forward / 10) % 10 + 48;
+                    msg[3] = forward % 10 + 48;
+                    msg[6] = (reverse / 10) % 10 + 48;
+                    msg[7] =  reverse % 10 + 48;
+                    msg[10] = (right / 100) % 10 + 48;
+                    msg[11] = (right / 10) % 10 + 48;
+                    msg[12] = right % 10 + 48;
+                    msg[15] = (left / 100) % 10 + 48;
+                    msg[16] = (left / 10) % 10 + 48;
+                    msg[17] = left % 10 + 48;
+                    SendLCDPrintMsg(lcdData, 20, msg);
+                    #endif
+                }
 				break;
 			}
             case setDirForwardMsgType:
             {
                 currentOp = FORWARD;
                 lastOp = FORWARD;
+                currentTime = 0;
                 leftEncoderCount = 0;
                 rightEncoderCount = 0;
                 //targetVal = getTargetVal(&msgBuffer)*TIMER_COUNTS_PER_CENTIMETER;
-                //sendi2cMotorMsg(i2cData,MOTOR_FORWARD_SPEED + RIGHT_MOTOR_OFFSET,MOTOR_FORWARD_SPEED, portMAX_DELAY);
+                sendi2cMotorMsg(i2cData, curSpeedVal + RIGHT_MOTOR_OFFSET, curSpeedVal, portMAX_DELAY);
                 break;
             }
 			case setDirReverseMsgType:
             {
+                currentOp = REVERSE;
+                lastOp = REVERSE;
+                currentTime = 0;
+                leftEncoderCount = 0;
+                rightEncoderCount = 0;
+                //targetVal = getTargetVal(&msgBuffer)*TIMER_COUNTS_PER_CENTIMETER;
+                sendi2cMotorMsg(i2cData, curSpeedVal + RIGHT_MOTOR_OFFSET, curSpeedVal, portMAX_DELAY);
                 break;
             }
             case setMotorSpeedMsgType:
             {
-                break;
-            }
-            case turnLeftMsgType:
-            {
+                speedDiff = curSpeedVal - getNewSpeed(&msgBuffer);
+                prevSpeedVal = curSpeedVal;
+                curSpeedVal = curSpeedVal + speedDiff;
                 break;
             }
             case turnRightMsgType:
             {
+                currentOp = RIGHT;
+                lastOp = RIGHT;
+                currentTime = 0;
+                leftEncoderCount = 0;
+                rightEncoderCount = 0;
+                //targetVal = getTargetVal(&msgBuffer)/DEGREES_PER_TIMER_COUNT;
+                sendi2cMotorMsg(i2cData, curSpeedVal + RIGHT_MOTOR_OFFSET, curSpeedVal, portMAX_DELAY);
+                break;
+            }
+            case turnLeftMsgType:
+            {
+                currentOp = LEFT;
+                lastOp = LEFT;
+                currentTime = 0;
+                leftEncoderCount = 0;
+                rightEncoderCount = 0;
+                //targetVal = getTargetVal(&msgBuffer)/DEGREES_PER_TIMER_COUNT;
+                sendi2cMotorMsg(i2cData, curSpeedVal + RIGHT_MOTOR_OFFSET, curSpeedVal, portMAX_DELAY);
                 break;
             }
             case motorStopMsgType:
             {
                 currentOp = NONE;
-                //sendi2cMotorMsg(i2cData,MOTOR_STOP_SPEED + RIGHT_MOTOR_OFFSET,MOTOR_STOP_SPEED, portMAX_DELAY);
+                //prevSpeedVal = MOTOR_STOP_SPEED;        // This is undoubtedly incorrect so look at this Matt!!
+                //curSpeedVal = MOTOR_STOP_SPEED;         // This is undoubtedly incorrect so look at this Matt!!
+                sendi2cMotorMsg(i2cData, MOTOR_STOP_SPEED + RIGHT_MOTOR_OFFSET, MOTOR_STOP_SPEED, portMAX_DELAY);
+                currentTime = 0;
                 break;
             }
             case encoderDataMsgType:
             {
                 rightEncoderCount += getRightCount(&msgBuffer);
                 leftEncoderCount += getLeftCount(&msgBuffer);
+
+                // char msg[12];
+                // msg[0] = 'L';
+                // msg[1] = ':';
+                // msg[2] = ' ';
+                // msg[3] = (getLeftCount(&msgBuffer) / 10) % 10 + 48;
+                // msg[4] = getLeftCount(&msgBuffer) % 10 + 48;
+                // msg[5] = ' ';
+                // msg[6] = 'R';
+                // msg[7] = ':';
+                // msg[8] = ' ';
+                // msg[9] = (getRightCount(&msgBuffer) / 10) % 10 + 48;
+                // msg[10] = getRightCount(&msgBuffer) % 10 + 48;
+                // msg[11] = 0;
+                // SendLCDPrintMsg(lcdData, 11, msg);
                 break;
             }
             default:
